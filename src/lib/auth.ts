@@ -7,5 +7,9 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),
+  emailAndPassword: {
+    enabled: true,
+    minPasswordLength: 6,
+  },
   plugins: [nextCookies()],
 })
