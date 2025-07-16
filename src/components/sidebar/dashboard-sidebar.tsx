@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
 } from '../ui/sidebar'
 import Link from 'next/link'
-import { auth } from '@/lib/auth'
+import { auth } from '@/lib/auth/auth'
 import { headers } from 'next/headers'
 import { NavUser } from './nav-user'
 
@@ -53,11 +53,7 @@ const menuLinks = {
   ],
 }
 
-type Role = 'ADMIN' | 'OPERATOR'
-
 export async function DashboardSidebar() {
-  const userRole: Role = 'ADMIN'
-
   const session = await auth.api.getSession({
     headers: await headers(),
   })
@@ -76,14 +72,14 @@ export async function DashboardSidebar() {
       </SidebarHeader>
       <SidebarContent>
         {Object.entries(menuLinks).map(([group, links]) => {
-          if (userRole !== 'ADMIN' && group === 'Admin') return null
+          if (session.user.role !== 'ADMIN' && group === 'Admin') return null
           return (
             <SidebarGroup key={group}>
               <SidebarGroupLabel>{group}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {links.map((link) => {
-                    if (link.roles.includes(userRole)) {
+                    if (link.roles.includes(session.user.role as string)) {
                       return (
                         <SidebarMenuItem key={link.title}>
                           <SidebarMenuButton asChild>
