@@ -58,7 +58,11 @@ export function SignInForm() {
             </p>
           )}
         </div>
-        <Button className="w-full" disabled={pending} aria-disabled={pending}>
+        <Button
+          className="w-full text-foreground"
+          disabled={pending}
+          aria-disabled={pending}
+        >
           {pending ? 'Entrando' : 'Entrar'}
         </Button>
       </div>
