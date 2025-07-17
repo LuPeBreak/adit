@@ -1,4 +1,11 @@
-import { Landmark, Network, Printer, User, Users } from 'lucide-react'
+import {
+  Landmark,
+  Network,
+  PackageOpen,
+  Printer,
+  User,
+  Users,
+} from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +25,12 @@ import { NavUser } from './nav-user'
 
 const menuLinks = {
   Ativos: [
+    {
+      title: 'Todos os Ativos',
+      url: '/dashboard/assets',
+      icon: PackageOpen,
+      roles: ['OPERATOR', 'ADMIN'],
+    },
     {
       title: 'Impressoras',
       url: '/dashboard/printers',
