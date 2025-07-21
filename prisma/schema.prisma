@@ -8,6 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Auth Models
+
 enum Role {
   OPERATOR
   ADMIN
@@ -78,4 +80,83 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+// App Models
+
+enum AssetType {
+  PRINTER
+  //COMPUTER
+  //SWITCH
+}
+
+enum AssetStatus {
+  USING
+  STOCK
+  BROKEN
+  MAINTENANCE
+  RESERVED
+}
+
+model Asset {
+  id        String      @id @default(cuid())
+  tag       String      @unique
+  assetType AssetType   @map("asset_type")
+  status    AssetStatus
+
+  sector   Sector @relation(fields: [sectorId], references: [id])
+  sectorId String @map("sector_id")
+
+  printer Printer?
+
+  @@map("asset")
+}
+
+model Printer {
+  id           String @id @default(cuid())
+  serialNumber String @map("serial_number")
+  ipAddress    String @map("ip_address")
+
+  printerModel   PrinterModel @relation(fields: [printerModelId], references: [id])
+  printerModelId String       @map("printer_model_id")
+
+  asset   Asset  @relation(fields: [assetId], references: [id])
+  assetId String @unique
+
+  @@map("printer")
+}
+
+model PrinterModel {
+  id    String   @id @default(cuid())
+  name  String
+  toner String[]
+
+  printers Printer[]
+
+  @@map("printer_model")
+}
+
+model Department {
+  id           String @id @default(cuid())
+  name         String
+  manager      String
+  managerEmail String @map("manager_email")
+
+  sectors Sector[]
+
+  @@map("department")
+}
+
+model Sector {
+  id           String @id @default(cuid())
+  name         String
+  manager      String
+  managerEmail String @map("manager_email")
+
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId String     @map("department_id")
+
+  assets Asset[]
+
+  @@map("sector")
 }
