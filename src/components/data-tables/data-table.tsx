@@ -8,6 +8,7 @@ import {
   getPaginationRowModel,
   ColumnFiltersState,
   getFilteredRowModel,
+  Table as TanstackTable,
 } from '@tanstack/react-table'
 
 import {
@@ -19,18 +20,21 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '../ui/button'
-import { useState } from 'react'
+import { cloneElement, useState } from 'react'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  toolbar?: React.ReactElement<{ table: TanstackTable<TData> }>
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  toolbar,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState('')
 
   const table = useReactTable({
     data,
@@ -38,14 +42,19 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       columnFilters,
+      globalFilter,
     },
   })
 
   return (
     <div>
+      <div className="flex items-center py-4">
+        {toolbar && cloneElement(toolbar, { table })}
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -89,7 +98,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Sem dados.
+                  Nenhum resultado.
                 </TableCell>
               </TableRow>
             )}

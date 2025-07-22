@@ -11,8 +11,8 @@ datasource db {
 // Auth Models
 
 enum Role {
-  OPERATOR
   ADMIN
+  OPERATOR
 }
 
 model User {

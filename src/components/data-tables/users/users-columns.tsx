@@ -45,9 +45,12 @@ export const userColumns: ColumnDef<UserColumnsType>[] = [
       }
     },
     header: 'Cargo',
+    id: 'role',
+    enableGlobalFilter: false,
   },
   {
     id: 'actions',
+    enableGlobalFilter: false,
     cell: ({ row }) => {
       const user = row.original
 
