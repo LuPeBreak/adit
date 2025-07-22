@@ -1,7 +1,13 @@
-export default function DepartmentsPage() {
+import { DataTable } from '@/components/data-tables/data-table'
+import { departmentColumns } from '@/components/data-tables/departments/departments-columns'
+import prisma from '@/lib/prisma'
+
+export default async function DepartmentsPage() {
+  const departments = await prisma.department.findMany()
+
   return (
-    <div className="flex flex-1 justify-center items-center">
-      <h1 className="font-bold text-2xl">Página de Secretarias</h1>
+    <div className="container mx-auto py-10">
+      <DataTable columns={departmentColumns} data={departments} />
     </div>
   )
 }

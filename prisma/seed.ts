@@ -37,7 +37,7 @@ async function main() {
 
   // 2. Create Departments and their Sectors
   const sectors = []
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 50; i++) {
     const department = await prisma.department.create({
       data: {
         name: `Secretaria de Exemplo ${i}`,

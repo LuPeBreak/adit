@@ -1,7 +1,13 @@
-export default function UsersPage() {
+import { DataTable } from '@/components/data-tables/data-table'
+import { userColumns } from '@/components/data-tables/users/users-columns'
+import prisma from '@/lib/prisma'
+
+export default async function UsersPage() {
+  const users = await prisma.user.findMany()
+
   return (
-    <div className="flex flex-1 justify-center items-center">
-      <h1 className="font-bold text-2xl">Página de Usuários</h1>
+    <div className="container mx-auto py-10">
+      <DataTable columns={userColumns} data={users} />
     </div>
   )
 }
