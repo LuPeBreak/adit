@@ -1,18 +1,10 @@
 'use client'
 
-import { z } from 'zod'
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
+import type { DepartmentsColumnType } from './departments-table-schema'
 
-export const departmentSchema = z.object({
-  name: z.string(),
-  manager: z.string(),
-  managerEmail: z.string().email(),
-})
-
-export type DepartmentColumnsType = z.infer<typeof departmentSchema>
-
-export const departmentColumns: ColumnDef<DepartmentColumnsType>[] = [
+export const departmentsTableColumns: ColumnDef<DepartmentsColumnType>[] = [
   {
     accessorKey: 'name',
     id: 'Nome',

@@ -4,13 +4,13 @@ import { Table } from '@tanstack/react-table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
-interface DepartmentTableToolbarProps<TData> {
+interface GlobalTableToolbarProps<TData> {
   table?: Table<TData> // A prop é opcional para evitar erro no page.tsx ( server component )
 }
 
-export function DepartmentTableToolbar<TData>({
+export function GlobalTableToolbar<TData>({
   table,
-}: DepartmentTableToolbarProps<TData>) {
+}: GlobalTableToolbarProps<TData>) {
   if (!table) return null // Não renderiza se a table não foi injetada
 
   const isFiltered = table.getState().globalFilter

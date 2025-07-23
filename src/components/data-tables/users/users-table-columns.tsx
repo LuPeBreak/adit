@@ -1,6 +1,5 @@
 'use client'
 
-import { z } from 'zod'
 import { ColumnDef } from '@tanstack/react-table'
 import { Role } from '@/generated/prisma'
 import { Button } from '@/components/ui/button'
@@ -14,17 +13,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
 import { DataTableColumnHeader } from '../data-table-column-header'
+import type { UsersColumnType } from './users-table-schema'
 
-export const userSchema = z.object({
-  id: z.string().cuid(),
-  name: z.string(),
-  email: z.string().email(),
-  role: z.enum([Role.ADMIN, Role.OPERATOR]),
-})
-
-export type UserColumnsType = z.infer<typeof userSchema>
-
-export const userColumns: ColumnDef<UserColumnsType>[] = [
+export const usersTableColumns: ColumnDef<UsersColumnType>[] = [
   {
     accessorKey: 'name',
     id: 'Nome',

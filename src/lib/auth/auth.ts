@@ -17,6 +17,7 @@ export const auth = betterAuth({
     nextCookies(),
     admin({
       adminRoles: ['ADMIN'],
+      adminUserIds: ['4xBx5hTIbEdkaHGpFu077Hw9bRLqdLpY'],
       ac,
       roles: {
         ADMIN,
