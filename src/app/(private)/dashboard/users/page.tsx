@@ -7,7 +7,8 @@ export default async function UsersPage() {
   const users = await prisma.user.findMany()
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto px-4">
+      <h1 className="font-bold text-2xl">Lista de Usuários</h1>
       <DataTable
         columns={userColumns}
         data={users}

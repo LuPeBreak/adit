@@ -9,6 +9,9 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
   Table as TanstackTable,
+  VisibilityState,
+  SortingState,
+  getSortedRowModel,
 } from '@tanstack/react-table'
 
 import {
@@ -19,8 +22,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '../ui/button'
 import { cloneElement, useState } from 'react'
+import { DataTablePagination } from './data-table-pagination'
+import { DataTableViewOptions } from './data-table-view-options'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -35,6 +39,12 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 15, // Padrão de 15 itens por página
+  })
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
     data,
@@ -43,10 +53,17 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: setPagination,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     state: {
       columnFilters,
       globalFilter,
+      pagination,
+      columnVisibility,
+      sorting,
     },
   })
 
@@ -54,6 +71,7 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4">
         {toolbar && cloneElement(toolbar, { table })}
+        <DataTableViewOptions table={table} />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -105,23 +123,8 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Anterior
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Proxima
-        </Button>
+      <div className="py-4">
+        <DataTablePagination table={table} />
       </div>
     </div>
   )

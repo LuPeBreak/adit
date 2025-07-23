@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { ColumnDef } from '@tanstack/react-table'
+import { DataTableColumnHeader } from '../data-table-column-header'
 
 export const departmentSchema = z.object({
   name: z.string(),
@@ -14,14 +15,23 @@ export type DepartmentColumnsType = z.infer<typeof departmentSchema>
 export const departmentColumns: ColumnDef<DepartmentColumnsType>[] = [
   {
     accessorKey: 'name',
-    header: 'Nome',
+    id: 'Nome',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nome" />
+    ),
   },
   {
     accessorKey: 'manager',
-    header: 'Responsável',
+    id: 'Responsável',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Responsável" />
+    ),
   },
   {
     accessorKey: 'managerEmail',
-    header: 'Email',
+    id: 'Email',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
   },
 ]

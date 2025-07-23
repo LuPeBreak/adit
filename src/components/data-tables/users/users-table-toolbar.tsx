@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Role } from '@/generated/prisma'
+import { Button } from '@/components/ui/button'
 
 interface UsersTableToolbarProps<TData> {
   table?: Table<TData> // A prop é opcional para evitar erro no page.tsx ( server component )
@@ -38,6 +39,9 @@ export function UsersTableToolbar<TData>({
 }: UsersTableToolbarProps<TData>) {
   if (!table) return null // Não renderiza se a table não foi injetada
 
+  const isFiltered =
+    table.getState().globalFilter || table.getColumn('Cargo')?.getFilterValue()
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
@@ -48,10 +52,10 @@ export function UsersTableToolbar<TData>({
           className="h-8 w-[150px] lg:w-[250px]"
         />
         <Select
-          value={(table.getColumn('role')?.getFilterValue() as string) ?? ''}
+          value={(table.getColumn('Cargo')?.getFilterValue() as string) ?? ''}
           onValueChange={(value) =>
             table
-              .getColumn('role')
+              .getColumn('Cargo')
               ?.setFilterValue(value === 'ALL' ? '' : value)
           }
         >
@@ -67,6 +71,18 @@ export function UsersTableToolbar<TData>({
             ))}
           </SelectContent>
         </Select>
+        {isFiltered && (
+          <Button
+            variant="secondary"
+            onClick={() => {
+              table.setGlobalFilter('')
+              table.getColumn('Cargo')?.setFilterValue('')
+            }}
+            className="h-8 px-2 lg:px-3"
+          >
+            Limpar Filtros
+          </Button>
+        )}
       </div>
     </div>
   )

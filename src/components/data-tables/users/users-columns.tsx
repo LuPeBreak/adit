@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
+import { DataTableColumnHeader } from '../data-table-column-header'
 
 export const userSchema = z.object({
   id: z.string().cuid(),
@@ -26,11 +27,17 @@ export type UserColumnsType = z.infer<typeof userSchema>
 export const userColumns: ColumnDef<UserColumnsType>[] = [
   {
     accessorKey: 'name',
-    header: 'Nome',
+    id: 'Nome',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nome" />
+    ),
   },
   {
     accessorKey: 'email',
-    header: 'Email',
+    id: 'Email',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
     filterFn: 'includesString',
   },
   {
@@ -44,15 +51,18 @@ export const userColumns: ColumnDef<UserColumnsType>[] = [
           return ''
       }
     },
-    header: 'Cargo',
-    id: 'role',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Cargo" />
+    ),
+    id: 'Cargo',
     enableGlobalFilter: false,
   },
   {
     id: 'actions',
+    enableHiding: false,
     enableGlobalFilter: false,
-    cell: ({ row }) => {
-      const user = row.original
+    cell: (/** { row } */) => {
+      // const user = row.original
 
       return (
         <DropdownMenu>
@@ -64,11 +74,6 @@ export const userColumns: ColumnDef<UserColumnsType>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
-            >
-              Copiar Id do usuário
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Editar Usuário</DropdownMenuItem>
             <DropdownMenuItem className="text-destructive">
