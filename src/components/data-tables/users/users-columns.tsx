@@ -41,8 +41,12 @@ export const userColumns: ColumnDef<UserColumnsType>[] = [
     filterFn: 'includesString',
   },
   {
-    accessorFn: (row) => {
-      switch (row.role) {
+    accessorKey: 'role',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Cargo" />
+    ),
+    cell: ({ cell }) => {
+      switch (cell.getValue()) {
         case Role.ADMIN:
           return 'Administrador'
         case Role.OPERATOR:
@@ -51,9 +55,6 @@ export const userColumns: ColumnDef<UserColumnsType>[] = [
           return ''
       }
     },
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Cargo" />
-    ),
     id: 'Cargo',
     enableGlobalFilter: false,
   },
