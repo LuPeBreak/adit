@@ -16,10 +16,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { getAvatarFallbackByName } from '@/lib/utils'
 import { CircleUser, EllipsisVertical } from 'lucide-react'
 import SignOutButton from '../auth/sign-out-button'
 import Link from 'next/link'
+import { getAvatarFallbackByName } from '@/utils/get-avatar-fallback-by-name'
 
 export function NavUser({
   user,

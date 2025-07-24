@@ -7,17 +7,29 @@ import {
 
 export const statement = {
   ...defaultStatements,
-  printer: ['create', 'read', 'update', 'delete'],
+  asset: ['create', 'list', 'update', 'delete'],
+  printer: ['create', 'list', 'update', 'delete'],
+  printerModel: ['create', 'list', 'update', 'delete'],
+  department: ['create', 'list', 'update', 'delete'],
+  sector: ['create', 'list', 'update', 'delete'],
 } as const
 
 export const ac = createAccessControl(statement)
 
 export const OPERATOR = ac.newRole({
-  printer: ['create', 'read', 'update'],
+  asset: ['create', 'list', 'update', 'delete'],
+  printer: ['create', 'list', 'update', 'delete'],
+  printerModel: ['create', 'list', 'update', 'delete'],
+  department: ['list'],
+  sector: ['list'],
   ...userAc.statements,
 })
 
 export const ADMIN = ac.newRole({
-  printer: ['create', 'read', 'update', 'delete'],
+  asset: ['create', 'list', 'update', 'delete'],
+  printer: ['create', 'list', 'update', 'delete'],
+  printerModel: ['create', 'list', 'update', 'delete'],
+  department: ['create', 'list', 'update', 'delete'],
+  sector: ['create', 'list', 'update', 'delete'],
   ...adminAc.statements,
 })
