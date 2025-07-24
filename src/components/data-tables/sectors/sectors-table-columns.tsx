@@ -9,21 +9,21 @@ export const sectorsTableColumns: ColumnDef<SectorsColumnType>[] = [
     accessorKey: 'name',
     id: 'Nome',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nome" />
+      <DataTableColumnHeader column={column} title={column.id} />
     ),
   },
   {
     accessorKey: 'manager',
     id: 'Responsável',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Responsável" />
+      <DataTableColumnHeader column={column} title={column.id} />
     ),
   },
   {
     accessorKey: 'managerEmail',
     id: 'Email',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
+      <DataTableColumnHeader column={column} title={column.id} />
     ),
   },
 ]

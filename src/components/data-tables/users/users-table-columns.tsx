@@ -20,21 +20,21 @@ export const usersTableColumns: ColumnDef<UsersColumnType>[] = [
     accessorKey: 'name',
     id: 'Nome',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nome" />
+      <DataTableColumnHeader column={column} title={column.id} />
     ),
   },
   {
     accessorKey: 'email',
     id: 'Email',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
+      <DataTableColumnHeader column={column} title={column.id} />
     ),
     filterFn: 'includesString',
   },
   {
     accessorKey: 'role',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Cargo" />
+      <DataTableColumnHeader column={column} title={column.id} />
     ),
     cell: ({ cell }) => {
       switch (cell.getValue()) {

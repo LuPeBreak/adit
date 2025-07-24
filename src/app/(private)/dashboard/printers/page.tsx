@@ -1,7 +1,19 @@
-export default function PrintersPage() {
+import { getPrinters } from '@/actions/get-printers'
+import { DataTable } from '@/components/data-tables/data-table'
+import { printersTableColumns } from '@/components/data-tables/printers/printers-table-columns'
+import { PrintersTableToolbar } from '@/components/data-tables/printers/printers-table-toolbar'
+
+export default async function PrintersPage() {
+  const printers = await getPrinters()
+
   return (
-    <div className=" flex flex-1 justify-center  items-center">
-      <h1 className="font-bold text-2xl">Página de Impressoras</h1>
+    <div className="container mx-auto px-4">
+      <h1 className="font-bold text-2xl">Impressoras</h1>
+      <DataTable
+        columns={printersTableColumns}
+        data={printers}
+        toolbar={<PrintersTableToolbar />}
+      />
     </div>
   )
 }
