@@ -1,27 +1,24 @@
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
+import { HeroSection } from '@/components/home/hero-section'
+import { ServicesSection } from '@/components/home/services-section'
+import { AboutSection } from '@/components/home/about-section'
+import { FooterSection } from '@/components/home/footer-section'
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 md:p-24 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black text-gray-900 dark:text-gray-100">
-      <div className="text-center max-w-3xl space-y-6">
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
-          Bem-vindo ao{' '}
-          <span className="text-blue-600 dark:text-blue-400">ADIT</span>
-        </h1>
-        <p className="text-xl md:text-2xl font-light leading-relaxed">
-          O <strong>ADIT</strong> (Administração de Ativos e TI) é o sistema de
-          gestão desenvolvido para otimizar o controle e a manutenção de ativos
-          e serviços de TI da Prefeitura de Barra Mansa.
-        </p>
-        <p className="text-lg md:text-xl leading-relaxed">
-          Nosso objetivo é proporcionar visibilidade, organização e um fluxo de
-          trabalho otimizado para a equipe de TI, começando pela gestão
-          eficiente de impressoras.
-        </p>
-        <Button asChild variant="default" className="text-foreground">
-          <Link href={'/login'}>Fazer Login</Link>
-        </Button>
+    <main className="min-h-screen bg-background relative overflow-hidden">
+      {/* Gradiente global que se estende por toda a página */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-primary/5 to-transparent opacity-70 z-0 pointer-events-none"></div>
+
+      {/* Efeito de bolhas/círculos decorativos */}
+      <div className="absolute -top-20 right-0 w-2/5 h-2/5 bg-primary/10 rounded-full blur-[100px] -translate-y-1/3 translate-x-1/4 z-0 pointer-events-none animate-pulse-slow"></div>
+      <div className="absolute top-1/3 -left-20 w-1/3 h-1/3 bg-primary/8 rounded-full blur-[80px] z-0 pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-1/4 h-1/4 bg-primary/5 rounded-full blur-[120px] translate-y-1/2 z-0 pointer-events-none animate-pulse-slow"></div>
+
+      <div className="relative z-10">
+        <HeroSection />
+        <ServicesSection />
+        <AboutSection />
+        <FooterSection />
       </div>
     </main>
   )
