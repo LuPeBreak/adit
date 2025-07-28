@@ -103,6 +103,8 @@ model Asset {
   tag       String      @unique
   assetType AssetType   @map("asset_type")
   status    AssetStatus
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   sector   Sector @relation(fields: [sectorId], references: [id])
   sectorId String @map("sector_id")
@@ -113,9 +115,11 @@ model Asset {
 }
 
 model Printer {
-  id           String @id @default(cuid())
-  serialNumber String @map("serial_number")
-  ipAddress    String @map("ip_address")
+  id           String   @id @default(cuid())
+  serialNumber String   @map("serial_number")
+  ipAddress    String   @map("ip_address")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   printerModel   PrinterModel @relation(fields: [printerModelId], references: [id])
   printerModelId String       @map("printer_model_id")
@@ -127,9 +131,11 @@ model Printer {
 }
 
 model PrinterModel {
-  id    String   @id @default(cuid())
-  name  String
-  toners String[]
+  id        String   @id @default(cuid())
+  name      String
+  toners    String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   printers Printer[]
 
@@ -137,10 +143,12 @@ model PrinterModel {
 }
 
 model Department {
-  id           String @id @default(cuid())
+  id           String   @id @default(cuid())
   name         String
   manager      String
-  managerEmail String @map("manager_email")
+  managerEmail String   @map("manager_email")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   sectors Sector[]
 
@@ -148,10 +156,12 @@ model Department {
 }
 
 model Sector {
-  id           String @id @default(cuid())
+  id           String   @id @default(cuid())
   name         String
   manager      String
-  managerEmail String @map("manager_email")
+  managerEmail String   @map("manager_email")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   department   Department @relation(fields: [departmentId], references: [id])
   departmentId String     @map("department_id")
