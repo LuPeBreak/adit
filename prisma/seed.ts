@@ -17,14 +17,14 @@ async function main() {
   const hpModel = await prisma.printerModel.create({
     data: {
       name: 'HP LaserJet Pro M404dn',
-      toner: ['HP 58A Black'],
+      toners: ['HP 58A Black'],
     },
   })
 
   const epsonModel = await prisma.printerModel.create({
     data: {
       name: 'Epson EcoTank L3250',
-      toner: [
+      toners: [
         'T544120-AL (Black)',
         'T544220-AL (Cyan)',
         'T544320-AL (Magenta)',

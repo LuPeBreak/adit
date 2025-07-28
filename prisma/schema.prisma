@@ -129,7 +129,7 @@ model Printer {
 model PrinterModel {
   id    String   @id @default(cuid())
   name  String
-  toner String[]
+  toners String[]
 
   printers Printer[]
 
