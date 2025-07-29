@@ -33,3 +33,16 @@ export const ADMIN = ac.newRole({
   sector: ['create', 'list', 'update', 'delete'],
   ...adminAc.statements,
 })
+
+
+// Tipagens 
+export type Resource = keyof typeof statement;
+
+type Action<R extends Resource> = (typeof statement)[R][number];
+
+export type PermissionOption = {
+  [R in Resource]: {
+    resource: R
+    action?: Action<R>[]
+  }
+}[Resource]
