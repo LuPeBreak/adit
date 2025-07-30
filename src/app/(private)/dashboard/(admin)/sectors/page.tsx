@@ -1,4 +1,4 @@
-import { getSectors } from '@/actions/get-sectors'
+import { getSectors } from '@/actions/sectors/get-sectors'
 import { DataTable } from '@/components/data-tables/data-table'
 import { GlobalTableToolbar } from '@/components/data-tables/global-table-toolbar'
 import { sectorsTableColumns } from '@/components/data-tables/sectors/sectors-table-columns'

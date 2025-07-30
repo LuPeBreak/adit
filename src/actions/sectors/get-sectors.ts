@@ -8,6 +8,7 @@ export const getSectors = withPermissions(
   async () => {
     const sectors = await prisma.sector.findMany({
       select: {
+        id: true,
         name: true,
         manager: true,
         managerEmail: true,

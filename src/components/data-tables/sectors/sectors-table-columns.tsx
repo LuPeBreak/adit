@@ -3,6 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
 import type { SectorsColumnType } from './sectors-table-schema'
+import { SectorRowActions } from './sector-row-actions'
 
 export const sectorsTableColumns: ColumnDef<SectorsColumnType>[] = [
   {
@@ -25,5 +26,11 @@ export const sectorsTableColumns: ColumnDef<SectorsColumnType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={column.id} />
     ),
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    enableGlobalFilter: false,
+    cell: ({ row }) => <SectorRowActions row={row} />,
   },
 ]

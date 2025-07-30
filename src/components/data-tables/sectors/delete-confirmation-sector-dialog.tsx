@@ -3,28 +3,28 @@
 import { BasicDialog } from '@/components/basic-dialog'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { deleteDepartmentAction } from '@/actions/departments/delete-department'
+import { deleteSectorAction } from '@/actions/sectors/delete-sector'
 
-interface DeleteConfirmationDepartmentDialogProps {
+interface DeleteConfirmationSectorDialogProps {
   id: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function DeleteConfirmationDepartmentDialog({
+export function DeleteConfirmationSectorDialog({
   id,
   open,
   onOpenChange,
-}: DeleteConfirmationDepartmentDialogProps) {
+}: DeleteConfirmationSectorDialogProps) {
   async function onDelete() {
-    const response = await deleteDepartmentAction({
+    const response = await deleteSectorAction({
       id,
     })
     if (!response.success) {
-      toast.error('Erro ao deletar secretaria')
+      toast.error('Erro ao deletar setor')
       return
     }
-    toast.success('Secretaria deletada com sucesso')
+    toast.success('Setor deletado com sucesso')
     onOpenChange(false)
   }
 
@@ -32,8 +32,8 @@ export function DeleteConfirmationDepartmentDialog({
     <BasicDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={'Deletar Secretaria'}
-      description={'Tem certeza que deseja deletar esta secretaria? '}
+      title={'Deletar Setor'}
+      description={'Tem certeza que deseja deletar este setor? '}
     >
       <>
         <p className="text-red-700 font-bold">

@@ -18,7 +18,6 @@ import { createDepartmentAction } from '@/actions/departments/create-department'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
 import { updateDepartmentAction } from '@/actions/departments/update-department'
-import type { DialogProps } from '@radix-ui/react-dialog'
 
 const departmentFormSchema = z.object({
   name: z
@@ -48,7 +47,7 @@ export interface DepartmentFormData {
   managerEmail: string
 }
 
-interface DepartmentDialogFormProps extends DialogProps {
+interface DepartmentDialogFormProps {
   initialData?: DepartmentFormData
   open: boolean
   onOpenChange: (open: boolean) => void
