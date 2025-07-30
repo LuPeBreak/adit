@@ -12,6 +12,9 @@ export const getDepartments = withPermissions(
         manager: true,
         managerEmail: true,
       },
+      orderBy: {
+        name: 'asc',
+      },
     })
 
     return departments

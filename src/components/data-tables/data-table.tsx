@@ -30,12 +30,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   toolbar?: React.ReactElement<{ table: TanstackTable<TData> }>
+  createDialog?: React.ReactNode
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   toolbar,
+  createDialog,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
@@ -71,7 +73,10 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="flex items-center py-4">
         {toolbar && cloneElement(toolbar, { table })}
-        <DataTableViewOptions table={table} />
+        <div className="flex gap-2 ml-auto">
+          {createDialog}
+          <DataTableViewOptions table={table} />
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
