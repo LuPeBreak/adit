@@ -8,6 +8,7 @@ export const getDepartments = withPermissions(
   async () => {
     const departments = await prisma.department.findMany({
       select: {
+        id: true,
         name: true,
         manager: true,
         managerEmail: true,

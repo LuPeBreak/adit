@@ -16,10 +16,11 @@ import {
 import { BasicDialog } from '@/components/basic-dialog'
 import { createDepartmentAction } from '@/actions/departments/create-department'
 import { toast } from 'sonner'
-import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { useEffect } from 'react'
+import { updateDepartmentAction } from '@/actions/departments/update-department'
+import type { DialogProps } from '@radix-ui/react-dialog'
 
-const createDepartmentFormSchema = z.object({
+const departmentFormSchema = z.object({
   name: z
     .string({ message: 'O nome da secretaria é obrigatório' })
     .min(5, 'O nome da secretaria deve ter no mínimo 5 caracteres'),
@@ -31,51 +32,87 @@ const createDepartmentFormSchema = z.object({
         managerName.split(' ').filter((name) => name.length > 0).length >= 2,
       'O responsável da secretaria deve conter o nome e o sobrenome',
     ),
-  managerEmail: z.string({
-    message: 'O email do responsável da secretaria é obrigatório',
-  }),
-  // .email('O email do responsável da secretaria é inválido'),
+  managerEmail: z
+    .string({
+      message: 'O email do responsável da secretaria é obrigatório',
+    })
+    .email('O email do responsável da secretaria é inválido'),
 })
 
-type CreateDepartmentFormValues = z.infer<typeof createDepartmentFormSchema>
+type DepartmentFormValues = z.infer<typeof departmentFormSchema>
 
-export function CreateDepartmentDialogForm() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const form = useForm<CreateDepartmentFormValues>({
-    resolver: zodResolver(createDepartmentFormSchema),
+export interface DepartmentFormData {
+  id?: string
+  name: string
+  manager: string
+  managerEmail: string
+}
+
+interface DepartmentDialogFormProps extends DialogProps {
+  initialData?: DepartmentFormData
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function DepartmentDialogForm({
+  initialData,
+  open,
+  onOpenChange,
+}: DepartmentDialogFormProps) {
+  const form = useForm<DepartmentFormValues>({
+    resolver: zodResolver(departmentFormSchema),
     defaultValues: {
-      name: '',
-      manager: '',
-      managerEmail: '',
+      name: initialData?.name ?? '',
+      manager: initialData?.manager ?? '',
+      managerEmail: initialData?.managerEmail ?? '',
     },
   })
 
-  async function onCreateDepartment(data: CreateDepartmentFormValues) {
-    const response = await createDepartmentAction(data)
-    if (!response.success) {
-      toast.error('Erro ao criar secretaria')
-      return
+  const isUpdateMode = !!initialData
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData)
     }
-    toast.success('Secretaria criada com sucesso')
-    setIsDialogOpen(false)
-    form.reset()
+  }, [initialData, form])
+
+  async function onSubmit(data: DepartmentFormValues) {
+    if (isUpdateMode) {
+      if (!initialData?.id) {
+        toast.error('Erro: ID da secretaria não encontrado para atualização.')
+        return
+      }
+      const response = await updateDepartmentAction({
+        ...data,
+        id: initialData.id,
+      })
+      if (!response.success) {
+        toast.error('Erro ao atualizar secretaria')
+        return
+      }
+      toast.success('Secretaria atualizada com sucesso')
+    } else {
+      const response = await createDepartmentAction(data)
+      if (!response.success) {
+        toast.error('Erro ao criar secretaria')
+        return
+      }
+      form.reset()
+      toast.success('Secretaria criada com sucesso')
+    }
+
+    onOpenChange(false)
   }
 
   return (
     <BasicDialog
-      open={isDialogOpen}
-      onOpenChange={setIsDialogOpen}
-      title={'Criar Secretaria'}
-      trigger={
-        <Button variant="outline" size={'sm'}>
-          <Plus />
-          Criar Secretaria
-        </Button>
-      }
+      open={open}
+      onOpenChange={onOpenChange}
+      title={isUpdateMode ? 'Editar Secretaria' : 'Criar Secretaria'}
     >
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onCreateDepartment)}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
           <FormField
@@ -121,7 +158,7 @@ export function CreateDepartmentDialogForm() {
               </FormItem>
             )}
           />
-          <Button type="submit">Criar</Button>
+          <Button type="submit">{isUpdateMode ? 'Editar' : 'Criar'}</Button>
         </form>
       </Form>
     </BasicDialog>

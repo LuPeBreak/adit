@@ -3,6 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
 import type { DepartmentsColumnType } from './departments-table-schema'
+import { DepartmentRowActions } from './department-row-actions'
 
 export const departmentsTableColumns: ColumnDef<DepartmentsColumnType>[] = [
   {
@@ -25,5 +26,11 @@ export const departmentsTableColumns: ColumnDef<DepartmentsColumnType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={column.id} />
     ),
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    enableGlobalFilter: false,
+    cell: ({ row }) => <DepartmentRowActions row={row} />,
   },
 ]
