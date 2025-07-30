@@ -14,10 +14,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { DepartmentRowActionsProps } from './departments-table-schema'
+import { DeleteConfirmationDepartmentDialog } from './delete-confirmation-department-dialog'
 
 export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
   const department = row.original
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   return (
     <>
@@ -25,6 +27,11 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
         initialData={department}
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
+      />
+      <DeleteConfirmationDepartmentDialog
+        id={department.id}
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
       />
 
       <DropdownMenu>
@@ -40,7 +47,10 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
           <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
             Editar Secretaria
           </DropdownMenuItem>
-          <DropdownMenuItem className="text-destructive">
+          <DropdownMenuItem
+            onSelect={() => setIsDeleteDialogOpen(true)}
+            className="text-destructive"
+          >
             Deletar Secretaria
           </DropdownMenuItem>
         </DropdownMenuContent>

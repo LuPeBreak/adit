@@ -24,21 +24,26 @@ export const createDepartmentAction = withPermissions(
   async (_, data: CreateDepartmentFormValues) => {
     const validatedFields = createDepartmentSchema.safeParse(data)
     if (!validatedFields.success) {
-      return { success: false, data: null }
+      return { success: false }
     }
 
     const { name, manager, managerEmail } = validatedFields.data
 
-    const department = await prisma.department.create({
-      data: {
-        name,
-        manager,
-        managerEmail,
-      },
-    })
+    try {
+      await prisma.department.create({
+        data: {
+          name,
+          manager,
+          managerEmail,
+        },
+      })
 
-    revalidatePath('/dashboard/departments')
+      revalidatePath('/dashboard/departments')
 
-    return { success: true, data: department }
+      return { success: true }
+    } catch (error) {
+      console.error(error)
+      return { success: false }
+    }
   },
 )
