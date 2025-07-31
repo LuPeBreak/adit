@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
-import type { PrintersColumnType } from './printers-table-schema'
+import type { PrintersColumnType } from './printers-table-types'
 import { AssetStatus } from '@/generated/prisma'
 import { getColoredStatus } from '@/utils/get-colored-status'
 

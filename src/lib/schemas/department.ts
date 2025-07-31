@@ -1,12 +1,5 @@
 import { z } from 'zod'
 
-export const departmentSchema = z.object({
-  id: z.string().cuid(),
-  name: z.string(),
-  manager: z.string(),
-  managerEmail: z.string().email(),
-})
-
 export const createDepartmentSchema = z.object({
   name: z
     .string({ message: 'O nome da secretaria é obrigatório' })
@@ -34,7 +27,6 @@ export const deleteDepartmentSchema = z.object({
   id: z.string().cuid('ID da secretaria inválido'),
 })
 
-export type Department = z.infer<typeof departmentSchema>
 export type CreateDepartmentData = z.infer<typeof createDepartmentSchema>
 export type UpdateDepartmentData = z.infer<typeof updateDepartmentSchema>
 export type DeleteDepartmentData = z.infer<typeof deleteDepartmentSchema>

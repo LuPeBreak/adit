@@ -1,7 +1,7 @@
 'use client'
 
 import type { ColumnDef } from '@tanstack/react-table'
-import type { PrinterModelsColumnType } from './printer-models-table-schema'
+import type { PrinterModelsColumnType } from './printer-models-table-types'
 import { DataTableColumnHeader } from '../data-table-column-header'
 
 export const printerModelsTableColumns: ColumnDef<PrinterModelsColumnType>[] = [

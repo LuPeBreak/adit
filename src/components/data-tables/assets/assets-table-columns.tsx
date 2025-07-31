@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
-import type { AssetsColumnType } from './assets-table-schema'
+import type { AssetsColumnType } from './assets-table-types'
 import { AssetStatus, AssetType } from '@/generated/prisma'
 import { getColoredStatus } from '@/utils/get-colored-status'
 

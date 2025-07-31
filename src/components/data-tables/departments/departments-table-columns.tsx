@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
-import type { DepartmentsColumnType } from './departments-table-schema'
+import type { DepartmentsColumnType } from './departments-table-types'
 import { DepartmentRowActions } from './department-row-actions'
 
 export const departmentsTableColumns: ColumnDef<DepartmentsColumnType>[] = [

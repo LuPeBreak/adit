@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
 import { DataTableColumnHeader } from '../data-table-column-header'
-import type { UsersColumnType } from './users-table-schema'
+import type { UsersColumnType } from './users-table-types'
 
 export const usersTableColumns: ColumnDef<UsersColumnType>[] = [
   {

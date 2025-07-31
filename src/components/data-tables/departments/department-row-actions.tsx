@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import type { DepartmentRowActionsProps } from './departments-table-schema'
+import type { DepartmentRowActionsProps } from './departments-table-types'
 import { DeleteConfirmationDepartmentDialog } from './delete-confirmation-department-dialog'
 
 export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
