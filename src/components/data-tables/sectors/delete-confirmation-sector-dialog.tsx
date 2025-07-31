@@ -4,6 +4,8 @@ import { BasicDialog } from '@/components/basic-dialog'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { deleteSectorAction } from '@/actions/sectors/delete-sector'
+import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 
 interface DeleteConfirmationSectorDialogProps {
   id: string
@@ -16,16 +18,24 @@ export function DeleteConfirmationSectorDialog({
   open,
   onOpenChange,
 }: DeleteConfirmationSectorDialogProps) {
+  const [isLoading, setIsLoading] = useState(false)
+
   async function onDelete() {
-    const response = await deleteSectorAction({
-      id,
-    })
-    if (!response.success) {
-      toast.error('Erro ao deletar setor')
-      return
+    setIsLoading(true)
+
+    try {
+      const response = await deleteSectorAction({
+        id,
+      })
+      if (!response.success) {
+        toast.error(response.error?.message || 'Erro ao deletar setor')
+        return
+      }
+      toast.success('Setor deletado com sucesso')
+      onOpenChange(false)
+    } finally {
+      setIsLoading(false)
     }
-    toast.success('Setor deletado com sucesso')
-    onOpenChange(false)
   }
 
   return (
@@ -44,6 +54,7 @@ export function DeleteConfirmationSectorDialog({
             variant={'outline'}
             onClick={() => onOpenChange(false)}
             className="flex-1"
+            disabled={isLoading}
           >
             Cancelar
           </Button>
@@ -51,7 +62,9 @@ export function DeleteConfirmationSectorDialog({
             variant={'destructive'}
             onClick={() => onDelete()}
             className="flex-1"
+            disabled={isLoading}
           >
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Deletar
           </Button>
         </div>

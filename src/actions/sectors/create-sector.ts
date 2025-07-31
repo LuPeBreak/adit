@@ -3,17 +3,17 @@
 import { withPermissions } from '@/lib/auth/with-permissions'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-import { deleteSectorSchema, type DeleteSectorData } from '@/lib/schemas/sector'
+import { createSectorSchema, type CreateSectorData } from '@/lib/schemas/sector'
 import {
   createSuccessResponse,
   createErrorResponse,
   type ActionResponse,
 } from '@/lib/types/action-response'
 
-export const deleteSectorAction = withPermissions(
-  [{ resource: 'sector', action: ['delete'] }],
-  async (_, data: DeleteSectorData): Promise<ActionResponse> => {
-    const validatedFields = deleteSectorSchema.safeParse(data)
+export const createSectorAction = withPermissions(
+  [{ resource: 'sector', action: ['create'] }],
+  async (_, data: CreateSectorData): Promise<ActionResponse> => {
+    const validatedFields = createSectorSchema.safeParse(data)
     if (!validatedFields.success) {
       const firstError = validatedFields.error.errors[0]
       return createErrorResponse(
@@ -23,11 +23,16 @@ export const deleteSectorAction = withPermissions(
       )
     }
 
-    const { id } = validatedFields.data
+    const { name, manager, managerEmail, departmentId } = validatedFields.data
 
     try {
-      await prisma.sector.delete({
-        where: { id },
+      await prisma.sector.create({
+        data: {
+          name,
+          manager,
+          managerEmail,
+          departmentId,
+        },
       })
 
       revalidatePath('/dashboard/sectors')
@@ -35,24 +40,21 @@ export const deleteSectorAction = withPermissions(
       return createSuccessResponse()
     } catch (error) {
       // depois podemos mandar isso para uma ferramenta de monitoramento como Sentry
-      console.error('Erro ao deletar setor:', error)
+      console.error('Erro ao criar setor:', error)
 
       if (typeof error === 'object' && error !== null && 'code' in error) {
-        // Erro de registro não encontrado
-        if (error.code === 'P2025') {
+        if (error.code === 'P2002') {
           return createErrorResponse(
-            'Setor não encontrado',
-            'NOT_FOUND_ERROR',
-            'id',
+            'Já existe um setor com este nome nesta secretaria',
+            'DUPLICATE_ERROR',
+            'name',
           )
         }
-
-        // Erro de violação de chave estrangeira
         if (error.code === 'P2003') {
           return createErrorResponse(
-            'Não é possível deletar este setor pois ele possui ativos vinculados',
-            'FOREIGN_KEY_ERROR',
-            'id',
+            'Secretaria não encontrada',
+            'NOT_FOUND_ERROR',
+            'departmentId',
           )
         }
       }

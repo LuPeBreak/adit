@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
-import type { SectorsColumnType } from './sectors-table-schema'
+import type { SectorsColumnType } from './sectors-table-types'
 import { SectorRowActions } from './sector-row-actions'
 
 export const sectorsTableColumns: ColumnDef<SectorsColumnType>[] = [
@@ -13,6 +13,7 @@ export const sectorsTableColumns: ColumnDef<SectorsColumnType>[] = [
       <DataTableColumnHeader column={column} title={column.id} />
     ),
   },
+
   {
     accessorKey: 'manager',
     id: 'Responsável',
@@ -23,6 +24,13 @@ export const sectorsTableColumns: ColumnDef<SectorsColumnType>[] = [
   {
     accessorKey: 'managerEmail',
     id: 'Email',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title={column.id} />
+    ),
+  },
+  {
+    accessorKey: 'departmentName',
+    id: 'Secretaria',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={column.id} />
     ),

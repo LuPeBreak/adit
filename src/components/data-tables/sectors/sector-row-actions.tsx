@@ -11,12 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import type { SectorRowActionsProps } from './sectors-table-schema'
+import type { SectorRowActionsProps } from './sectors-table-types'
 import { DeleteConfirmationSectorDialog } from './delete-confirmation-sector-dialog'
+import { SectorDialogForm } from './sector-dialog-form'
 
 export function SectorRowActions({ row }: SectorRowActionsProps) {
   const sector = row.original
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   return (
     <>
@@ -24,6 +26,12 @@ export function SectorRowActions({ row }: SectorRowActionsProps) {
         id={sector.id}
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
+      />
+
+      <SectorDialogForm
+        initialData={sector}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
       />
 
       <DropdownMenu>
@@ -36,11 +44,14 @@ export function SectorRowActions({ row }: SectorRowActionsProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
+            Editar Setor
+          </DropdownMenuItem>
           <DropdownMenuItem
             onSelect={() => setIsDeleteDialogOpen(true)}
             className="text-destructive"
           >
-            Deletar Secretaria
+            Deletar Setor
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
