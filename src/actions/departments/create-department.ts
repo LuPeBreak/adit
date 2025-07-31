@@ -3,28 +3,27 @@
 import { withPermissions } from '@/lib/auth/with-permissions'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-import z from 'zod'
-
-const createDepartmentSchema = z.object({
-  name: z.string().min(5),
-  manager: z
-    .string()
-    .min(5)
-    .refine(
-      (managerName) =>
-        managerName.split(' ').filter((name) => name.length > 0).length >= 2,
-    ),
-  managerEmail: z.string().email(),
-})
-
-type CreateDepartmentFormValues = z.infer<typeof createDepartmentSchema>
+import {
+  createDepartmentSchema,
+  type CreateDepartmentData,
+} from '@/lib/schemas/department'
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  type ActionResponse,
+} from '@/lib/types/action-response'
 
 export const createDepartmentAction = withPermissions(
   [{ resource: 'department', action: ['create'] }],
-  async (_, data: CreateDepartmentFormValues) => {
+  async (_, data: CreateDepartmentData): Promise<ActionResponse> => {
     const validatedFields = createDepartmentSchema.safeParse(data)
     if (!validatedFields.success) {
-      return { success: false }
+      const firstError = validatedFields.error.errors[0]
+      return createErrorResponse(
+        firstError.message,
+        'VALIDATION_ERROR',
+        firstError.path[0]?.toString(),
+      )
     }
 
     const { name, manager, managerEmail } = validatedFields.data
@@ -40,10 +39,25 @@ export const createDepartmentAction = withPermissions(
 
       revalidatePath('/dashboard/departments')
 
-      return { success: true }
+      return createSuccessResponse()
     } catch (error) {
-      console.error(error)
-      return { success: false }
+      // depois podemos mandar isso para uma ferramenta de monitoramento como Sentry
+      console.error('Erro ao criar secretaria:', error)
+
+      if (typeof error === 'object' && error !== null && 'code' in error) {
+        if (error.code === 'P2002') {
+          return createErrorResponse(
+            'Já existe uma secretaria com este nome',
+            'DUPLICATE_ERROR',
+            'name',
+          )
+        }
+      }
+
+      return createErrorResponse(
+        'Erro interno do servidor. Tente novamente mais tarde.',
+        'INTERNAL_ERROR',
+      )
     }
   },
 )

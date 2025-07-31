@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import {
@@ -18,27 +17,13 @@ import { createDepartmentAction } from '@/actions/departments/create-department'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
 import { updateDepartmentAction } from '@/actions/departments/update-department'
+import {
+  createDepartmentSchema,
+  type CreateDepartmentData,
+} from '@/lib/schemas/department'
+import { Loader2 } from 'lucide-react'
 
-const departmentFormSchema = z.object({
-  name: z
-    .string({ message: 'O nome da secretaria é obrigatório' })
-    .min(5, 'O nome da secretaria deve ter no mínimo 5 caracteres'),
-  manager: z
-    .string({ message: 'O responsável da secretaria é obrigatório' })
-    .min(5, 'O responsável da secretaria deve ter no mínimo 5 caracteres')
-    .refine(
-      (managerName) =>
-        managerName.split(' ').filter((name) => name.length > 0).length >= 2,
-      'O responsável da secretaria deve conter o nome e o sobrenome',
-    ),
-  managerEmail: z
-    .string({
-      message: 'O email do responsável da secretaria é obrigatório',
-    })
-    .email('O email do responsável da secretaria é inválido'),
-})
-
-type DepartmentFormValues = z.infer<typeof departmentFormSchema>
+type DepartmentFormValues = CreateDepartmentData
 
 export interface DepartmentFormData {
   id?: string
@@ -59,7 +44,7 @@ export function DepartmentDialogForm({
   onOpenChange,
 }: DepartmentDialogFormProps) {
   const form = useForm<DepartmentFormValues>({
-    resolver: zodResolver(departmentFormSchema),
+    resolver: zodResolver(createDepartmentSchema),
     defaultValues: {
       name: initialData?.name ?? '',
       manager: initialData?.manager ?? '',
@@ -86,14 +71,14 @@ export function DepartmentDialogForm({
         id: initialData.id,
       })
       if (!response.success) {
-        toast.error('Erro ao atualizar secretaria')
+        toast.error(response.error?.message || 'Erro ao atualizar secretaria')
         return
       }
       toast.success('Secretaria atualizada com sucesso')
     } else {
       const response = await createDepartmentAction(data)
       if (!response.success) {
-        toast.error('Erro ao criar secretaria')
+        toast.error(response.error?.message || 'Erro ao criar secretaria')
         return
       }
       form.reset()
@@ -157,7 +142,12 @@ export function DepartmentDialogForm({
               </FormItem>
             )}
           />
-          <Button type="submit">{isUpdateMode ? 'Editar' : 'Criar'}</Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {isUpdateMode ? 'Editar' : 'Criar'}
+          </Button>
         </form>
       </Form>
     </BasicDialog>

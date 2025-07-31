@@ -116,8 +116,8 @@ model Asset {
 
 model Printer {
   id           String   @id @default(cuid())
-  serialNumber String   @map("serial_number")
-  ipAddress    String   @map("ip_address")
+  serialNumber String   @unique @map("serial_number")
+  ipAddress    String   @unique @map("ip_address")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -132,7 +132,7 @@ model Printer {
 
 model PrinterModel {
   id        String   @id @default(cuid())
-  name      String
+  name      String   @unique
   toners    String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -144,7 +144,7 @@ model PrinterModel {
 
 model Department {
   id           String   @id @default(cuid())
-  name         String
+  name         String   @unique
   manager      String
   managerEmail String   @map("manager_email")
   createdAt    DateTime @default(now())
@@ -168,5 +168,6 @@ model Sector {
 
   assets Asset[]
 
+  @@unique([departmentId, name])
   @@map("sector")
 }

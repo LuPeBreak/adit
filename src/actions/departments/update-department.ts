@@ -3,29 +3,27 @@
 import { withPermissions } from '@/lib/auth/with-permissions'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-import z from 'zod'
-
-const updateDepartmentSchema = z.object({
-  id: z.string(),
-  name: z.string().min(5),
-  manager: z
-    .string()
-    .min(5)
-    .refine(
-      (managerName) =>
-        managerName.split(' ').filter((name) => name.length > 0).length >= 2,
-    ),
-  managerEmail: z.string().email(),
-})
-
-type UpdateDepartmentValues = z.infer<typeof updateDepartmentSchema>
+import {
+  updateDepartmentSchema,
+  type UpdateDepartmentData,
+} from '@/lib/schemas/department'
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  type ActionResponse,
+} from '@/lib/types/action-response'
 
 export const updateDepartmentAction = withPermissions(
   [{ resource: 'department', action: ['update'] }],
-  async (_, data: UpdateDepartmentValues) => {
+  async (_, data: UpdateDepartmentData): Promise<ActionResponse> => {
     const validatedFields = updateDepartmentSchema.safeParse(data)
     if (!validatedFields.success) {
-      return { success: false }
+      const firstError = validatedFields.error.errors[0]
+      return createErrorResponse(
+        firstError.message,
+        'VALIDATION_ERROR',
+        firstError.path[0]?.toString(),
+      )
     }
 
     const { id, ...departmentData } = validatedFields.data
@@ -38,10 +36,32 @@ export const updateDepartmentAction = withPermissions(
 
       revalidatePath('/dashboard/departments')
 
-      return { success: true }
+      return createSuccessResponse()
     } catch (error) {
-      console.error(error)
-      return { success: false }
+      // depois podemos mandar isso para uma ferramenta de monitoramento como Sentry
+      console.error('Erro ao atualizar secretaria:', error)
+
+      if (typeof error === 'object' && error !== null && 'code' in error) {
+        if (error.code === 'P2025') {
+          return createErrorResponse(
+            'Secretaria não encontrada',
+            'NOT_FOUND_ERROR',
+            'id',
+          )
+        }
+        if (error.code === 'P2002') {
+          return createErrorResponse(
+            'Já existe uma secretaria com este nome',
+            'DUPLICATE_ERROR',
+            'name',
+          )
+        }
+      }
+
+      return createErrorResponse(
+        'Erro interno do servidor. Tente novamente mais tarde.',
+        'INTERNAL_ERROR',
+      )
     }
   },
 )
