@@ -37,25 +37,32 @@ export function DeletePrinterModelConfirmationDialog({
   }
 
   return (
-    <BasicDialog open={open} onOpenChange={onOpenChange} title="Deletar Modelo">
+    <BasicDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Deletar Modelo"
+      description={`Tem certeza que deseja deletar o modelo "${printerModel.name}"?`}
+    >
       <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">
-          Tem certeza que deseja deletar o modelo{' '}
-          <span className="font-semibold">{printerModel.name}</span>?
-        </p>
-
         {printerModel._count.printers > 0 && (
-          <div className="rounded-md bg-yellow-50 p-3 border border-yellow-200">
-            <p className="text-sm text-yellow-800">
+          <div className="rounded-md bg-destructive/10 p-3 border border-destructive/20">
+            <p className="text-sm text-destructive">
               <strong>Atenção:</strong> Este modelo possui{' '}
-              {printerModel._count.printers} impressora(s) vinculada(s).
+              {printerModel._count.printers} impressora(s) vinculada(s). Esta
+              ação não pode ser desfeita.
             </p>
           </div>
         )}
 
-        <p className="text-sm text-muted-foreground">
-          Esta ação não pode ser desfeita.
-        </p>
+        {printerModel._count.printers === 0 && (
+          <div className="rounded-md bg-destructive/10 p-3 border border-destructive/20">
+            <p className="text-sm text-destructive">
+              <strong>Atenção:</strong> Esta ação irá remover permanentemente o
+              modelo e todos os dados associados. Esta ação não pode ser
+              desfeita.
+            </p>
+          </div>
+        )}
 
         <div className="flex justify-end space-x-2">
           <Button

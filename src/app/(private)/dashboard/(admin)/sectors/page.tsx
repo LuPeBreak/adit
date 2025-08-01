@@ -2,7 +2,7 @@ import { getSectors } from '@/actions/sectors/get-sectors'
 import { DataTable } from '@/components/data-tables/data-table'
 import { GlobalTableToolbar } from '@/components/data-tables/global-table-toolbar'
 import { sectorsTableColumns } from '@/components/data-tables/sectors/sectors-table-columns'
-import { CreateSectorsButton } from '@/components/data-tables/sectors/create-sectors-button'
+import { CreateSectorButton } from '@/components/data-tables/sectors/create-sector-button'
 
 export default async function SectorsPage() {
   const sectors = await getSectors()
@@ -14,7 +14,7 @@ export default async function SectorsPage() {
         columns={sectorsTableColumns}
         data={sectors}
         toolbar={<GlobalTableToolbar />}
-        createDialog={<CreateSectorsButton />}
+        createDialog={<CreateSectorButton />}
       />
     </div>
   )

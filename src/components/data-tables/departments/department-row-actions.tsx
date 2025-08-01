@@ -51,7 +51,7 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
         onOpenChange={setIsEditDialogOpen}
       />
       <DeleteDepartmentConfirmationDialog
-        id={department.id}
+        department={department}
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       />

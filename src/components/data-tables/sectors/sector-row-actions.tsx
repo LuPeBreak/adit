@@ -45,7 +45,7 @@ export function SectorRowActions({ row }: SectorRowActionsProps) {
       </DropdownMenu>
 
       <DeleteSectorConfirmationDialog
-        id={sector.id}
+        sector={sector}
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
       />

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { SectorDialogForm } from './sector-dialog-form'
 
-export function CreateSectorsButton() {
+export function CreateSectorButton() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   return (

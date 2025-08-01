@@ -1,8 +1,8 @@
 import { getPrinterModels } from '@/actions/printer-models/get-printer-models'
 import { DataTable } from '@/components/data-tables/data-table'
-import { printerModelsTableColumns } from '@/components/data-tables/printers-models/printer-models-table-columns'
+import { printerModelsTableColumns } from '@/components/data-tables/printer-models/printer-models-table-columns'
 import { GlobalTableToolbar } from '@/components/data-tables/global-table-toolbar'
-import { CreatePrinterModelButton } from '@/components/data-tables/printers-models/create-printer-model-button'
+import { CreatePrinterModelButton } from '@/components/data-tables/printer-models/create-printer-model-button'
 
 export default async function PrinterModelsPage() {
   const printerModels = await getPrinterModels()
