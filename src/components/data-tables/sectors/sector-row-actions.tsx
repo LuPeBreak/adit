@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { SectorRowActionsProps } from './sectors-table-types'
-import { DeleteConfirmationSectorDialog } from './delete-confirmation-sector-dialog'
 import { SectorDialogForm } from './sector-dialog-form'
+import { DeleteSectorConfirmationDialog } from './delete-sector-confirmation-dialog'
 
 export function SectorRowActions({ row }: SectorRowActionsProps) {
   const sector = row.original
@@ -22,18 +22,6 @@ export function SectorRowActions({ row }: SectorRowActionsProps) {
 
   return (
     <>
-      <DeleteConfirmationSectorDialog
-        id={sector.id}
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      />
-
-      <SectorDialogForm
-        initialData={sector}
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-      />
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -55,6 +43,18 @@ export function SectorRowActions({ row }: SectorRowActionsProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <DeleteSectorConfirmationDialog
+        id={sector.id}
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      />
+
+      <SectorDialogForm
+        initialData={sector}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+      />
     </>
   )
 }

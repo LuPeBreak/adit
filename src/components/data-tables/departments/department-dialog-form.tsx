@@ -146,7 +146,7 @@ export function DepartmentDialogForm({
             {form.formState.isSubmitting && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {isUpdateMode ? 'Editar' : 'Criar'}
+            {isUpdateMode ? 'Salvar Alterações' : 'Criar Secretaria'}
           </Button>
         </form>
       </Form>

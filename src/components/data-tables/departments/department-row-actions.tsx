@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { DepartmentRowActionsProps } from './departments-table-types'
-import { DeleteConfirmationDepartmentDialog } from './delete-confirmation-department-dialog'
+import { DeleteDepartmentConfirmationDialog } from './delete-department-confirmation-dialog'
 
 export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
   const department = row.original
@@ -23,17 +23,6 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
 
   return (
     <>
-      <DepartmentDialogForm
-        initialData={department}
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-      />
-      <DeleteConfirmationDepartmentDialog
-        id={department.id}
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      />
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -55,6 +44,17 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <DepartmentDialogForm
+        initialData={department}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+      />
+      <DeleteDepartmentConfirmationDialog
+        id={department.id}
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      />
     </>
   )
 }

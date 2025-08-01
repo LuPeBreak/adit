@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { PrinterModelDialogForm } from './printer-model-dialog-form'
 import type { PrinterModelRowActionsProps } from './printer-models-table-types'
-import { DeleteConfirmationPrinterModelDialog } from './delete-confirmation-printer-model-dialog'
+import { DeletePrinterModelConfirmationDialog } from './delete-printer-model-confirmation-dialog'
 
 export function PrinterModelRowActions({ row }: PrinterModelRowActionsProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -54,7 +54,7 @@ export function PrinterModelRowActions({ row }: PrinterModelRowActionsProps) {
         onOpenChange={setIsEditDialogOpen}
       />
 
-      <DeleteConfirmationPrinterModelDialog
+      <DeletePrinterModelConfirmationDialog
         printerModel={printerModel}
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}

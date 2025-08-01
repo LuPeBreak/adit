@@ -13,7 +13,7 @@ interface DeleteConfirmationSectorDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function DeleteConfirmationSectorDialog({
+export function DeleteSectorConfirmationDialog({
   id,
   open,
   onOpenChange,

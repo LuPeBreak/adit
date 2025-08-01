@@ -14,7 +14,7 @@ interface DeleteConfirmationPrinterModelDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function DeleteConfirmationPrinterModelDialog({
+export function DeletePrinterModelConfirmationDialog({
   printerModel,
   open,
   onOpenChange,
