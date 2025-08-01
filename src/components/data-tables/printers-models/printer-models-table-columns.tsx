@@ -3,6 +3,7 @@
 import type { ColumnDef } from '@tanstack/react-table'
 import type { PrinterModelsColumnType } from './printer-models-table-types'
 import { DataTableColumnHeader } from '../data-table-column-header'
+import { PrinterModelRowActions } from './printer-model-row-actions'
 
 export const printerModelsTableColumns: ColumnDef<PrinterModelsColumnType>[] = [
   {
@@ -28,5 +29,10 @@ export const printerModelsTableColumns: ColumnDef<PrinterModelsColumnType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={column.id} />
     ),
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    cell: ({ row }) => <PrinterModelRowActions row={row} />,
   },
 ]

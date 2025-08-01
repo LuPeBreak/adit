@@ -8,6 +8,7 @@ export const getPrinterModels = withPermissions(
   async () => {
     const printerModels = await prisma.printerModel.findMany({
       select: {
+        id: true,
         name: true,
         toners: true,
         _count: {
@@ -15,6 +16,9 @@ export const getPrinterModels = withPermissions(
             printers: true,
           },
         },
+      },
+      orderBy: {
+        name: 'asc',
       },
     })
 

@@ -39,7 +39,7 @@ const menuLinks = {
     },
     {
       title: 'Modelos de Impressoras',
-      url: '/dashboard/printers/models',
+      url: '/dashboard/printer-models',
       icon: Printer,
       roles: ['OPERATOR', 'ADMIN'],
     },

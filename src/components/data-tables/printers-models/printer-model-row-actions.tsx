@@ -1,0 +1,64 @@
+'use client'
+
+import { useState } from 'react'
+import { MoreHorizontal } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { PrinterModelDialogForm } from './printer-model-dialog-form'
+import type { PrinterModelRowActionsProps } from './printer-models-table-types'
+import { DeleteConfirmationPrinterModelDialog } from './delete-confirmation-printer-model-dialog'
+
+export function PrinterModelRowActions({ row }: PrinterModelRowActionsProps) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const printerModel = row.original
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Abrir menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Ações</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
+            Editar Modelo
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => setIsDeleteDialogOpen(true)}
+            className="text-destructive"
+          >
+            Deletar Modelo
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <PrinterModelDialogForm
+        initialData={{
+          id: printerModel.id,
+          name: printerModel.name,
+          toners: printerModel.toners,
+        }}
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+      />
+
+      <DeleteConfirmationPrinterModelDialog
+        printerModel={printerModel}
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      />
+    </>
+  )
+}
