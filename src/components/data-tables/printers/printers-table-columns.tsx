@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from '../data-table-column-header'
 import type { PrintersColumnType } from './printers-table-types'
 import { AssetStatus } from '@/generated/prisma'
 import { getColoredStatus } from '@/utils/get-colored-status'
+import { PrinterRowActions } from './printer-row-actions'
 
 export const printersTableColumns: ColumnDef<PrintersColumnType>[] = [
   {
@@ -59,5 +60,11 @@ export const printersTableColumns: ColumnDef<PrintersColumnType>[] = [
     cell: ({ cell }) => {
       return getColoredStatus(cell.getValue() as AssetStatus)
     },
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    enableGlobalFilter: false,
+    cell: ({ row }) => <PrinterRowActions row={row} />,
   },
 ]

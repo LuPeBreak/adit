@@ -1,7 +1,8 @@
-import { getPrinters } from '@/actions/get-printers'
+import { getPrinters } from '@/actions/printers/get-printers'
 import { DataTable } from '@/components/data-tables/data-table'
 import { printersTableColumns } from '@/components/data-tables/printers/printers-table-columns'
 import { PrintersTableToolbar } from '@/components/data-tables/printers/printers-table-toolbar'
+import { CreatePrinterButton } from '@/components/data-tables/printers/create-printer-button'
 
 export default async function PrintersPage() {
   const printers = await getPrinters()
@@ -13,6 +14,7 @@ export default async function PrintersPage() {
         columns={printersTableColumns}
         data={printers}
         toolbar={<PrintersTableToolbar />}
+        createDialog={<CreatePrinterButton />}
       />
     </div>
   )

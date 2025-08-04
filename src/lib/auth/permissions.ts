@@ -17,8 +17,8 @@ export const statement = {
 export const ac = createAccessControl(statement)
 
 export const OPERATOR = ac.newRole({
-  asset: ['create', 'list', 'update', 'delete'],
-  printer: ['create', 'list', 'update', 'delete'],
+  asset: ['create', 'list', 'update'],
+  printer: ['create', 'list', 'update'],
   printerModel: ['create', 'list', 'update', 'delete'],
   department: ['list'],
   sector: ['list'],

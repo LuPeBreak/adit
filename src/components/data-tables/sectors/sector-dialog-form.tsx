@@ -176,7 +176,7 @@ export function SectorDialogForm({
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="container max-h-[200px] p-0">
+                  <PopoverContent className="max-h-[200px] p-0">
                     <Command>
                       <CommandInput placeholder="Buscar secretaria..." />
                       <CommandList>
