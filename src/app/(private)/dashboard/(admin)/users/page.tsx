@@ -1,6 +1,6 @@
 import { UsersTableToolbar } from '@/components/data-tables/users/users-table-toolbar'
 import { DataTable } from '@/components/data-tables/data-table'
-import { getUsers } from '@/actions/get-users'
+import { getUsers } from '@/actions/users/get-users'
 import { usersTableColumns } from '@/components/data-tables/users/users-table-columns'
 
 export default async function UsersPage() {

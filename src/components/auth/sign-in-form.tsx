@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { signInAction } from '../../actions/sign-in'
+import { signInAction } from '../../actions/auth/sign-in'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'

@@ -1,4 +1,4 @@
-import { getAssets } from '@/actions/get-assets'
+import { getAssets } from '@/actions/assets/get-assets'
 import { assetsTableColumns } from '@/components/data-tables/assets/assets-table-columns'
 import { AssetsTableToolbar } from '@/components/data-tables/assets/assets-table-toolbar'
 import { DataTable } from '@/components/data-tables/data-table'
