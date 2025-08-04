@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash } from 'lucide-react'
 
 import { DepartmentDialogForm } from './department-dialog-form'
 import { Button } from '@/components/ui/button'
@@ -34,13 +34,12 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
-            Editar Secretaria
+            <Pencil />
+            Editar
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => setIsDeleteDialogOpen(true)}
-            className="text-destructive"
-          >
-            Deletar Secretaria
+          <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)}>
+            <Trash className="text-destructive" />
+            <span className="text-destructive">Deletar</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

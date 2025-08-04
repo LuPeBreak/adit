@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -33,13 +33,12 @@ export function SectorRowActions({ row }: SectorRowActionsProps) {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
-            Editar Setor
+            <Pencil />
+            Editar
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => setIsDeleteDialogOpen(true)}
-            className="text-destructive"
-          >
-            Deletar Setor
+          <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)}>
+            <Trash className="text-destructive" />
+            <span className="text-destructive">Deletar</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

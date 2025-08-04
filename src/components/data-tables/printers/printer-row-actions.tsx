@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -38,15 +38,14 @@ export function PrinterRowActions({ row }: PrinterRowActionsProps) {
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
-            Editar Impressora
+            <Pencil />
+            Editar
           </DropdownMenuItem>
           {isAdmin && (
             <>
-              <DropdownMenuItem
-                onClick={() => setDeleteDialogOpen(true)}
-                className="text-destructive"
-              >
-                Deletar Impressora
+              <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
+                <Trash className="text-destructive" />
+                <span className="text-destructive">Deletar</span>
               </DropdownMenuItem>
             </>
           )}
