@@ -9,30 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Role } from '@/generated/prisma'
 import { Button } from '@/components/ui/button'
+import { roles } from '@/lib/utils/role-utils'
 
 interface UsersTableToolbarProps<TData> {
   table?: Table<TData> // A prop é opcional para evitar erro no page.tsx ( server component )
 }
-
-// Função auxiliar para converter o valor do enum para um label amigável
-const getRoleLabel = (role: Role): string => {
-  switch (role) {
-    case Role.ADMIN:
-      return 'Administrador'
-    case Role.OPERATOR:
-      return 'Operador'
-    default:
-      return role // Retorna o próprio valor se não houver um mapeamento específico
-  }
-}
-
-// Mapeamento dinâmico dos cargos (valor do enum -> texto para o usuário)
-const roles = Object.values(Role).map((role) => ({
-  value: role,
-  label: getRoleLabel(role),
-}))
 
 export function UsersTableToolbar<TData>({
   table,

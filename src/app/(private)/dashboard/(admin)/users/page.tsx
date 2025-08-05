@@ -2,6 +2,7 @@ import { UsersTableToolbar } from '@/components/data-tables/users/users-table-to
 import { DataTable } from '@/components/data-tables/data-table'
 import { getUsers } from '@/actions/users/get-users'
 import { usersTableColumns } from '@/components/data-tables/users/users-table-columns'
+import { CreateUserButton } from '@/components/data-tables/users/create-user-button'
 
 export default async function UsersPage() {
   const users = await getUsers()
@@ -13,6 +14,7 @@ export default async function UsersPage() {
         columns={usersTableColumns}
         data={users}
         toolbar={<UsersTableToolbar />}
+        createDialog={<CreateUserButton />}
       />
     </div>
   )

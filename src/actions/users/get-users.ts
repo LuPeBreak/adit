@@ -12,6 +12,8 @@ export const getUsers = withPermissions(
         name: true,
         email: true,
         role: true,
+        banned: true,
+        banReason: true,
       },
     })
 

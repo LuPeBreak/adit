@@ -1,19 +1,10 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { Role } from '@/generated/prisma'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { MoreHorizontal } from 'lucide-react'
 import { DataTableColumnHeader } from '../data-table-column-header'
 import type { UsersColumnType } from './users-table-types'
+import { UserRowActions } from './user-row-actions'
+import { InlineRoleEditor } from './inline-role-editor'
 
 export const usersTableColumns: ColumnDef<UsersColumnType>[] = [
   {
@@ -36,47 +27,40 @@ export const usersTableColumns: ColumnDef<UsersColumnType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={column.id} />
     ),
-    cell: ({ cell }) => {
-      switch (cell.getValue()) {
-        case Role.ADMIN:
-          return 'Administrador'
-        case Role.OPERATOR:
-          return 'Operador'
-        default:
-          return ''
-      }
+    cell: ({ row }) => {
+      const user = row.original
+      return <InlineRoleEditor userId={user.id} currentRole={user.role} />
     },
     id: 'Cargo',
+    enableGlobalFilter: false,
+  },
+  {
+    accessorKey: 'banned',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => {
+      const user = row.original
+      if (user.banned) {
+        return (
+          <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+            Banido
+          </span>
+        )
+      }
+      return (
+        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+          Ativo
+        </span>
+      )
+    },
+    id: 'Status',
     enableGlobalFilter: false,
   },
   {
     id: 'actions',
     enableHiding: false,
     enableGlobalFilter: false,
-    cell: (/** { row } */) => {
-      // const user = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Ações</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Editar Usuário</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              Deletar usuário
-            </DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
-              Banir Usuário
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    cell: ({ row }) => <UserRowActions row={row} />,
   },
 ]
