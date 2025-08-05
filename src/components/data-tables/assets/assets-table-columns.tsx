@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
 import type { AssetsColumnType } from './assets-table-types'
 import { AssetStatus, AssetType } from '@/generated/prisma'
-import { getColoredStatus } from '@/utils/get-colored-status'
+import { getColoredStatus } from '@/lib/utils/get-colored-status'
 
 export const assetsTableColumns: ColumnDef<AssetsColumnType>[] = [
   {

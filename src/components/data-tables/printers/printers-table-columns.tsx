@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
 import type { PrintersColumnType } from './printers-table-types'
 import { AssetStatus } from '@/generated/prisma'
-import { getColoredStatus } from '@/utils/get-colored-status'
+import { getColoredStatus } from '@/lib/utils/get-colored-status'
 import { PrinterRowActions } from './printer-row-actions'
 
 export const printersTableColumns: ColumnDef<PrintersColumnType>[] = [
