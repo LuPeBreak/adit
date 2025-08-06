@@ -15,6 +15,9 @@ export const getUsers = withPermissions(
         banned: true,
         banReason: true,
       },
+      orderBy: {
+        name: 'asc',
+      },
     })
 
     return users

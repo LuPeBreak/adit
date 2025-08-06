@@ -44,8 +44,31 @@ export const updateUserPasswordSchema = z.object({
     .min(8, 'A senha deve ter no mínimo 8 caracteres'),
 })
 
+// Schema para atualização de perfil próprio do usuário
+export const updateOwnProfileSchema = z.object({
+  name: z
+    .string({ message: 'O nome completo é obrigatório' })
+    .min(2, 'O nome deve ter no mínimo 2 caracteres')
+    .refine(
+      (name) => name.split(' ').filter((n) => n.length > 0).length >= 2,
+      'O nome deve conter nome e sobrenome',
+    ),
+})
+
+// Schema para alteração de senha própria do usuário
+export const changeOwnPasswordSchema = z.object({
+  currentPassword: z
+    .string({ message: 'A senha atual é obrigatória' })
+    .min(1, 'A senha atual é obrigatória'),
+  newPassword: z
+    .string({ message: 'A nova senha é obrigatória' })
+    .min(8, 'A nova senha deve ter no mínimo 8 caracteres'),
+})
+
 export type CreateUserData = z.infer<typeof createUserSchema>
 export type BanUserData = z.infer<typeof banUserSchema>
 export type UnbanUserData = z.infer<typeof unbanUserSchema>
 export type UpdateUserRoleData = z.infer<typeof updateUserRoleSchema>
 export type UpdateUserPasswordData = z.infer<typeof updateUserPasswordSchema>
+export type UpdateOwnProfileData = z.infer<typeof updateOwnProfileSchema>
+export type ChangeOwnPasswordData = z.infer<typeof changeOwnPasswordSchema>

@@ -39,7 +39,6 @@ export function BanUserDialog({
   })
 
   async function onSubmit(data: BanUserData) {
-    console.log(data)
     const response = await banUserAction(data)
     if (response.success) {
       toast.success('Usuário banido com sucesso')
