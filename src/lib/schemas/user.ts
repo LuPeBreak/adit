@@ -20,25 +20,25 @@ export const createUserSchema = z.object({
 })
 
 export const banUserSchema = z.object({
-  userId: z.string(),
+  userId: z.string().min(1, 'O ID do usuário é obrigatório'),
   banReason: z
     .string({ message: 'O motivo do banimento é obrigatório' })
     .min(5, 'O motivo do banimento deve ter no mínimo 5 caracteres'),
 })
 
 export const unbanUserSchema = z.object({
-  userId: z.string(),
+  userId: z.string().min(1, 'O ID do usuário é obrigatório'),
 })
 
 // Schema para atualização de cargo do usuário
 export const updateUserRoleSchema = z.object({
-  id: z.string(),
+  id: z.string().min(1, 'O ID é obrigatório'),
   role: z.nativeEnum(Role, { message: 'O cargo é obrigatório' }),
 })
 
 // Schema para alteração de senha do usuário
 export const updateUserPasswordSchema = z.object({
-  id: z.string(),
+  id: z.string().min(1, 'O ID é obrigatório'),
   password: z
     .string({ message: 'A senha é obrigatória' })
     .min(8, 'A senha deve ter no mínimo 8 caracteres'),

@@ -38,11 +38,9 @@ export const ADMIN = ac.newRole({
 // Tipagens 
 export type Resource = keyof typeof statement;
 
-type Action<R extends Resource> = (typeof statement)[R][number];
-
 export type PermissionOption = {
   [R in Resource]: {
     resource: R
-    action?: Action<R>[]
+    action?: (typeof statement)[R][number][]
   }
 }[Resource]
