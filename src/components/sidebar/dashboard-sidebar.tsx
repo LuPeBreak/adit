@@ -5,6 +5,7 @@ import {
   Printer,
   User,
   Users,
+  FileText,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -41,6 +42,12 @@ const menuLinks = {
       title: 'Modelos de Impressoras',
       url: '/dashboard/printer-models',
       icon: Printer,
+      roles: ['OPERATOR', 'ADMIN'],
+    },
+    {
+      title: 'Pedidos de Toner',
+      url: '/dashboard/toner-requests',
+      icon: FileText,
       roles: ['OPERATOR', 'ADMIN'],
     },
   ],

@@ -109,7 +109,8 @@ model Asset {
   sector   Sector @relation(fields: [sectorId], references: [id])
   sectorId String @map("sector_id")
 
-  printer Printer?
+  printer      Printer?
+  TonerRequest TonerRequest[]
 
   @@map("asset")
 }
@@ -170,4 +171,29 @@ model Sector {
 
   @@unique([departmentId, name])
   @@map("sector")
+}
+
+enum TonerRequestStatus {
+  PENDING
+  APPROVED
+  DELIVERED
+  REJECTED
+}
+
+model TonerRequest {
+  id                 String             @id @default(cuid())
+  requesterName      String             @map("requester_name")
+  registrationNumber String             @map("registration_number") // Employee registration number
+  requesterWhatsApp  String             @map("requester_whatsapp")
+  requesterEmail     String             @map("requester_email")
+  selectedToner      String             @map("selected_toner")
+  status             TonerRequestStatus @default(PENDING)
+  notes              String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  asset   Asset  @relation(fields: [assetId], references: [id])
+  assetId String @map("asset_id")
+
+  @@map("toner_request")
 }

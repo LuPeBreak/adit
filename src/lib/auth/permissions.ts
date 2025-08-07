@@ -12,6 +12,7 @@ export const statement = {
   printerModel: ['create', 'list', 'update', 'delete'],
   department: ['create', 'list', 'update', 'delete'],
   sector: ['create', 'list', 'update', 'delete'],
+  tonerRequest: ['list', 'update', 'delete'],
 } as const
 
 export const ac = createAccessControl(statement)
@@ -22,6 +23,7 @@ export const OPERATOR = ac.newRole({
   printerModel: ['create', 'list', 'update', 'delete'],
   department: ['list'],
   sector: ['list'],
+  tonerRequest: ['list','update'],
   ...userAc.statements,
 })
 
@@ -31,6 +33,7 @@ export const ADMIN = ac.newRole({
   printerModel: ['create', 'list', 'update', 'delete'],
   department: ['create', 'list', 'update', 'delete'],
   sector: ['create', 'list', 'update', 'delete'],
+  tonerRequest: ['list', 'update', 'delete'],
   ...adminAc.statements,
 })
 

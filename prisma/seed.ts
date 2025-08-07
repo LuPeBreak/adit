@@ -1,11 +1,24 @@
-import { PrismaClient } from '../src/generated/prisma'
+import {
+  PrismaClient,
+  AssetStatus,
+  TonerRequestStatus,
+} from '../src/generated/prisma'
 
 const prisma = new PrismaClient()
+
+// Helper function to get random enum value
+function getRandomEnumValue<T extends Record<string, string>>(
+  enumObject: T,
+): T[keyof T] {
+  const values = Object.values(enumObject)
+  return values[Math.floor(Math.random() * values.length)] as T[keyof T]
+}
 
 async function main() {
   console.log('Start seeding ...')
 
   // Clean up previous data to avoid conflicts
+  await prisma.tonerRequest.deleteMany()
   await prisma.printer.deleteMany()
   await prisma.asset.deleteMany()
   await prisma.printerModel.deleteMany()
@@ -61,21 +74,26 @@ async function main() {
   console.log('Created departments and sectors.')
 
   // 3. Create 10 Printers and their corresponding Assets randomly across sectors
+  const createdAssets = []
   for (let i = 1; i <= 10; i++) {
     // Select a random sector and printer model
     const randomSector = sectors[Math.floor(Math.random() * sectors.length)]
     const randomPrinterModel =
       printerModels[Math.floor(Math.random() * printerModels.length)]
 
+    // Get random status for asset
+    const randomStatus = getRandomEnumValue(AssetStatus)
+
     // Create the asset first
     const asset = await prisma.asset.create({
       data: {
         tag: `PRINTER-${String(i).padStart(3, '0')}`,
         assetType: 'PRINTER',
-        status: 'USING',
+        status: randomStatus,
         sectorId: randomSector.id,
       },
     })
+    createdAssets.push(asset)
 
     // Create the printer linked to the asset
     await prisma.printer.create({
@@ -88,6 +106,42 @@ async function main() {
     })
   }
   console.log('Created 10 printers and their assets.')
+
+  // 4. Create 3 toner requests per printer (30 total)
+  const requesterNames = [
+    'João Silva',
+    'Maria Santos',
+    'Pedro Oliveira',
+    'Ana Costa',
+    'Carlos Ferreira',
+    'Lucia Pereira',
+    'Roberto Lima',
+    'Fernanda Alves',
+    'Marcos Souza',
+    'Patricia Rocha',
+  ]
+
+  for (const asset of createdAssets) {
+    for (let j = 1; j <= 3; j++) {
+      const randomRequester =
+        requesterNames[Math.floor(Math.random() * requesterNames.length)]
+      const randomStatus = getRandomEnumValue(TonerRequestStatus)
+
+      await prisma.tonerRequest.create({
+        data: {
+          requesterName: randomRequester,
+          registrationNumber: `REG${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
+          requesterWhatsApp: `(24) 9${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
+          requesterEmail: `${randomRequester.toLowerCase().replace(' ', '.')}@barramansa.rj.gov.br`,
+          selectedToner: 'HP 58A Black', // Simplified for now
+          status: randomStatus,
+          notes: j === 1 ? 'Pedido urgente para impressão de relatórios' : null,
+          assetId: asset.id,
+        },
+      })
+    }
+  }
+  console.log('Created 30 toner requests (3 per printer).')
 
   console.log('Seeding finished successfully!')
 }
