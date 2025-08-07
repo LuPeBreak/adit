@@ -6,6 +6,7 @@ import {
   User,
   Users,
   FileText,
+  LayoutDashboard,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -25,52 +26,69 @@ import { headers } from 'next/headers'
 import { NavUser } from './nav-user'
 
 const menuLinks = {
-  Ativos: [
-    {
-      title: 'Todos os Ativos',
-      url: '/dashboard/assets',
-      icon: PackageOpen,
-      roles: ['OPERATOR', 'ADMIN'],
-    },
-    {
-      title: 'Impressoras',
-      url: '/dashboard/printers',
-      icon: Printer,
-      roles: ['OPERATOR', 'ADMIN'],
-    },
-    {
-      title: 'Modelos de Impressoras',
-      url: '/dashboard/printer-models',
-      icon: Printer,
-      roles: ['OPERATOR', 'ADMIN'],
-    },
-    {
-      title: 'Pedidos de Toner',
-      url: '/dashboard/toner-requests',
-      icon: FileText,
-      roles: ['OPERATOR', 'ADMIN'],
-    },
-  ],
-  Admin: [
-    {
-      title: 'Usuários',
-      url: '/dashboard/users',
-      icon: User,
-      roles: ['ADMIN'],
-    },
-    {
-      title: 'Secretarias',
-      url: '/dashboard/departments',
-      icon: Landmark,
-      roles: ['ADMIN'],
-    },
-    {
-      title: 'Setores',
-      url: '/dashboard/sectors',
-      icon: Users,
-      roles: ['ADMIN'],
-    },
-  ],
+  Geral: {
+    roles: ['OPERATOR', 'ADMIN'],
+    links: [
+      {
+        title: 'Dashboard',
+        url: '/dashboard',
+        icon: LayoutDashboard,
+        roles: ['OPERATOR', 'ADMIN'],
+      },
+      {
+        title: 'Todos os Ativos',
+        url: '/dashboard/assets',
+        icon: PackageOpen,
+        roles: ['OPERATOR', 'ADMIN'],
+      },
+    ],
+  },
+  Impressoras: {
+    roles: ['OPERATOR', 'ADMIN'],
+    links: [
+      {
+        title: 'Impressoras',
+        url: '/dashboard/printers',
+        icon: Printer,
+        roles: ['OPERATOR', 'ADMIN'],
+      },
+      {
+        title: 'Modelos de Impressoras',
+        url: '/dashboard/printer-models',
+        icon: Printer,
+        roles: ['OPERATOR', 'ADMIN'],
+      },
+      {
+        title: 'Pedidos de Toner',
+        url: '/dashboard/toner-requests',
+        icon: FileText,
+        roles: ['OPERATOR', 'ADMIN'],
+      },
+    ],
+  },
+  Administração: {
+    roles: ['ADMIN'],
+    links: [
+      {
+        title: 'Usuários',
+        url: '/dashboard/users',
+        icon: User,
+        roles: ['ADMIN'],
+      },
+      {
+        title: 'Secretarias',
+        url: '/dashboard/departments',
+        icon: Landmark,
+        roles: ['ADMIN'],
+      },
+      {
+        title: 'Setores',
+        url: '/dashboard/sectors',
+        icon: Users,
+        roles: ['ADMIN'],
+      },
+    ],
+  },
 }
 
 export async function DashboardSidebar() {
@@ -91,28 +109,33 @@ export async function DashboardSidebar() {
         </Link>
       </SidebarHeader>
       <SidebarContent>
-        {Object.entries(menuLinks).map(([group, links]) => {
-          if (session.user.role !== 'ADMIN' && group === 'Admin') return null
+        {Object.entries(menuLinks).map(([groupName, group]) => {
+          // Verifica se o usuário tem permissão para ver o grupo
+          if (!group.roles.includes(session.user.role as string)) return null
+
+          // Filtra os links que o usuário pode ver
+          const visibleLinks = group.links.filter((link) =>
+            link.roles.includes(session.user.role as string),
+          )
+
+          // Se não há links visíveis, não renderiza o grupo
+          if (visibleLinks.length === 0) return null
+
           return (
-            <SidebarGroup key={group}>
-              <SidebarGroupLabel>{group}</SidebarGroupLabel>
+            <SidebarGroup key={groupName}>
+              <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {links.map((link) => {
-                    if (link.roles.includes(session.user.role as string)) {
-                      return (
-                        <SidebarMenuItem key={link.title}>
-                          <SidebarMenuButton asChild>
-                            <Link href={link.url}>
-                              <link.icon />
-                              <span>{link.title}</span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      )
-                    }
-                    return null
-                  })}
+                  {visibleLinks.map((link) => (
+                    <SidebarMenuItem key={link.title}>
+                      <SidebarMenuButton asChild>
+                        <Link href={link.url}>
+                          <link.icon />
+                          <span>{link.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
