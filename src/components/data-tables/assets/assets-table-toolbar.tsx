@@ -11,42 +11,19 @@ import {
 } from '@/components/ui/select'
 import { AssetStatus, AssetType } from '@/generated/prisma'
 import { Button } from '@/components/ui/button'
+import {
+  getAssetStatusLabel,
+  getAssetTypeLabel,
+} from '@/lib/utils/get-status-label'
 
 interface AssetsTableToolbarProps<TData> {
   table?: Table<TData> // A prop é opcional para evitar erro no page.tsx ( server component )
 }
 
-// Função auxiliar para converter o valor do enum para um label amigável
-const getStatusLabel = (status: AssetStatus): string => {
-  switch (status) {
-    case AssetStatus.RESERVED:
-      return 'Reservado'
-    case AssetStatus.STOCK:
-      return 'Em Estoque'
-    case AssetStatus.USING:
-      return 'Em Uso'
-    case AssetStatus.MAINTENANCE:
-      return 'Em Manutenção'
-    case AssetStatus.BROKEN:
-      return 'Quebrado'
-    default:
-      return status // Retorna o próprio valor se não houver um mapeamento específico
-  }
-}
-
-const getAssetTypeLabel = (status: AssetType): string => {
-  switch (status) {
-    case AssetType.PRINTER:
-      return 'Impressora'
-    default:
-      return status // Retorna o próprio valor se não houver um mapeamento específico
-  }
-}
-
 // Mapeamento dinâmico dos status (valor do enum -> texto para o usuário)
 const statuses = Object.values(AssetStatus).map((status) => ({
   value: status,
-  label: getStatusLabel(status),
+  label: getAssetStatusLabel(status),
 }))
 
 const assetTypes = Object.values(AssetType).map((type) => ({

@@ -11,31 +11,16 @@ import {
 } from '@/components/ui/select'
 import { TonerRequestStatus } from '@/generated/prisma'
 import { Button } from '@/components/ui/button'
+import { getTonerRequestStatusLabel } from '@/lib/utils/get-status-label'
 
 interface TonerRequestsTableToolbarProps<TData> {
   table?: Table<TData> // A prop é opcional para evitar erro no page.tsx ( server component )
 }
 
-// Função auxiliar para converter o valor do enum para um label amigável
-const getStatusLabel = (status: TonerRequestStatus): string => {
-  switch (status) {
-    case TonerRequestStatus.PENDING:
-      return 'Pendente'
-    case TonerRequestStatus.APPROVED:
-      return 'Aprovado'
-    case TonerRequestStatus.DELIVERED:
-      return 'Entregue'
-    case TonerRequestStatus.REJECTED:
-      return 'Rejeitado'
-    default:
-      return status // Retorna o próprio valor se não houver um mapeamento específico
-  }
-}
-
 // Mapeamento dinâmico dos status (valor do enum -> texto para o usuário)
 const statuses = Object.values(TonerRequestStatus).map((status) => ({
   value: status,
-  label: getStatusLabel(status),
+  label: getTonerRequestStatusLabel(status),
 }))
 
 export function TonerRequestsTableToolbar<TData>({

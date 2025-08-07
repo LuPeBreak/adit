@@ -4,7 +4,8 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
 import type { AssetsColumnType } from './assets-table-types'
 import { AssetStatus, AssetType } from '@/generated/prisma'
-import { getColoredStatus } from '@/lib/utils/get-colored-status'
+import { getAssetStatusBadge } from '@/lib/utils/get-status-badge'
+import { getAssetTypeLabel } from '@/lib/utils/get-status-label'
 
 export const assetsTableColumns: ColumnDef<AssetsColumnType>[] = [
   {
@@ -36,12 +37,7 @@ export const assetsTableColumns: ColumnDef<AssetsColumnType>[] = [
       <DataTableColumnHeader column={column} title={column.id} />
     ),
     cell: ({ cell }) => {
-      switch (cell.getValue()) {
-        case AssetType.PRINTER:
-          return 'Impressora'
-        default:
-          return ''
-      }
+      return getAssetTypeLabel(cell.getValue() as AssetType)
     },
   },
   {
@@ -52,7 +48,7 @@ export const assetsTableColumns: ColumnDef<AssetsColumnType>[] = [
       <DataTableColumnHeader column={column} title={column.id} />
     ),
     cell: ({ cell }) => {
-      return getColoredStatus(cell.getValue() as AssetStatus)
+      return getAssetStatusBadge(cell.getValue() as AssetStatus)
     },
   },
 ]

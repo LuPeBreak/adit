@@ -50,6 +50,7 @@ import { cn } from '@/lib/utils'
 import { AssetStatus } from '@/generated/prisma'
 import type { PrintersColumnType } from './printers-table-types'
 import { authClient } from '@/lib/auth/auth-client'
+import { getAssetStatusLabel } from '@/lib/utils/get-status-label'
 
 interface PrinterDialogFormProps {
   initialData?: PrintersColumnType
@@ -68,13 +69,10 @@ interface PrinterModel {
   name: string
 }
 
-const assetStatusOptions = [
-  { value: AssetStatus.USING, label: 'Em Uso' },
-  { value: AssetStatus.STOCK, label: 'Estoque' },
-  { value: AssetStatus.BROKEN, label: 'Quebrado' },
-  { value: AssetStatus.MAINTENANCE, label: 'Manutenção' },
-  { value: AssetStatus.RESERVED, label: 'Reservado' },
-]
+const assetStatusOptions = Object.values(AssetStatus).map((status) => ({
+  value: status,
+  label: getAssetStatusLabel(status),
+}))
 
 export function PrinterDialogForm({
   initialData,

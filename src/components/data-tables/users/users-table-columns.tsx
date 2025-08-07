@@ -5,6 +5,7 @@ import { DataTableColumnHeader } from '../data-table-column-header'
 import type { UsersColumnType } from './users-table-types'
 import { UserRowActions } from './user-row-actions'
 import { InlineRoleEditor } from './inline-role-editor'
+import { getUserStatusBadge } from '@/lib/utils/get-status-badge'
 
 export const usersTableColumns: ColumnDef<UsersColumnType>[] = [
   {
@@ -41,18 +42,7 @@ export const usersTableColumns: ColumnDef<UsersColumnType>[] = [
     ),
     cell: ({ row }) => {
       const user = row.original
-      if (user.banned) {
-        return (
-          <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-            Banido
-          </span>
-        )
-      }
-      return (
-        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-          Ativo
-        </span>
-      )
+      return getUserStatusBadge(!!user.banned)
     },
     id: 'Status',
     enableGlobalFilter: false,

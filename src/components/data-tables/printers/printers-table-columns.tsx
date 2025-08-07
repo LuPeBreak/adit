@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
 import type { PrintersColumnType } from './printers-table-types'
 import { AssetStatus } from '@/generated/prisma'
-import { getColoredStatus } from '@/lib/utils/get-colored-status'
+import { getAssetStatusBadge } from '@/lib/utils/get-status-badge'
 import { PrinterRowActions } from './printer-row-actions'
 
 export const printersTableColumns: ColumnDef<PrintersColumnType>[] = [
@@ -58,7 +58,7 @@ export const printersTableColumns: ColumnDef<PrintersColumnType>[] = [
       <DataTableColumnHeader column={column} title={column.id} />
     ),
     cell: ({ cell }) => {
-      return getColoredStatus(cell.getValue() as AssetStatus)
+      return getAssetStatusBadge(cell.getValue() as AssetStatus)
     },
   },
   {
