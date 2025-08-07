@@ -5,6 +5,8 @@ import { DataTableColumnHeader } from '../data-table-column-header'
 import type { TonerRequestsColumnType } from './toner-requests-table-types'
 import { TonerRequestStatus } from '@/generated/prisma'
 import { getTonerRequestStatusBadge } from '@/lib/utils/get-status-badge'
+import { TonerRequestRowActions } from './toner-request-row-actions'
+import { formatRelativeDate } from '@/lib/utils/format-date'
 
 export const tonerRequestsTableColumns: ColumnDef<TonerRequestsColumnType>[] = [
   {
@@ -17,6 +19,13 @@ export const tonerRequestsTableColumns: ColumnDef<TonerRequestsColumnType>[] = [
   {
     accessorKey: 'assetTag',
     id: 'N° Patrimonio',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title={column.id} />
+    ),
+  },
+  {
+    accessorKey: 'selectedToner',
+    id: 'Toner Requerido',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={column.id} />
     ),
@@ -36,6 +45,17 @@ export const tonerRequestsTableColumns: ColumnDef<TonerRequestsColumnType>[] = [
     ),
   },
   {
+    accessorKey: 'createdAt',
+    id: 'Data do Pedido',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title={column.id} />
+    ),
+    cell: ({ cell }) => {
+      const date = cell.getValue() as Date
+      return formatRelativeDate(date)
+    },
+  },
+  {
     accessorKey: 'status',
     id: 'Status',
     enableGlobalFilter: false,
@@ -45,5 +65,11 @@ export const tonerRequestsTableColumns: ColumnDef<TonerRequestsColumnType>[] = [
     cell: ({ cell }) => {
       return getTonerRequestStatusBadge(cell.getValue() as TonerRequestStatus)
     },
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    enableGlobalFilter: false,
+    cell: ({ row }) => <TonerRequestRowActions row={row} />,
   },
 ]

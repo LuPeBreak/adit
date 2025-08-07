@@ -10,8 +10,14 @@ export const getTonerRequests = withPermissions(
       select: {
         id: true,
         requesterName: true,
+        registrationNumber: true,
+        requesterEmail: true,
+        requesterWhatsApp: true,
+        selectedToner: true,
         status: true,
         createdAt: true,
+        updatedAt: true,
+        notes: true,
         asset: {
           select: {
             tag: true,
@@ -36,11 +42,17 @@ export const getTonerRequests = withPermissions(
     return tonerRequests.map((request) => ({
       id: request.id,
       requesterName: request.requesterName,
+      registrationNumber: request.registrationNumber,
+      requesterEmail: request.requesterEmail,
+      requesterWhatsApp: request.requesterWhatsApp,
+      selectedToner: request.selectedToner,
       assetTag: request.asset.tag,
       sector: request.asset.sector.name,
       department: request.asset.sector.department.name,
       status: request.status,
       createdAt: request.createdAt,
+      updatedAt: request.updatedAt,
+      notes: request.notes,
     }))
   },
 )
