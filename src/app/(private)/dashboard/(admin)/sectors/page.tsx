@@ -3,19 +3,32 @@ import { DataTable } from '@/components/data-tables/data-table'
 import { GlobalTableToolbar } from '@/components/data-tables/global-table-toolbar'
 import { sectorsTableColumns } from '@/components/data-tables/sectors/sectors-table-columns'
 import { CreateSectorButton } from '@/components/data-tables/sectors/create-sector-button'
+import { ErrorAlert } from '@/components/error-alert'
 
 export default async function SectorsPage() {
-  const sectors = await getSectors()
+  const response = await getSectors()
 
   return (
     <div className="container mx-auto px-4">
       <h1 className="font-bold text-2xl">Setores</h1>
-      <DataTable
-        columns={sectorsTableColumns}
-        data={sectors}
-        toolbar={<GlobalTableToolbar />}
-        createDialog={<CreateSectorButton />}
-      />
+      
+      {response.success ? (
+        <DataTable
+          columns={sectorsTableColumns}
+          data={response.data || []}
+          createDialog={<CreateSectorButton />}
+          toolbar={<GlobalTableToolbar />}
+        />
+      ) : (
+        <div className="mt-6">
+          <ErrorAlert 
+             title="Erro ao carregar setores"
+             message={response.error?.message || 'Ocorreu um erro inesperado ao carregar os dados.'}
+             type="error"
+             refreshButtonText="Recarregar página"
+           />
+        </div>
+      )}
     </div>
   )
 }

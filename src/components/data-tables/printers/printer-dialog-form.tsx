@@ -125,8 +125,18 @@ export function PrinterDialogForm({
   async function loadSectors() {
     setIsLoadingSectors(true)
     try {
-      const sectorsData = await getSectors()
-      setSectors(sectorsData)
+      const response = await getSectors()
+      if (response.success && response.data) {
+        const mappedSectors = response.data.map(sector => ({
+          id: sector.id,
+          name: sector.name,
+          departmentName: sector.departmentName
+        }))
+        setSectors(mappedSectors)
+      } else {
+        console.error('Erro ao carregar setores:', response.error)
+        toast.error('Erro ao carregar setores')
+      }
     } catch (error) {
       console.error('Erro ao carregar setores:', error)
       toast.error('Erro ao carregar setores')
@@ -138,8 +148,17 @@ export function PrinterDialogForm({
   async function loadPrinterModels() {
     setIsLoadingModels(true)
     try {
-      const modelsData = await getPrinterModels()
-      setPrinterModels(modelsData)
+      const response = await getPrinterModels()
+      if (response.success && response.data) {
+        const mappedModels = response.data.map(model => ({
+          id: model.id,
+          name: model.name
+        }))
+        setPrinterModels(mappedModels)
+      } else {
+        console.error('Erro ao carregar modelos:', response.error)
+        toast.error('Erro ao carregar modelos de impressora')
+      }
     } catch (error) {
       console.error('Erro ao carregar modelos:', error)
       toast.error('Erro ao carregar modelos de impressora')

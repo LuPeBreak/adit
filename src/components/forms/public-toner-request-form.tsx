@@ -102,9 +102,14 @@ export function PublicTonerRequestForm({
   useEffect(() => {
     async function loadPrinters() {
       try {
-        const result = await getPublicPrintersAction()
+        const response = await getPublicPrintersAction()
 
-        setPrinters(result)
+        if (response.success && response.data) {
+          setPrinters(response.data)
+        } else {
+          console.error('Erro ao carregar impressoras:', response.error)
+          toast.error('Erro ao carregar impressoras')
+        }
       } catch (error) {
         console.error('Erro ao carregar impressoras:', error)
         toast.error('Erro ao carregar impressoras')

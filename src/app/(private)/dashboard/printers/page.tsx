@@ -3,19 +3,32 @@ import { DataTable } from '@/components/data-tables/data-table'
 import { printersTableColumns } from '@/components/data-tables/printers/printers-table-columns'
 import { PrintersTableToolbar } from '@/components/data-tables/printers/printers-table-toolbar'
 import { CreatePrinterButton } from '@/components/data-tables/printers/create-printer-button'
+import { ErrorAlert } from '@/components/error-alert'
 
 export default async function PrintersPage() {
-  const printers = await getPrinters()
+  const response = await getPrinters()
 
   return (
     <div className="container mx-auto px-4">
       <h1 className="font-bold text-2xl">Impressoras</h1>
-      <DataTable
-        columns={printersTableColumns}
-        data={printers}
-        toolbar={<PrintersTableToolbar />}
-        createDialog={<CreatePrinterButton />}
-      />
+      
+      {response.success ? (
+        <DataTable
+          columns={printersTableColumns}
+          data={response.data || []}
+          createDialog={<CreatePrinterButton />}
+          toolbar={<PrintersTableToolbar />}
+        />
+      ) : (
+        <div className="mt-6">
+          <ErrorAlert 
+             title="Erro ao carregar impressoras"
+             message={response.error?.message || 'Ocorreu um erro inesperado ao carregar os dados.'}
+             type="error"
+             refreshButtonText="Recarregar página"
+           />
+        </div>
+      )}
     </div>
   )
 }
