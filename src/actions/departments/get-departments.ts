@@ -2,22 +2,33 @@
 
 import { withPermissions } from '@/lib/auth/with-permissions'
 import prisma from '@/lib/prisma'
+import {
+  createSuccessResponse,
+  createErrorResponse,
+  type ActionResponse,
+} from '@/lib/types/action-response'
+import type { DepartmentsColumnType } from '@/components/data-tables/departments/departments-table-types'
 
 export const getDepartments = withPermissions(
   [{ resource: 'department', action: ['list'] }],
-  async () => {
-    const departments = await prisma.department.findMany({
-      select: {
-        id: true,
-        name: true,
-        manager: true,
-        managerEmail: true,
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    })
+  async (): Promise<ActionResponse<DepartmentsColumnType[]>> => {
+    try {
+      const departments = await prisma.department.findMany({
+        select: {
+          id: true,
+          name: true,
+          manager: true,
+          managerEmail: true,
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      })
 
-    return departments
+      return createSuccessResponse(departments)
+    } catch (error) {
+      console.error('Erro ao buscar secretarias:', error)
+      return createErrorResponse('Erro interno do servidor')
+    }
   },
 )

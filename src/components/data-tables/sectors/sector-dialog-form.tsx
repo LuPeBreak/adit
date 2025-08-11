@@ -92,8 +92,12 @@ export function SectorDialogForm({
   async function loadDepartments() {
     setIsLoadingDepartments(true)
     try {
-      const departmentsData = await getDepartments()
-      setDepartments(departmentsData)
+      const response = await getDepartments()
+      if (response.success) {
+        setDepartments(response.data || [])
+      } else {
+        toast.error(response.error?.message || 'Erro ao carregar secretarias')
+      }
     } catch (error) {
       console.error('Erro ao carregar secretarias:', error)
       toast.error('Erro ao carregar secretarias')

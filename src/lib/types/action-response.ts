@@ -15,11 +15,11 @@ export function createSuccessResponse<T = void>(data?: T): ActionResponse<T> {
   }
 }
 
-export function createErrorResponse(
+export function createErrorResponse<T = void>(
   message: string,
   code?: string,
   field?: string,
-): ActionResponse {
+): ActionResponse<T> {
   return {
     success: false,
     error: {
