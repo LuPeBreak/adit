@@ -48,10 +48,8 @@ export const approveTonerRequestAction = withPermissions(
       }
 
       // Verificar se o status permite aprovação
-      if (
-        existingRequest.status !== TonerRequestStatus.PENDING &&
-        existingRequest.status !== TonerRequestStatus.REJECTED
-      ) {
+      // REJECTED e DELIVERED são estados finais
+      if (existingRequest.status !== TonerRequestStatus.PENDING) {
         return createErrorResponse(
           'Este pedido não pode ser aprovado no status atual',
           'INVALID_STATUS_ERROR',
@@ -60,15 +58,10 @@ export const approveTonerRequestAction = withPermissions(
       }
 
       // Atualizar o status para aprovado
-      // Se estava rejeitado, limpar o campo notes (motivo da rejeição)
       await prisma.tonerRequest.update({
         where: { id: tonerRequestId },
         data: {
           status: TonerRequestStatus.APPROVED,
-          notes:
-            existingRequest.status === TonerRequestStatus.REJECTED
-              ? null
-              : undefined,
           updatedAt: new Date(),
         },
       })

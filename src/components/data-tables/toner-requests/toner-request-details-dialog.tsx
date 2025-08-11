@@ -3,8 +3,7 @@
 import { BasicDialog } from '@/components/basic-dialog'
 import type { TonerRequestsColumnType } from './toner-requests-table-types'
 import { getTonerRequestStatusBadge } from '@/lib/utils/get-status-badge'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { formatFullDate } from '@/lib/utils/format-date'
 
 interface TonerRequestDetailsDialogProps {
   tonerRequest: TonerRequestsColumnType
@@ -111,13 +110,7 @@ export function TonerRequestDetailsDialog({
                   Data do Pedido:
                 </span>
                 <p className="text-gray-600">
-                  {format(
-                    tonerRequest.createdAt,
-                    "dd 'de' MMMM 'de' yyyy 'às' HH:mm",
-                    {
-                      locale: ptBR,
-                    },
-                  )}
+                  {formatFullDate(tonerRequest.createdAt)}
                 </p>
               </div>
               <div>
@@ -125,13 +118,7 @@ export function TonerRequestDetailsDialog({
                   Última Atualização:
                 </span>
                 <p className="text-gray-600">
-                  {format(
-                    tonerRequest.updatedAt,
-                    "dd 'de' MMMM 'de' yyyy 'às' HH:mm",
-                    {
-                      locale: ptBR,
-                    },
-                  )}
+                  {formatFullDate(tonerRequest.updatedAt)}
                 </p>
               </div>
             </div>

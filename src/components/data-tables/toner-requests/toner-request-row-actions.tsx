@@ -26,9 +26,7 @@ export function TonerRequestRowActions({ row }: TonerRequestRowActionsProps) {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
 
   // Determinar quais ações estão disponíveis baseado no status atual
-  const canApprove =
-    tonerRequest.status === TonerRequestStatus.PENDING ||
-    tonerRequest.status === TonerRequestStatus.REJECTED
+  const canApprove = tonerRequest.status === TonerRequestStatus.PENDING
   const canReject = tonerRequest.status === TonerRequestStatus.PENDING
   const canDeliver = tonerRequest.status === TonerRequestStatus.APPROVED
 

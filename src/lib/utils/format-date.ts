@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from 'date-fns'
+import { formatDistanceToNow, format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 /**
@@ -8,6 +8,16 @@ import { ptBR } from 'date-fns/locale'
 export function formatRelativeDate(date: Date): string {
   return formatDistanceToNow(date, {
     addSuffix: true,
+    locale: ptBR,
+  })
+}
+
+/**
+ * Formata uma data completa em português brasileiro
+ * Ex: "07 de agosto de 2025 às 09:15"
+ */
+export function formatFullDate(date: Date): string {
+  return format(date, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
     locale: ptBR,
   })
 }
