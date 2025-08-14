@@ -11,7 +11,7 @@ export default async function PrinterModelsPage() {
   return (
     <div className="container mx-auto px-4">
       <h1 className="font-bold text-2xl">Modelos de Impressora</h1>
-      
+
       {response.success ? (
         <DataTable
           data={response.data || []}
@@ -21,12 +21,15 @@ export default async function PrinterModelsPage() {
         />
       ) : (
         <div className="mt-6">
-          <ErrorAlert 
-             title="Erro ao carregar modelos de impressora"
-             message={response.error?.message || 'Ocorreu um erro inesperado ao carregar os dados.'}
-             type="error"
-             refreshButtonText="Recarregar página"
-           />
+          <ErrorAlert
+            title="Erro ao carregar modelos de impressora"
+            message={
+              response.error?.message ||
+              'Ocorreu um erro inesperado ao carregar os dados.'
+            }
+            type="error"
+            refreshButtonText="Recarregar página"
+          />
         </div>
       )}
     </div>

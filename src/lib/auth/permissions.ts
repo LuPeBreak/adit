@@ -23,7 +23,7 @@ export const OPERATOR = ac.newRole({
   printerModel: ['create', 'list', 'update', 'delete'],
   department: ['list'],
   sector: ['list'],
-  tonerRequest: ['list','update'],
+  tonerRequest: ['list', 'update'],
   ...userAc.statements,
 })
 
@@ -37,9 +37,8 @@ export const ADMIN = ac.newRole({
   ...adminAc.statements,
 })
 
-
-// Tipagens 
-export type Resource = keyof typeof statement;
+// Tipagens
+export type Resource = keyof typeof statement
 
 export type PermissionOption = {
   [R in Resource]: {

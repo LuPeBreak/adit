@@ -127,10 +127,10 @@ export function PrinterDialogForm({
     try {
       const response = await getSectors()
       if (response.success && response.data) {
-        const mappedSectors = response.data.map(sector => ({
+        const mappedSectors = response.data.map((sector) => ({
           id: sector.id,
           name: sector.name,
-          departmentName: sector.departmentName
+          departmentName: sector.departmentName,
         }))
         setSectors(mappedSectors)
       } else {
@@ -150,9 +150,9 @@ export function PrinterDialogForm({
     try {
       const response = await getPrinterModels()
       if (response.success && response.data) {
-        const mappedModels = response.data.map(model => ({
+        const mappedModels = response.data.map((model) => ({
           id: model.id,
-          name: model.name
+          name: model.name,
         }))
         setPrinterModels(mappedModels)
       } else {

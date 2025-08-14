@@ -20,29 +20,29 @@ const errorConfig = {
   error: {
     icon: AlertCircle,
     variant: 'destructive' as const,
-    defaultTitle: 'Erro ao carregar dados'
+    defaultTitle: 'Erro ao carregar dados',
   },
   warning: {
     icon: AlertTriangle,
     variant: 'default' as const,
-    defaultTitle: 'Atenção'
+    defaultTitle: 'Atenção',
   },
   critical: {
     icon: XCircle,
     variant: 'destructive' as const,
-    defaultTitle: 'Erro crítico'
-  }
+    defaultTitle: 'Erro crítico',
+  },
 }
 
-export function ErrorAlert({ 
+export function ErrorAlert({
   title,
-  message = "Ocorreu um erro inesperado ao carregar os dados.",
+  message = 'Ocorreu um erro inesperado ao carregar os dados.',
   type = 'error',
   showRefreshButton = true,
   refreshButtonText = 'Tentar novamente',
   onRefresh,
   className,
-  children
+  children,
 }: ErrorAlertProps) {
   const config = errorConfig[type]
   const Icon = config.icon
@@ -54,16 +54,12 @@ export function ErrorAlert({
       <AlertTitle className="font-semibold">{alertTitle}</AlertTitle>
       <AlertDescription className="mt-2 space-y-3">
         <p className="text-sm leading-relaxed">{message}</p>
-        
-        {children && (
-          <div className="text-sm">
-            {children}
-          </div>
-        )}
-        
+
+        {children && <div className="text-sm">{children}</div>}
+
         {showRefreshButton && (
           <div className="pt-1">
-            <RefreshButton 
+            <RefreshButton
               text={refreshButtonText}
               onRefresh={onRefresh}
               variant={type === 'critical' ? 'destructive' : 'outline'}

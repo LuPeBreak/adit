@@ -10,7 +10,7 @@ export default async function TonerRequestsPage() {
   return (
     <div className="container mx-auto px-4">
       <h1 className="font-bold text-2xl">Pedidos de Toner</h1>
-      
+
       {response.success ? (
         <DataTable
           columns={tonerRequestsTableColumns}
@@ -19,12 +19,15 @@ export default async function TonerRequestsPage() {
         />
       ) : (
         <div className="mt-6">
-          <ErrorAlert 
-             title="Erro ao carregar pedidos de toner"
-             message={response.error?.message || 'Ocorreu um erro inesperado ao carregar os dados.'}
-             type="error"
-             refreshButtonText="Recarregar página"
-           />
+          <ErrorAlert
+            title="Erro ao carregar pedidos de toner"
+            message={
+              response.error?.message ||
+              'Ocorreu um erro inesperado ao carregar os dados.'
+            }
+            type="error"
+            refreshButtonText="Recarregar página"
+          />
         </div>
       )}
     </div>

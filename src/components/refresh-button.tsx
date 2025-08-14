@@ -7,32 +7,38 @@ import { cn } from '@/lib/utils'
 
 interface RefreshButtonProps {
   className?: string
-  variant?: 'outline' | 'default' | 'destructive' | 'secondary' | 'ghost' | 'link'
+  variant?:
+    | 'outline'
+    | 'default'
+    | 'destructive'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
   size?: 'default' | 'sm' | 'lg' | 'icon'
   text?: string
   onRefresh?: () => void | Promise<void>
   disabled?: boolean
 }
 
-export function RefreshButton({ 
+export function RefreshButton({
   className,
   variant = 'outline',
   size = 'sm',
   text = 'Tentar novamente',
   onRefresh,
-  disabled = false
+  disabled = false,
 }: RefreshButtonProps) {
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const handleRefresh = async () => {
     if (disabled) return
-    
+
     if (onRefresh) {
       // Apenas mostra loading state para refresh customizado
       if (isRefreshing) return
-      
+
       setIsRefreshing(true)
-      
+
       try {
         await onRefresh()
       } catch (error) {
@@ -49,7 +55,7 @@ export function RefreshButton({
   const showLoadingState = onRefresh && isRefreshing
 
   return (
-    <Button 
+    <Button
       variant={variant}
       size={size}
       onClick={handleRefresh}
@@ -57,10 +63,9 @@ export function RefreshButton({
       className={cn('gap-2', className)}
       aria-label={showLoadingState ? 'Atualizando...' : text}
     >
-      <RefreshCw className={cn(
-        'h-4 w-4',
-        showLoadingState && 'animate-spin'
-      )} />
+      <RefreshCw
+        className={cn('h-4 w-4', showLoadingState && 'animate-spin')}
+      />
       {showLoadingState ? 'Atualizando...' : text}
     </Button>
   )

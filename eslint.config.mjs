@@ -11,13 +11,27 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
-    ignores: ['src/generated/**'],
+    ignores: [
+      'node_modules/**',
+      '.next/**',
+      'src/generated/**',
+      'prisma/migrations/**',
+      '*.config.js',
+      '*.config.mjs',
+      '*.config.ts',
+    ],
   },
   ...compat.extends(
     'next/core-web-vitals',
     'next/typescript',
     '@rocketseat/eslint-config/next',
   ),
+  {
+    files: ['src/lib/auth/permissions.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
 ]
 
 export default eslintConfig

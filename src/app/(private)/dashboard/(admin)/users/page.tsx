@@ -11,7 +11,7 @@ export default async function UsersPage() {
   return (
     <div className="container mx-auto px-4">
       <h1 className="font-bold text-2xl">Lista de Usuários</h1>
-      
+
       {response.success ? (
         <DataTable
           columns={usersTableColumns}
@@ -21,12 +21,15 @@ export default async function UsersPage() {
         />
       ) : (
         <div className="mt-6">
-          <ErrorAlert 
-             title="Erro ao carregar usuários"
-             message={response.error?.message || 'Ocorreu um erro inesperado ao carregar os dados.'}
-             type="error"
-             refreshButtonText="Recarregar página"
-           />
+          <ErrorAlert
+            title="Erro ao carregar usuários"
+            message={
+              response.error?.message ||
+              'Ocorreu um erro inesperado ao carregar os dados.'
+            }
+            type="error"
+            refreshButtonText="Recarregar página"
+          />
         </div>
       )}
     </div>
