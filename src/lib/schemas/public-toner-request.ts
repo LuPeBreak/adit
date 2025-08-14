@@ -1,19 +1,19 @@
 import { z } from 'zod'
+import {
+  createFullNameValidation,
+  createEmailValidation,
+} from '@/lib/validations/name-validations'
 
 export const publicTonerRequestSchema = z.object({
   assetId: z
     .string({ message: 'A impressora é obrigatória' })
     .cuid('ID da impressora inválido'),
-  requesterName: z
-    .string({ message: 'O nome do requerente é obrigatório' })
-    .min(2, 'O nome deve ter no mínimo 2 caracteres'),
+  requesterName: createFullNameValidation('nome do requerente', 50),
   registrationNumber: z
     .string({ message: 'A matrícula é obrigatória' })
     .min(5, 'A matrícula deve ter no mínimo 5 dígitos')
     .regex(/^\d+$/, 'A matrícula deve conter apenas números'),
-  requesterEmail: z
-    .string({ message: 'O e-mail é obrigatório' })
-    .email('E-mail inválido'),
+  requesterEmail: createEmailValidation('e-mail', 50),
   requesterWhatsApp: z
     .string({ message: 'O WhatsApp é obrigatório' })
     .min(10, 'WhatsApp deve ter no mínimo 10 dígitos')

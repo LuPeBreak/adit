@@ -50,10 +50,20 @@ export const deletePrinterAction = withPermissions(
       console.error('Erro ao deletar impressora:', error)
 
       if (typeof error === 'object' && error !== null && 'code' in error) {
+        // Erro de registro não encontrado
         if (error.code === 'P2025') {
           return createErrorResponse(
             'Impressora não encontrada',
             'NOT_FOUND_ERROR',
+            'id',
+          )
+        }
+
+        // Erro de violação de chave estrangeira
+        if (error.code === 'P2003') {
+          return createErrorResponse(
+            'Não é possível deletar esta impressora pois ela possui pedidos de toner vinculados',
+            'FOREIGN_KEY_ERROR',
             'id',
           )
         }

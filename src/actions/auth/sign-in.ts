@@ -50,6 +50,8 @@ export async function signInAction(
       switch (error.status) {
         case 'UNAUTHORIZED':
           return { errorMessage: 'Email ou senha inválidos.' }
+        case 'FORBIDDEN':
+          return { errorMessage: 'Usuário desativado.' }
         default:
           return { errorMessage: 'Algo deu errado.' }
       }

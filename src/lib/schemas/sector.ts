@@ -1,25 +1,17 @@
 import { z } from 'zod'
+import {
+  createEntityNameValidation,
+  createFullNameValidation,
+  createEmailValidation,
+} from '@/lib/validations/name-validations'
 
 export const createSectorSchema = z.object({
-  name: z
-    .string({ message: 'O nome do setor é obrigatório' })
-    .min(3, 'O nome do setor deve ter no mínimo 3 caracteres'),
-  manager: z
-    .string({ message: 'O responsável do setor é obrigatório' })
-    .min(5, 'O responsável do setor deve ter no mínimo 5 caracteres')
-    .refine(
-      (managerName) =>
-        managerName.split(' ').filter((name) => name.length > 0).length >= 2,
-      'O responsável do setor deve conter o nome e o sobrenome',
-    ),
-  managerEmail: z
-    .string({
-      message: 'O email do responsável do setor é obrigatório',
-    })
-    .email('O email do responsável do setor é inválido'),
+  name: createEntityNameValidation('nome do setor', 80),
+  manager: createFullNameValidation('responsável do setor', 50),
+  managerEmail: createEmailValidation('email do responsável do setor', 50),
   departmentId: z
     .string({ message: 'A secretaria é obrigatória' })
-    .cuid('ID da secretaria inválido'),
+    .cuid('Secretaria invalida'),
 })
 
 export const updateSectorSchema = createSectorSchema.extend({

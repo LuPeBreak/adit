@@ -1,22 +1,14 @@
 import { z } from 'zod'
+import {
+  createEntityNameValidation,
+  createFullNameValidation,
+  createEmailValidation,
+} from '@/lib/validations/name-validations'
 
 export const createDepartmentSchema = z.object({
-  name: z
-    .string({ message: 'O nome da secretaria é obrigatório' })
-    .min(5, 'O nome da secretaria deve ter no mínimo 5 caracteres'),
-  manager: z
-    .string({ message: 'O responsável da secretaria é obrigatório' })
-    .min(5, 'O responsável da secretaria deve ter no mínimo 5 caracteres')
-    .refine(
-      (managerName) =>
-        managerName.split(' ').filter((name) => name.length > 0).length >= 2,
-      'O responsável da secretaria deve conter o nome e o sobrenome',
-    ),
-  managerEmail: z
-    .string({
-      message: 'O email do responsável da secretaria é obrigatório',
-    })
-    .email('O email do responsável da secretaria é inválido'),
+  name: createEntityNameValidation('nome da secretaria', 100),
+  manager: createFullNameValidation('responsável da secretaria', 50),
+  managerEmail: createEmailValidation('email do responsável da secretaria', 50),
 })
 
 export const updateDepartmentSchema = createDepartmentSchema.extend({

@@ -23,7 +23,7 @@ export function TonerRequestDetailsDialog({
       title="Detalhes do Pedido de Toner"
       description={`Informações completas do pedido de "${tonerRequest.requesterName}"`}
     >
-      <div className="space-y-6">
+      <div className="space-y-6 max-h-[80vh] overflow-y-auto pr-2">
         {/* Informações do Requerente */}
         <div className="rounded-md bg-blue-50 p-4 border border-blue-200">
           <h3 className="text-sm font-semibold text-blue-800 mb-3">
