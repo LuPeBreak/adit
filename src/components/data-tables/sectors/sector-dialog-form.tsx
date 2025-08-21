@@ -181,7 +181,13 @@ export function SectorDialogForm({
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="max-h-[200px] p-0">
-                    <Command>
+                    <Command
+                      filter={(value, search) => {
+                        const departmentText = value.toLowerCase()
+                        const searchText = search.toLowerCase()
+                        return departmentText.includes(searchText) ? 1 : 0
+                      }}
+                    >
                       <CommandInput placeholder="Buscar secretaria..." />
                       <CommandList>
                         <CommandEmpty>

@@ -8,6 +8,7 @@ import {
 export const statement = {
   ...defaultStatements,
   asset: ['create', 'list', 'update', 'delete'],
+  assetHistory: ['list'],
   printer: ['create', 'list', 'update', 'delete'],
   printerModel: ['create', 'list', 'update', 'delete'],
   department: ['create', 'list', 'update', 'delete'],
@@ -19,6 +20,7 @@ export const ac = createAccessControl(statement)
 
 export const OPERATOR = ac.newRole({
   asset: ['create', 'list', 'update'],
+  assetHistory: ['list'],
   printer: ['create', 'list', 'update'],
   printerModel: ['create', 'list', 'update', 'delete'],
   department: ['list'],
@@ -29,6 +31,7 @@ export const OPERATOR = ac.newRole({
 
 export const ADMIN = ac.newRole({
   asset: ['create', 'list', 'update', 'delete'],
+  assetHistory: ['list'],
   printer: ['create', 'list', 'update', 'delete'],
   printerModel: ['create', 'list', 'update', 'delete'],
   department: ['create', 'list', 'update', 'delete'],

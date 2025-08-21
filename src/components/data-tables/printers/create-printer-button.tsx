@@ -3,14 +3,17 @@
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
-import { PrinterDialogForm } from './printer-dialog-form'
+import { CreatePrinterDialogForm } from './create-printer-dialog-form'
 
 export function CreatePrinterButton() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   return (
     <>
-      <PrinterDialogForm open={isDialogOpen} onOpenChange={setIsDialogOpen} />
+      <CreatePrinterDialogForm
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+      />
       <Button
         variant="outline"
         size={'sm'}

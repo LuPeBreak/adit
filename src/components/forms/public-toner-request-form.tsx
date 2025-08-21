@@ -181,8 +181,14 @@ export function PublicTonerRequestForm({
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-full p-0">
-                  <Command>
-                    <CommandInput placeholder="Pesquisar impressora..." />
+                  <Command
+                    filter={(value, search) => {
+                      const printerText = value.toLowerCase()
+                      const searchText = search.toLowerCase()
+                      return printerText.includes(searchText) ? 1 : 0
+                    }}
+                  >
+                    <CommandInput placeholder="Pesquisar impressora pelo numero de patrimonio da TI..." />
                     <CommandList>
                       <CommandEmpty>
                         Nenhuma impressora encontrada.

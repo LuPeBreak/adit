@@ -22,7 +22,8 @@ export const createPrinterSchema = z.object({
     .cuid('ID do modelo inválido'),
 })
 
-export const updatePrinterSchema = z.object({
+// Schema para administradores (todos os campos incluindo status e setor)
+export const updatePrinterAdminSchema = z.object({
   id: z.string().cuid('ID da impressora inválido'),
   serialNumber: z
     .string({ message: 'O número serial é obrigatório' })
@@ -51,20 +52,12 @@ export const updatePrinterSchema = z.object({
     .optional(),
 })
 
+// Schema para operadores (campos limitados - não pode atualizar serialNumber e tag)
 export const updatePrinterOperatorSchema = z.object({
   id: z.string().cuid('ID da impressora inválido'),
   ipAddress: z
     .string({ message: 'O endereço IP é obrigatório' })
     .ip('Endereço IP inválido')
-    .optional(),
-  status: z
-    .nativeEnum(AssetStatus, {
-      message: 'Status inválido',
-    })
-    .optional(),
-  sectorId: z
-    .string({ message: 'O setor é obrigatório' })
-    .cuid('ID do setor inválido')
     .optional(),
   printerModelId: z
     .string({ message: 'O modelo da impressora é obrigatório' })
@@ -76,9 +69,10 @@ export const deletePrinterSchema = z.object({
   id: z.string().cuid('ID da impressora inválido'),
 })
 
-export type CreatePrinterData = z.infer<typeof createPrinterSchema>
-export type UpdatePrinterData = z.infer<typeof updatePrinterSchema>
 export type UpdatePrinterOperatorData = z.infer<
   typeof updatePrinterOperatorSchema
 >
+
+export type CreatePrinterData = z.infer<typeof createPrinterSchema>
+export type UpdatePrinterAdminData = z.infer<typeof updatePrinterAdminSchema>
 export type DeletePrinterData = z.infer<typeof deletePrinterSchema>

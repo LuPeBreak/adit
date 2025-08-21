@@ -31,6 +31,8 @@ model User {
   banReason  String?
   banExpires DateTime?
 
+  assetStatusChanges AssetStatusHistory[]
+
   @@unique([email])
   @@map("user")
 }
@@ -109,8 +111,9 @@ model Asset {
   sector   Sector @relation(fields: [sectorId], references: [id])
   sectorId String @map("sector_id")
 
-  printer      Printer?
-  TonerRequest TonerRequest[]
+  printer       Printer?
+  TonerRequest  TonerRequest[]
+  statusHistory AssetStatusHistory[]
 
   @@map("asset")
 }
@@ -167,7 +170,8 @@ model Sector {
   department   Department @relation(fields: [departmentId], references: [id])
   departmentId String     @map("department_id")
 
-  assets Asset[]
+  assets             Asset[]
+  assetStatusHistory AssetStatusHistory[]
 
   @@unique([departmentId, name])
   @@map("sector")
@@ -196,4 +200,24 @@ model TonerRequest {
   assetId String @map("asset_id")
 
   @@map("toner_request")
+}
+
+model AssetStatusHistory {
+  id        String      @id @default(cuid())
+  status    AssetStatus
+  notes     String?
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  asset   Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  assetId String @map("asset_id")
+
+  sector   Sector @relation(fields: [sectorId], references: [id])
+  sectorId String @map("sector_id")
+
+  user      User   @relation(fields: [changedBy], references: [id])
+  changedBy String @map("changed_by")
+
+  @@index([assetId, createdAt(sort: Desc)])
+  @@index([createdAt(sort: Desc)])
+  @@map("asset_status_history")
 }

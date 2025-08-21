@@ -34,7 +34,6 @@ import {
 } from '@/components/ui/popover'
 import { BasicDialog } from '@/components/basic-dialog'
 import { createPrinterAction } from '@/actions/printers/create-printer'
-import { updatePrinterAction } from '@/actions/printers/update-printer'
 import { getSectors } from '@/actions/sectors/get-sectors'
 import { getPrinterModels } from '@/actions/printer-models/get-printer-models'
 import { toast } from 'sonner'
@@ -42,18 +41,13 @@ import { useEffect, useState } from 'react'
 import {
   createPrinterSchema,
   type CreatePrinterData,
-  type UpdatePrinterData,
-  type UpdatePrinterOperatorData,
 } from '@/lib/schemas/printer'
 import { Loader2, Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AssetStatus } from '@/generated/prisma'
-import type { PrintersColumnType } from './printers-table-types'
-import { authClient } from '@/lib/auth/auth-client'
 import { getAssetStatusLabel } from '@/lib/utils/get-status-label'
 
-interface PrinterDialogFormProps {
-  initialData?: PrintersColumnType
+interface CreatePrinterDialogFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -74,46 +68,28 @@ const assetStatusOptions = Object.values(AssetStatus).map((status) => ({
   label: getAssetStatusLabel(status),
 }))
 
-export function PrinterDialogForm({
-  initialData,
+export function CreatePrinterDialogForm({
   open,
   onOpenChange,
-}: PrinterDialogFormProps) {
+}: CreatePrinterDialogFormProps) {
   const [sectors, setSectors] = useState<Sector[]>([])
   const [printerModels, setPrinterModels] = useState<PrinterModel[]>([])
   const [sectorOpen, setSectorOpen] = useState(false)
+  const [printerModelOpen, setPrinterModelOpen] = useState(false)
   const [isLoadingSectors, setIsLoadingSectors] = useState(false)
   const [isLoadingModels, setIsLoadingModels] = useState(false)
-
-  const { data: session } = authClient.useSession()
-
-  const isUpdateMode = !!initialData
-  const isAdmin = session?.user.role === 'ADMIN'
 
   const form = useForm<CreatePrinterData>({
     resolver: zodResolver(createPrinterSchema),
     defaultValues: {
-      serialNumber: initialData?.serialNumber ?? '',
-      ipAddress: initialData?.ipAddress ?? '',
-      tag: initialData?.tag ?? '',
-      status: initialData?.status ?? AssetStatus.USING,
-      sectorId: initialData?.sectorId ?? '',
-      printerModelId: initialData?.printerModelId ?? '',
+      serialNumber: '',
+      ipAddress: '',
+      tag: '',
+      status: AssetStatus.USING,
+      sectorId: '',
+      printerModelId: '',
     },
   })
-
-  useEffect(() => {
-    if (initialData && open) {
-      form.reset({
-        serialNumber: initialData.serialNumber,
-        ipAddress: initialData.ipAddress,
-        tag: initialData.tag,
-        status: initialData.status,
-        sectorId: initialData.sectorId,
-        printerModelId: initialData.printerModelId,
-      })
-    }
-  }, [initialData, form, open])
 
   useEffect(() => {
     if (open) {
@@ -168,41 +144,13 @@ export function PrinterDialogForm({
   }
 
   async function onSubmit(data: CreatePrinterData) {
-    if (isUpdateMode) {
-      if (!initialData?.id) {
-        toast.error('Erro: ID da impressora não encontrado para atualização.')
-        return
-      }
-
-      // Preparar dados baseado nas permissões do usuário
-      const updateData: UpdatePrinterData | UpdatePrinterOperatorData = {
-        id: initialData.id,
-        ipAddress: data.ipAddress,
-        status: data.status,
-        sectorId: data.sectorId,
-        printerModelId: data.printerModelId,
-        ...(isAdmin && {
-          serialNumber: data.serialNumber,
-          tag: data.tag,
-        }),
-      }
-
-      const response = await updatePrinterAction(updateData)
-      if (!response.success) {
-        toast.error(response.error?.message || 'Erro ao atualizar impressora')
-        return
-      }
-      toast.success('Impressora atualizada com sucesso')
-    } else {
-      const response = await createPrinterAction(data)
-      if (!response.success) {
-        toast.error(response.error?.message || 'Erro ao criar impressora')
-        return
-      }
-      form.reset()
-      toast.success('Impressora criada com sucesso')
+    const response = await createPrinterAction(data)
+    if (!response.success) {
+      toast.error(response.error?.message || 'Erro ao criar impressora')
+      return
     }
-
+    form.reset()
+    toast.success('Impressora criada com sucesso')
     onOpenChange(false)
   }
 
@@ -210,7 +158,7 @@ export function PrinterDialogForm({
     <BasicDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={isUpdateMode ? 'Editar Impressora' : 'Criar Impressora'}
+      title="Criar Impressora"
       className="sm:max-w-[600px]"
     >
       <Form {...form}>
@@ -226,11 +174,7 @@ export function PrinterDialogForm({
                 <FormItem>
                   <FormLabel>N° Patrimônio</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="123456"
-                      {...field}
-                      disabled={isUpdateMode && !isAdmin}
-                    />
+                    <Input placeholder="123456" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -243,11 +187,7 @@ export function PrinterDialogForm({
                 <FormItem>
                   <FormLabel>N° Serial</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="ABC123DEF456"
-                      {...field}
-                      disabled={isUpdateMode && !isAdmin}
-                    />
+                    <Input placeholder="ABC123DEF456" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -301,25 +241,82 @@ export function PrinterDialogForm({
               control={form.control}
               name="printerModelId"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel>Modelo</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
+                  <Popover
+                    open={printerModelOpen}
+                    onOpenChange={setPrinterModelOpen}
                   >
-                    <FormControl>
-                      <SelectTrigger disabled={isLoadingModels}>
-                        <SelectValue placeholder="Selecione o modelo" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {printerModels.map((model) => (
-                        <SelectItem key={model.id} value={model.id}>
-                          {model.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={printerModelOpen}
+                          className={cn(
+                            'justify-between',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                          disabled={isLoadingModels}
+                        >
+                          {isLoadingModels ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Carregando...
+                            </>
+                          ) : field.value ? (
+                            (() => {
+                              const model = printerModels.find(
+                                (m) => m.id === field.value,
+                              )
+                              return model
+                                ? model.name
+                                : 'Modelo não encontrado'
+                            })()
+                          ) : (
+                            'Selecione um modelo'
+                          )}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
+                      <Command
+                        filter={(value, search) => {
+                          const modelText = value.toLowerCase()
+                          const searchText = search.toLowerCase()
+                          return modelText.includes(searchText) ? 1 : 0
+                        }}
+                      >
+                        <CommandInput placeholder="Buscar modelo..." />
+                        <CommandList>
+                          <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
+                          <CommandGroup>
+                            {printerModels.map((model) => (
+                              <CommandItem
+                                key={model.id}
+                                value={model.name}
+                                onSelect={() => {
+                                  form.setValue('printerModelId', model.id)
+                                  setPrinterModelOpen(false)
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    field.value === model.id
+                                      ? 'opacity-100'
+                                      : 'opacity-0',
+                                  )}
+                                />
+                                {model.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -331,7 +328,7 @@ export function PrinterDialogForm({
             name="sectorId"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Setor</FormLabel>
+                <FormLabel>Secretaria - Setor</FormLabel>
                 <Popover open={sectorOpen} onOpenChange={setSectorOpen}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -367,7 +364,13 @@ export function PrinterDialogForm({
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
-                    <Command>
+                    <Command
+                      filter={(value, search) => {
+                        const sectorText = value.toLowerCase()
+                        const searchText = search.toLowerCase()
+                        return sectorText.includes(searchText) ? 1 : 0
+                      }}
+                    >
                       <CommandInput placeholder="Buscar setor..." />
                       <CommandList>
                         <CommandEmpty>Nenhum setor encontrado.</CommandEmpty>
@@ -375,7 +378,7 @@ export function PrinterDialogForm({
                           {sectors.map((sector) => (
                             <CommandItem
                               key={sector.id}
-                              value={sector.id}
+                              value={`${sector.departmentName} - ${sector.name}`}
                               onSelect={() => {
                                 form.setValue('sectorId', sector.id)
                                 setSectorOpen(false)
@@ -406,7 +409,7 @@ export function PrinterDialogForm({
             {form.formState.isSubmitting && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {isUpdateMode ? 'Salvar Alterações' : 'Criar Impressora'}
+            Criar Impressora
           </Button>
         </form>
       </Form>

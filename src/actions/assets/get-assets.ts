@@ -15,11 +15,13 @@ export const getAssets = withPermissions(
     try {
       const assets = await prisma.asset.findMany({
         select: {
+          id: true,
           tag: true,
           status: true,
           assetType: true,
           sector: {
             select: {
+              id: true,
               name: true,
               department: {
                 select: {
@@ -29,14 +31,19 @@ export const getAssets = withPermissions(
             },
           },
         },
+        orderBy: {
+          tag: 'asc',
+        },
       })
 
       const formattedAssets = assets.map((asset) => {
         return {
+          id: asset.id,
           tag: asset.tag,
           assetType: asset.assetType,
           status: asset.status,
           sector: asset.sector.name,
+          sectorId: asset.sector.id,
           department: asset.sector.department.name,
         }
       })

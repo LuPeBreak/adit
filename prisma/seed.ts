@@ -19,12 +19,24 @@ async function main() {
 
   // Clean up previous data to avoid conflicts
   await prisma.tonerRequest.deleteMany()
+  await prisma.assetStatusHistory.deleteMany()
   await prisma.printer.deleteMany()
   await prisma.asset.deleteMany()
   await prisma.printerModel.deleteMany()
   await prisma.sector.deleteMany()
   await prisma.department.deleteMany()
   console.log('Previous data cleaned.')
+
+  // Get the first admin user for history tracking
+  const adminUser = await prisma.user.findFirst({
+    where: { role: 'ADMIN' },
+  })
+
+  if (!adminUser) {
+    console.log('No admin user found. Please create an admin user first.')
+    process.exit(1)
+  }
+  console.log('Using existing admin user for history tracking.')
 
   // 1. Create Printer Models
   const hpModel = await prisma.printerModel.create({
@@ -102,6 +114,17 @@ async function main() {
         ipAddress: `192.168.1.${100 + i}`,
         printerModelId: randomPrinterModel.id,
         assetId: asset.id,
+      },
+    })
+
+    // Create initial status history entry for the asset
+    await prisma.assetStatusHistory.create({
+      data: {
+        assetId: asset.id,
+        status: randomStatus,
+        sectorId: randomSector.id,
+        changedBy: adminUser.id,
+        notes: 'Registro inicial do ativo no sistema',
       },
     })
   }

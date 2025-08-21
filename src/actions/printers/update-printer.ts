@@ -4,9 +4,9 @@ import { withPermissions } from '@/lib/auth/with-permissions'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import {
-  updatePrinterSchema,
+  updatePrinterAdminSchema,
   updatePrinterOperatorSchema,
-  type UpdatePrinterData,
+  type UpdatePrinterAdminData,
   type UpdatePrinterOperatorData,
 } from '@/lib/schemas/printer'
 import {
@@ -19,13 +19,13 @@ export const updatePrinterAction = withPermissions(
   [{ resource: 'printer', action: ['update'] }],
   async (
     session,
-    data: UpdatePrinterData | UpdatePrinterOperatorData,
+    data: UpdatePrinterAdminData | UpdatePrinterOperatorData,
   ): Promise<ActionResponse> => {
     const isAdmin = session.user.role === 'ADMIN'
 
     // Validar dados baseado no papel do usuário
     const validatedFields = isAdmin
-      ? updatePrinterSchema.safeParse(data)
+      ? updatePrinterAdminSchema.safeParse(data)
       : updatePrinterOperatorSchema.safeParse(data)
 
     if (!validatedFields.success) {
@@ -46,22 +46,22 @@ export const updatePrinterAction = withPermissions(
           where: { id },
           data: {
             serialNumber: isAdmin
-              ? (updateData as UpdatePrinterData).serialNumber
+              ? (updateData as UpdatePrinterAdminData).serialNumber
               : undefined,
             ipAddress: updateData.ipAddress,
             printerModelId: updateData.printerModelId,
           },
         })
 
-        // Atualizar dados do asset
-        await tx.asset.update({
-          where: { id: updatedPrinter.assetId },
-          data: {
-            tag: isAdmin ? (updateData as UpdatePrinterData).tag : undefined,
-            status: updateData.status,
-            sectorId: updateData.sectorId,
-          },
-        })
+        // Atualizar dados do asset (apenas tag para administradores)
+        if (isAdmin && (updateData as UpdatePrinterAdminData).tag) {
+          await tx.asset.update({
+            where: { id: updatedPrinter.assetId },
+            data: {
+              tag: (updateData as UpdatePrinterAdminData).tag,
+            },
+          })
+        }
       })
 
       revalidatePath('/dashboard/printers')
@@ -114,23 +114,9 @@ export const updatePrinterAction = withPermissions(
           'meta' in error &&
           typeof error.meta === 'object' &&
           error.meta !== null &&
-          'modelName' in error.meta &&
           'constraint' in error.meta
         ) {
-          if (
-            error.meta.modelName === 'Asset' &&
-            error.meta.constraint === 'asset_sector_id_fkey'
-          ) {
-            return createErrorResponse(
-              'Setor não encontrado',
-              'NOT_FOUND_ERROR',
-              'sectorId',
-            )
-          }
-          if (
-            error.meta.modelName === 'Printer' &&
-            error.meta.constraint === 'printer_printer_model_id_fkey'
-          ) {
+          if (error.meta.constraint === 'printer_printer_model_id_fkey') {
             return createErrorResponse(
               'Modelo da impressora não encontrado',
               'NOT_FOUND_ERROR',

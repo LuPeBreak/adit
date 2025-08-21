@@ -16,7 +16,7 @@ import { AssetType } from '@/generated/prisma'
 
 export const createPrinterAction = withPermissions(
   [{ resource: 'printer', action: ['create'] }],
-  async (_, data: CreatePrinterData): Promise<ActionResponse> => {
+  async (session, data: CreatePrinterData): Promise<ActionResponse> => {
     const validatedFields = createPrinterSchema.safeParse(data)
     if (!validatedFields.success) {
       const firstError = validatedFields.error.errors[0]
@@ -47,6 +47,17 @@ export const createPrinterAction = withPermissions(
             ipAddress,
             printerModelId,
             assetId: asset.id,
+          },
+        })
+
+        // Criar registro inicial no histórico de status
+        await tx.assetStatusHistory.create({
+          data: {
+            assetId: asset.id,
+            status,
+            sectorId,
+            changedBy: session.user.id,
+            notes: 'Registro inicial - Impressora criada',
           },
         })
       })

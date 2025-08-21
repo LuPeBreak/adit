@@ -6,6 +6,7 @@ import type { AssetsColumnType } from './assets-table-types'
 import { AssetStatus, AssetType } from '@/generated/prisma'
 import { getAssetStatusBadge } from '@/lib/utils/get-status-badge'
 import { getAssetTypeLabel } from '@/lib/utils/get-status-label'
+import { AssetRowActions } from './asset-row-actions'
 
 export const assetsTableColumns: ColumnDef<AssetsColumnType>[] = [
   {
@@ -50,5 +51,11 @@ export const assetsTableColumns: ColumnDef<AssetsColumnType>[] = [
     cell: ({ cell }) => {
       return getAssetStatusBadge(cell.getValue() as AssetStatus)
     },
+  },
+  {
+    id: 'actions',
+    enableHiding: false,
+    enableGlobalFilter: false,
+    cell: ({ row }) => <AssetRowActions row={row} />,
   },
 ]
