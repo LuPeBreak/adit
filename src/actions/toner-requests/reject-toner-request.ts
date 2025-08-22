@@ -11,6 +11,8 @@ import type { ActionResponse } from '@/lib/types/action-response'
 import type { RejectTonerRequestData } from '@/lib/schemas/toner-request'
 import prisma from '@/lib/prisma'
 import { TonerRequestStatus } from '@/generated/prisma'
+import { sendEmail } from '@/lib/utils/email-service'
+import { createRejectionEmailTemplate } from '@/lib/utils/email-templates'
 
 export const rejectTonerRequestAction = withPermissions(
   [{ resource: 'tonerRequest', action: ['update'] }],
@@ -36,6 +38,21 @@ export const rejectTonerRequestAction = withPermissions(
           status: true,
           requesterEmail: true,
           requesterName: true,
+          selectedToner: true,
+          asset: {
+            select: {
+              tag: true,
+              printer: {
+                select: {
+                  printerModel: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       })
 
@@ -66,14 +83,20 @@ export const rejectTonerRequestAction = withPermissions(
         },
       })
 
-      // TODO: Implementar envio de email de rejeição
-      // Quando implementarmos o sistema de email, adicionar aqui:
-      // await sendRejectionEmail({
-      //   to: existingRequest.requesterEmail,
-      //   requesterName: existingRequest.requesterName,
-      //   tonerRequestId: tonerRequestId,
-      //   rejectionReason: rejectionReason,
-      // })
+      // Enviar email de rejeição
+      await sendEmail({
+        email: existingRequest.requesterEmail,
+        subject: 'Pedido de Toner Rejeitado - Equipe de TI PMBM',
+        message: createRejectionEmailTemplate({
+          requesterName: existingRequest.requesterName,
+          requesterEmail: existingRequest.requesterEmail,
+          rejectionReason,
+          selectedToner: existingRequest.selectedToner,
+          printerTag: existingRequest.asset?.tag || 'N/A',
+          printerModel:
+            existingRequest.asset?.printer?.printerModel.name || 'N/A',
+        }),
+      })
 
       revalidatePath('/dashboard/toner-requests')
 

@@ -11,6 +11,8 @@ import type { ActionResponse } from '@/lib/types/action-response'
 import type { ApproveTonerRequestData } from '@/lib/schemas/toner-request'
 import prisma from '@/lib/prisma'
 import { TonerRequestStatus } from '@/generated/prisma'
+import { sendEmail } from '@/lib/utils/email-service'
+import { createApprovalEmailTemplate } from '@/lib/utils/email-templates'
 
 export const approveTonerRequestAction = withPermissions(
   [{ resource: 'tonerRequest', action: ['update'] }],
@@ -34,8 +36,23 @@ export const approveTonerRequestAction = withPermissions(
         select: {
           id: true,
           status: true,
+          selectedToner: true,
           requesterEmail: true,
           requesterName: true,
+          asset: {
+            select: {
+              tag: true,
+              printer: {
+                select: {
+                  printerModel: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       })
 
@@ -48,7 +65,6 @@ export const approveTonerRequestAction = withPermissions(
       }
 
       // Verificar se o status permite aprovação
-      // REJECTED e DELIVERED são estados finais
       if (existingRequest.status !== TonerRequestStatus.PENDING) {
         return createErrorResponse(
           'Este pedido não pode ser aprovado no status atual',
@@ -66,13 +82,19 @@ export const approveTonerRequestAction = withPermissions(
         },
       })
 
-      // TODO: Implementar envio de email de aprovação
-      // Quando implementarmos o sistema de email, adicionar aqui:
-      // await sendApprovalEmail({
-      //   to: existingRequest.requesterEmail,
-      //   requesterName: existingRequest.requesterName,
-      //   tonerRequestId: tonerRequestId,
-      // })
+      // Enviar email de aprovação
+      await sendEmail({
+        email: existingRequest.requesterEmail,
+        subject: 'Pedido de Toner Aprovado - Equipe de TI PMBM',
+        message: createApprovalEmailTemplate({
+          requesterName: existingRequest.requesterName,
+          requesterEmail: existingRequest.requesterEmail,
+          selectedToner: existingRequest.selectedToner,
+          printerTag: existingRequest.asset?.tag || 'N/A',
+          printerModel:
+            existingRequest.asset?.printer?.printerModel.name || 'N/A',
+        }),
+      })
 
       revalidatePath('/dashboard/toner-requests')
 

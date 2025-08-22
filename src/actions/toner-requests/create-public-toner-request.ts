@@ -11,6 +11,11 @@ import {
   createErrorResponse,
   type ActionResponse,
 } from '@/lib/types/action-response'
+import { sendEmail } from '@/lib/utils/email-service'
+import {
+  createNewRequestNotificationTemplate,
+  createRequestConfirmationTemplate,
+} from '@/lib/utils/email-templates'
 
 export async function createPublicTonerRequestAction(
   data: PublicTonerRequestData,
@@ -44,10 +49,27 @@ export async function createPublicTonerRequestAction(
           isNot: null,
         },
       },
-      include: {
+      select: {
+        id: true,
+        tag: true,
+        sector: {
+          select: {
+            name: true,
+            department: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
         printer: {
-          include: {
-            printerModel: true,
+          select: {
+            printerModel: {
+              select: {
+                name: true,
+                toners: true,
+              },
+            },
           },
         },
       },
@@ -62,7 +84,7 @@ export async function createPublicTonerRequestAction(
     }
 
     // Verificar se o toner selecionado é válido para esta impressora
-    const availableToners = asset.printer?.printerModel.toners || []
+    const availableToners = asset.printer?.printerModel?.toners || []
     if (!availableToners.includes(selectedToner)) {
       return createErrorResponse(
         'Toner selecionado não é compatível com esta impressora',
@@ -82,6 +104,36 @@ export async function createPublicTonerRequestAction(
         selectedToner,
         status: 'PENDING',
       },
+    })
+
+    // Enviar emails de notificação
+    // Email para a equipe de TI
+    await sendEmail({
+      email: process.env.ADMIN_EMAIL!,
+      subject: 'Novo Pedido de Toner - Sistema ADIT',
+      message: createNewRequestNotificationTemplate({
+        requesterName,
+        requesterEmail,
+        requesterWhatsApp,
+        department: asset?.sector?.department?.name || 'N/A',
+        sector: asset?.sector?.name || 'N/A',
+        printerModel: asset?.printer?.printerModel?.name || 'N/A',
+        selectedToner,
+        printerTag: asset?.tag || 'N/A',
+      }),
+    })
+
+    // Enviar confirmação para o solicitante
+    await sendEmail({
+      email: requesterEmail,
+      subject: 'Pedido de Toner Recebido - Equipe de TI PMBM',
+      message: createRequestConfirmationTemplate({
+        requesterName,
+        requesterEmail,
+        selectedToner,
+        printerTag: asset?.tag || 'N/A',
+        printerModel: asset?.printer?.printerModel?.name || 'N/A',
+      }),
     })
 
     revalidatePath('/dashboard/toner-requests')
