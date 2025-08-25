@@ -1,3 +1,5 @@
+import { maskWhatsappNumber } from './contact-formatter'
+
 export interface ApprovalEmailData {
   requesterName: string
   requesterEmail: string
@@ -70,8 +72,8 @@ export function createApprovalEmailTemplate(data: ApprovalEmailData): string {
         <div style="background-color: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 4px;">
           <p style="color: #1e40af; font-size: 14px; margin: 0;">
             📞 <strong>Contato:</strong><br>
-              Whatsapp: (24) 98146-5782<br>
-              Email: informatica@barramansa.rj.gov.br<br>
+              Whatsapp: ${maskWhatsappNumber(process.env.ADMIN_WHATSAPP || '')}<br>
+              Email: ${process.env.ADMIN_EMAIL}<br>
               <br>
             🕒 <strong>Horário de retirada:</strong><br>
               Segunda a sexta-feira: 8h às 12h e 14h às 17h
@@ -130,8 +132,8 @@ export function createRejectionEmailTemplate(data: RejectionEmailData): string {
         <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
           <p style="color: #92400e; font-size: 14px; margin: 0;">
             📞 <strong>Contato:</strong><br>
-              Whatsapp: (24) 98146-5782<br>
-              Email: informatica@barramansa.rj.gov.br<br>
+              Whatsapp: ${maskWhatsappNumber(process.env.ADMIN_WHATSAPP || '')}<br>
+              Email: ${process.env.ADMIN_EMAIL}<br>
               <br>
             🕒 <strong>Horário de atendimento:</strong><br>
             Segunda a sexta-feira: 8h às 12h e 14h às 17h

@@ -13,6 +13,8 @@ import prisma from '@/lib/prisma'
 import { TonerRequestStatus } from '@/generated/prisma'
 import { sendEmail } from '@/lib/utils/email-service'
 import { createApprovalEmailTemplate } from '@/lib/utils/email-templates'
+import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
+import { createApprovalWhatsAppTemplate } from '@/lib/utils/whatsapp-templates'
 
 export const approveTonerRequestAction = withPermissions(
   [{ resource: 'tonerRequest', action: ['update'] }],
@@ -39,6 +41,7 @@ export const approveTonerRequestAction = withPermissions(
           selectedToner: true,
           requesterEmail: true,
           requesterName: true,
+          requesterWhatsApp: true,
           asset: {
             select: {
               tag: true,
@@ -89,6 +92,18 @@ export const approveTonerRequestAction = withPermissions(
         message: createApprovalEmailTemplate({
           requesterName: existingRequest.requesterName,
           requesterEmail: existingRequest.requesterEmail,
+          selectedToner: existingRequest.selectedToner,
+          printerTag: existingRequest.asset?.tag || 'N/A',
+          printerModel:
+            existingRequest.asset?.printer?.printerModel.name || 'N/A',
+        }),
+      })
+
+      // Enviar mensagem WhatsApp de aprovação
+      await sendWhatsApp({
+        number: `55${existingRequest.requesterWhatsApp}`,
+        text: createApprovalWhatsAppTemplate({
+          requesterName: existingRequest.requesterName,
           selectedToner: existingRequest.selectedToner,
           printerTag: existingRequest.asset?.tag || 'N/A',
           printerModel:

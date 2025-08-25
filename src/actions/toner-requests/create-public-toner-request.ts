@@ -16,6 +16,8 @@ import {
   createNewRequestNotificationTemplate,
   createRequestConfirmationTemplate,
 } from '@/lib/utils/email-templates'
+import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
+import { createRequestConfirmationWhatsAppTemplate } from '@/lib/utils/whatsapp-templates'
 
 export async function createPublicTonerRequestAction(
   data: PublicTonerRequestData,
@@ -130,6 +132,31 @@ export async function createPublicTonerRequestAction(
       message: createRequestConfirmationTemplate({
         requesterName,
         requesterEmail,
+        selectedToner,
+        printerTag: asset?.tag || 'N/A',
+        printerModel: asset?.printer?.printerModel?.name || 'N/A',
+      }),
+    })
+
+    // Enviar mensagem WhatsApp para a equipe de TI
+    // await sendWhatsApp({
+    //   number: process.env.ADMIN_WHATSAPP!,
+    //   text: createNewRequestNotificationWhatsAppTemplate({
+    //     requesterName,
+    //     requesterWhatsApp,
+    //     department: asset?.sector?.department?.name || 'N/A',
+    //     sector: asset?.sector?.name || 'N/A',
+    //     printerModel: asset?.printer?.printerModel?.name || 'N/A',
+    //     selectedToner,
+    //     printerTag: asset?.tag || 'N/A',
+    //   }),
+    // })
+
+    // Enviar confirmação WhatsApp para o solicitante
+    await sendWhatsApp({
+      number: `55${requesterWhatsApp}`,
+      text: createRequestConfirmationWhatsAppTemplate({
+        requesterName,
         selectedToner,
         printerTag: asset?.tag || 'N/A',
         printerModel: asset?.printer?.printerModel?.name || 'N/A',

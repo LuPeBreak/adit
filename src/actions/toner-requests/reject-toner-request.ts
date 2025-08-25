@@ -13,6 +13,8 @@ import prisma from '@/lib/prisma'
 import { TonerRequestStatus } from '@/generated/prisma'
 import { sendEmail } from '@/lib/utils/email-service'
 import { createRejectionEmailTemplate } from '@/lib/utils/email-templates'
+import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
+import { createRejectionWhatsAppTemplate } from '@/lib/utils/whatsapp-templates'
 
 export const rejectTonerRequestAction = withPermissions(
   [{ resource: 'tonerRequest', action: ['update'] }],
@@ -38,6 +40,7 @@ export const rejectTonerRequestAction = withPermissions(
           status: true,
           requesterEmail: true,
           requesterName: true,
+          requesterWhatsApp: true,
           selectedToner: true,
           asset: {
             select: {
@@ -90,6 +93,19 @@ export const rejectTonerRequestAction = withPermissions(
         message: createRejectionEmailTemplate({
           requesterName: existingRequest.requesterName,
           requesterEmail: existingRequest.requesterEmail,
+          rejectionReason,
+          selectedToner: existingRequest.selectedToner,
+          printerTag: existingRequest.asset?.tag || 'N/A',
+          printerModel:
+            existingRequest.asset?.printer?.printerModel.name || 'N/A',
+        }),
+      })
+
+      // Enviar mensagem WhatsApp de rejeição
+      await sendWhatsApp({
+        number: `55${existingRequest.requesterWhatsApp}`,
+        text: createRejectionWhatsAppTemplate({
+          requesterName: existingRequest.requesterName,
           rejectionReason,
           selectedToner: existingRequest.selectedToner,
           printerTag: existingRequest.asset?.tag || 'N/A',
