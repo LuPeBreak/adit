@@ -4,14 +4,16 @@ import { printerModelsTableColumns } from '@/components/data-tables/printer-mode
 import { GlobalTableToolbar } from '@/components/data-tables/global-table-toolbar'
 import { CreatePrinterModelButton } from '@/components/data-tables/printer-models/create-printer-model-button'
 import { ErrorAlert } from '@/components/error-alert'
+import DashboardContainer from '@/components/dashboard-container'
 
 export default async function PrinterModelsPage() {
   const response = await getPrinterModels()
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="font-bold text-2xl">Modelos de Impressora</h1>
-
+    <DashboardContainer
+      title="Modelos de Impressora"
+      description="Visualize e gerencie os modelos de impressora cadastrados."
+    >
       {response.success ? (
         <DataTable
           data={response.data || []}
@@ -32,6 +34,6 @@ export default async function PrinterModelsPage() {
           />
         </div>
       )}
-    </div>
+    </DashboardContainer>
   )
 }

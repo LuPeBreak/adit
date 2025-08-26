@@ -4,14 +4,16 @@ import { GlobalTableToolbar } from '@/components/data-tables/global-table-toolba
 import { getDepartments } from '@/actions/departments/get-departments'
 import { CreateDepartmentButton } from '@/components/data-tables/departments/create-department-button'
 import { ErrorAlert } from '@/components/error-alert'
+import DashboardContainer from '@/components/dashboard-container'
 
 export default async function DepartmentsPage() {
   const response = await getDepartments()
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="font-bold text-2xl">Secretarias</h1>
-
+    <DashboardContainer
+      title="Secretarias"
+      description="visualize e gerencie as secretarias cadastradas."
+    >
       {response.success ? (
         <DataTable
           columns={departmentsTableColumns}
@@ -32,6 +34,6 @@ export default async function DepartmentsPage() {
           />
         </div>
       )}
-    </div>
+    </DashboardContainer>
   )
 }

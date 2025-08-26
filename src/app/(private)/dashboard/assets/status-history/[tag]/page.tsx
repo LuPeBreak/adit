@@ -4,6 +4,7 @@ import { statusHistoryColumns } from '@/components/data-tables/status-history/st
 import { StatusHistoryToolbar } from '@/components/data-tables/status-history/status-history-toolbar'
 import { getAssetTypeLabel } from '@/lib/utils/get-status-label'
 import { getAssetHistoryByTagAction } from '@/actions/assets/get-asset-history-by-tag'
+import DashboardContainer from '@/components/dashboard-container'
 
 interface StatusHistoryPageProps {
   params: Promise<{
@@ -25,17 +26,11 @@ export default async function StatusHistoryPage({
     : []
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="font-bold text-2xl">
-        {asset
-          ? `${asset.tag} - ${getAssetTypeLabel(asset.assetType)}`
-          : `Histórico de Status - ${tag}`}
-      </h1>
-
-      <p className="text-muted-foreground mb-6">
-        Histórico de mudanças de status do ativo
-      </p>
-
+    <DashboardContainer 
+    title={
+      asset
+            ? `${asset.tag} - ${getAssetTypeLabel(asset.assetType)}`
+            : `Histórico de Status - ${tag}`} description={`Histórico de status do ativo ${tag}`}>
       {!assetHistoryResult.success ? (
         <div className="mt-6">
           <ErrorAlert
@@ -54,6 +49,8 @@ export default async function StatusHistoryPage({
           toolbar={<StatusHistoryToolbar />}
         />
       )}
-    </div>
+    </DashboardContainer>
+
+      
   )
 }

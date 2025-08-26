@@ -4,13 +4,16 @@ import { GlobalTableToolbar } from '@/components/data-tables/global-table-toolba
 import { sectorsTableColumns } from '@/components/data-tables/sectors/sectors-table-columns'
 import { CreateSectorButton } from '@/components/data-tables/sectors/create-sector-button'
 import { ErrorAlert } from '@/components/error-alert'
+import DashboardContainer from '@/components/dashboard-container'
 
 export default async function SectorsPage() {
   const response = await getSectors()
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="font-bold text-2xl">Setores</h1>
+    <DashboardContainer
+      title="Setores"
+      description="Visualize e gerencie os setores cadastrados."
+    >
 
       {response.success ? (
         <DataTable
@@ -32,6 +35,6 @@ export default async function SectorsPage() {
           />
         </div>
       )}
-    </div>
+    </DashboardContainer>
   )
 }

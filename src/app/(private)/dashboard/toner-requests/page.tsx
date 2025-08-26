@@ -3,14 +3,16 @@ import { tonerRequestsTableColumns } from '@/components/data-tables/toner-reques
 import { TonerRequestsTableToolbar } from '@/components/data-tables/toner-requests/toner-requests-table-toolbar'
 import { DataTable } from '@/components/data-tables/data-table'
 import { ErrorAlert } from '@/components/error-alert'
+import DashboardContainer from '@/components/dashboard-container'
 
 export default async function TonerRequestsPage() {
   const response = await getTonerRequests()
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="font-bold text-2xl">Pedidos de Toner</h1>
-
+    <DashboardContainer
+      title="Pedidos de Toner"
+      description="Visualize e gerencie os pedidos de toner cadastrados."
+    >
       {response.success ? (
         <DataTable
           columns={tonerRequestsTableColumns}
@@ -30,6 +32,6 @@ export default async function TonerRequestsPage() {
           />
         </div>
       )}
-    </div>
+    </DashboardContainer>
   )
 }

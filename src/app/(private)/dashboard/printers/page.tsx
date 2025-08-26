@@ -4,14 +4,16 @@ import { printersTableColumns } from '@/components/data-tables/printers/printers
 import { PrintersTableToolbar } from '@/components/data-tables/printers/printers-table-toolbar'
 import { CreatePrinterButton } from '@/components/data-tables/printers/create-printer-button'
 import { ErrorAlert } from '@/components/error-alert'
+import DashboardContainer from '@/components/dashboard-container'
 
 export default async function PrintersPage() {
   const response = await getPrinters()
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="font-bold text-2xl">Impressoras</h1>
-
+    <DashboardContainer
+      title="Impressoras"
+      description="Visualize e gerencie as impressoras cadastradas."
+    >
       {response.success ? (
         <DataTable
           columns={printersTableColumns}
@@ -32,6 +34,6 @@ export default async function PrintersPage() {
           />
         </div>
       )}
-    </div>
+    </DashboardContainer>
   )
 }

@@ -1,7 +1,12 @@
+import DashboardContainer from "@/components/dashboard-container";
+
 export default async function DashboardPage() {
   return (
-    <div className="flex-1 flex flex-col gap-4 items-center justify-center ">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-    </div>
+    <DashboardContainer
+      title="Dashboard"
+      description="Bem-vindo ao dashboard do ADIT."
+    >
+      <h3>Gráficos e dados</h3>
+    </DashboardContainer>
   )
 }

@@ -4,13 +4,16 @@ import { getUsers } from '@/actions/users/get-users'
 import { usersTableColumns } from '@/components/data-tables/users/users-table-columns'
 import { CreateUserButton } from '@/components/data-tables/users/create-user-button'
 import { ErrorAlert } from '@/components/error-alert'
+import DashboardContainer from '@/components/dashboard-container'
 
 export default async function UsersPage() {
   const response = await getUsers()
 
   return (
-    <div className="container mx-auto px-4">
-      <h1 className="font-bold text-2xl">Lista de Usuários</h1>
+    <DashboardContainer
+      title="Usuários"
+      description="Visualize e gerencie os usuários cadastrados."
+    >
 
       {response.success ? (
         <DataTable
@@ -32,6 +35,6 @@ export default async function UsersPage() {
           />
         </div>
       )}
-    </div>
+    </DashboardContainer>
   )
 }
