@@ -10,20 +10,21 @@ export default async function DashboardPage() {
     getTonerRequestsMetrics(),
   ])
 
-  console.log(tonerMetrics.data);
-
   // Helper function para calcular percentuais
   const calculatePercentage = (value: number, total: number) =>
     total > 0 ? (value / total) * 100 : 0
 
   const { assetsByStatus, totalAssets = 0 } = assetsMetrics.data || {}
-  
+
   const assetsInUse = assetsByStatus?.[AssetStatus.USING] ?? 0
   const assetsInMaintenance = assetsByStatus?.[AssetStatus.MAINTENANCE] ?? 0
   const assetsInStock = assetsByStatus?.[AssetStatus.STOCK] ?? 0
-  
+
   const percentageInUse = calculatePercentage(assetsInUse, totalAssets)
-  const percentageInMaintenance = calculatePercentage(assetsInMaintenance, totalAssets)
+  const percentageInMaintenance = calculatePercentage(
+    assetsInMaintenance,
+    totalAssets,
+  )
   const percentageInStock = calculatePercentage(assetsInStock, totalAssets)
 
   return (
@@ -52,27 +53,21 @@ export default async function DashboardPage() {
             <MetricCard
               title="Ativos em Uso"
               description="Percentual de ativos atualmente em uso"
-              value={
-               `${percentageInUse.toFixed(1)}%`
-              }
+              value={`${percentageInUse.toFixed(1)}%`}
               secondaryValue={`${assetsInUse} de ${totalAssets}`}
             />
 
             <MetricCard
               title="Ativos em Manutenção"
               description="Quantidade de ativos atualmente em manutenção"
-              value={
-                 `${percentageInMaintenance.toFixed(1)}%`
-              }
+              value={`${percentageInMaintenance.toFixed(1)}%`}
               secondaryValue={`${assetsInMaintenance} de ${totalAssets}`}
             />
 
             <MetricCard
               title="Ativos em Estoque"
               description="Percentual de ativos atualmente em estoque"
-              value={
-               `${percentageInStock.toFixed(1)}%`
-              }
+              value={`${percentageInStock.toFixed(1)}%`}
               secondaryValue={`${assetsInStock} de ${totalAssets}`}
             />
           </div>

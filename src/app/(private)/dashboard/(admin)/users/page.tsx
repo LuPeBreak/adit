@@ -14,7 +14,6 @@ export default async function UsersPage() {
       title="Usuários"
       description="Visualize e gerencie os usuários cadastrados."
     >
-
       {response.success ? (
         <DataTable
           columns={usersTableColumns}

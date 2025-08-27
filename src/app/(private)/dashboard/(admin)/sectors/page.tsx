@@ -14,7 +14,6 @@ export default async function SectorsPage() {
       title="Setores"
       description="Visualize e gerencie os setores cadastrados."
     >
-
       {response.success ? (
         <DataTable
           columns={sectorsTableColumns}

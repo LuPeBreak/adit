@@ -26,11 +26,14 @@ export default async function StatusHistoryPage({
     : []
 
   return (
-    <DashboardContainer 
-    title={
-      asset
-            ? `${asset.tag} - ${getAssetTypeLabel(asset.assetType)}`
-            : `Histórico de Status - ${tag}`} description={`Histórico de status do ativo ${tag}`}>
+    <DashboardContainer
+      title={
+        asset
+          ? `${asset.tag} - ${getAssetTypeLabel(asset.assetType)}`
+          : `Histórico de Status - ${tag}`
+      }
+      description={`Histórico de status do ativo ${tag}`}
+    >
       {!assetHistoryResult.success ? (
         <div className="mt-6">
           <ErrorAlert
@@ -50,7 +53,5 @@ export default async function StatusHistoryPage({
         />
       )}
     </DashboardContainer>
-
-      
   )
 }

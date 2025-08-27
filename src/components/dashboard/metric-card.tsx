@@ -1,6 +1,12 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
 interface MetricCardProps {
@@ -18,7 +24,6 @@ export function MetricCard({
   secondaryValue,
   className,
 }: MetricCardProps) {
-
   return (
     <Card
       className={cn(
@@ -32,9 +37,7 @@ export function MetricCard({
           {title}
         </CardTitle>
         {description && (
-          <CardDescription className="text-xs">
-            {description}
-          </CardDescription>
+          <CardDescription className="text-xs">{description}</CardDescription>
         )}
       </CardHeader>
       <CardContent className="pt-0">
