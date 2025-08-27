@@ -95,6 +95,22 @@ export async function createPublicTonerRequestAction(
       )
     }
 
+    // Verificar se já existe um pedido pendente para esta impressora
+    const existingPendingRequest = await prisma.tonerRequest.findFirst({
+      where: {
+        assetId,
+        status: 'PENDING',
+      },
+    })
+
+    if (existingPendingRequest) {
+      return createErrorResponse(
+        'Já existe um pedido de toner pendente para esta impressora. Aguarde a aprovação do pedido existente antes de criar um novo.',
+        'VALIDATION_ERROR',
+        'assetId',
+      )
+    }
+
     // Criar o pedido de toner
     await prisma.tonerRequest.create({
       data: {
