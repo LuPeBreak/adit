@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { AssetStatus } from '@/generated/prisma'
+import { AssetStatus, AssetType } from '@/generated/prisma'
 
 // Schema para atualização de status do ativo
 export const updateAssetStatusSchema = z.object({
@@ -16,5 +16,12 @@ export const getAssetByTagSchema = z.object({
   tag: z.string().min(1, 'Número de patrimônio é obrigatório'),
 })
 
+export const getAssetsMetricsByTypeSchema = z.object({
+  assetType: z.nativeEnum(AssetType).optional(),
+})
+
 export type UpdateAssetStatusData = z.infer<typeof updateAssetStatusSchema>
 export type GetAssetByTagData = z.infer<typeof getAssetByTagSchema>
+export type GetAssetsMetricsByTypeData = z.infer<
+  typeof getAssetsMetricsByTypeSchema
+>
