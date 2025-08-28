@@ -174,7 +174,7 @@ export function CreatePrinterDialogForm({
                 <FormItem>
                   <FormLabel>N° Patrimônio</FormLabel>
                   <FormControl>
-                    <Input placeholder="123456" {...field} />
+                    <Input placeholder="TI-00001" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

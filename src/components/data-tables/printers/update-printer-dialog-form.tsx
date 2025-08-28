@@ -158,7 +158,7 @@ export function UpdatePrinterDialogForm({
                   <FormLabel>N° Patrimônio</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={'Digite a tag'}
+                      placeholder={'TI-00001'}
                       {...field}
                       disabled={!isAdmin}
                     />

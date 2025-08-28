@@ -9,8 +9,12 @@ export const createPrinterSchema = z.object({
     .string({ message: 'O endereço IP é obrigatório' })
     .ip('Endereço IP inválido'),
   tag: z
-    .string({ message: 'O número do patrimônio é obrigatório' })
-    .min(1, 'O número do patrimônio é obrigatório'),
+    .string()
+    .min(1, 'Número do patrimônio é obrigatório')
+    .regex(/^TI-\d{5}$/, {
+      message:
+        'Número do patrimônio deve seguir o formato TI-00001 (TI- seguido de 5 números)',
+    }),
   status: z.nativeEnum(AssetStatus, {
     message: 'Status inválido',
   }),
@@ -35,7 +39,10 @@ export const updatePrinterAdminSchema = z.object({
     .optional(),
   tag: z
     .string({ message: 'O número do patrimônio é obrigatório' })
-    .min(1, 'O número do patrimônio é obrigatório')
+    .regex(/^TI-\d{5}$/, {
+      message:
+        'O número do patrimônio deve seguir o padrão TI-00001 (TI- seguido de 5 dígitos)',
+    })
     .optional(),
   status: z
     .nativeEnum(AssetStatus, {

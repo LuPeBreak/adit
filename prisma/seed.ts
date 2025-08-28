@@ -99,7 +99,7 @@ async function main() {
     // Create the asset first
     const asset = await prisma.asset.create({
       data: {
-        tag: `PRINTER-${String(i).padStart(3, '0')}`,
+        tag: `TI-${i.toString().padStart(5, '0')}`,
         assetType: 'PRINTER',
         status: randomStatus,
         sectorId: randomSector.id,
