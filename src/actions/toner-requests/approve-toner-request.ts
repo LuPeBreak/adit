@@ -42,16 +42,16 @@ export const approveTonerRequestAction = withPermissions(
           requesterEmail: true,
           requesterName: true,
           requesterWhatsApp: true,
-          asset: {
+          printer: {
             select: {
-              tag: true,
-              printer: {
+              asset: {
                 select: {
-                  printerModel: {
-                    select: {
-                      name: true,
-                    },
-                  },
+                  tag: true,
+                },
+              },
+              printerModel: {
+                select: {
+                  name: true,
                 },
               },
             },
@@ -93,9 +93,8 @@ export const approveTonerRequestAction = withPermissions(
           requesterName: existingRequest.requesterName,
           requesterEmail: existingRequest.requesterEmail,
           selectedToner: existingRequest.selectedToner,
-          printerTag: existingRequest.asset?.tag || 'N/A',
-          printerModel:
-            existingRequest.asset?.printer?.printerModel.name || 'N/A',
+          printerTag: existingRequest.printer?.asset?.tag || 'N/A',
+          printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
         }),
       })
 
@@ -105,9 +104,8 @@ export const approveTonerRequestAction = withPermissions(
         text: createApprovalWhatsAppTemplate({
           requesterName: existingRequest.requesterName,
           selectedToner: existingRequest.selectedToner,
-          printerTag: existingRequest.asset?.tag || 'N/A',
-          printerModel:
-            existingRequest.asset?.printer?.printerModel.name || 'N/A',
+          printerTag: existingRequest.printer?.asset?.tag || 'N/A',
+          printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
         }),
       })
 

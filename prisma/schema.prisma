@@ -112,7 +112,6 @@ model Asset {
   sectorId String @map("sector_id")
 
   printer       Printer?
-  TonerRequest  TonerRequest[]
   statusHistory AssetStatusHistory[]
 
   @@map("asset")
@@ -130,6 +129,8 @@ model Printer {
 
   asset   Asset  @relation(fields: [assetId], references: [id])
   assetId String @unique
+
+  tonerRequests TonerRequest[]
 
   @@map("printer")
 }
@@ -196,8 +197,8 @@ model TonerRequest {
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
-  asset   Asset  @relation(fields: [assetId], references: [id])
-  assetId String @map("asset_id")
+  printer   Printer @relation(fields: [printerId], references: [id])
+  printerId String  @map("printer_id")
 
   @@map("toner_request")
 }

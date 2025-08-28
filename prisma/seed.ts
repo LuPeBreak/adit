@@ -86,7 +86,7 @@ async function main() {
   console.log('Created departments and sectors.')
 
   // 3. Create 10 Printers and their corresponding Assets randomly across sectors
-  const createdAssets = []
+  const createdPrinters = []
   for (let i = 1; i <= 10; i++) {
     // Select a random sector and printer model
     const randomSector = sectors[Math.floor(Math.random() * sectors.length)]
@@ -105,10 +105,9 @@ async function main() {
         sectorId: randomSector.id,
       },
     })
-    createdAssets.push(asset)
 
-    // Create the printer linked to the asset
-    await prisma.printer.create({
+    // Create the printer linked to the asset and store it directly
+    const printer = await prisma.printer.create({
       data: {
         serialNumber: `SN-${String(Math.random()).slice(2, 12)}`,
         ipAddress: `192.168.1.${100 + i}`,
@@ -116,6 +115,7 @@ async function main() {
         assetId: asset.id,
       },
     })
+    createdPrinters.push(printer)
 
     // Create initial status history entry for the asset
     await prisma.assetStatusHistory.create({
@@ -144,7 +144,7 @@ async function main() {
     'Patricia Rocha',
   ]
 
-  for (const asset of createdAssets) {
+  for (const printer of createdPrinters) {
     for (let j = 1; j <= 3; j++) {
       const randomRequester =
         requesterNames[Math.floor(Math.random() * requesterNames.length)]
@@ -159,7 +159,7 @@ async function main() {
           selectedToner: 'HP 58A Black', // Simplified for now
           status: randomStatus,
           notes: j === 1 ? 'Pedido urgente para impressão de relatórios' : null,
-          assetId: asset.id,
+          printerId: printer.id,
         },
       })
     }

@@ -44,9 +44,8 @@ import { getPublicPrintersAction } from '@/actions/printers/get-public-printers'
 import { toast } from 'sonner'
 
 type PrinterData = {
-  assetId: string
+  printerId: string
   tag: string
-  status: string
   sector: string
   department: string
   printerModel: string
@@ -89,7 +88,7 @@ export function PublicTonerRequestForm({
   const form = useForm<PublicTonerRequestData>({
     resolver: zodResolver(publicTonerRequestSchema),
     defaultValues: {
-      assetId: '',
+      printerId: '',
       requesterName: '',
       registrationNumber: '',
       requesterEmail: '',
@@ -144,7 +143,7 @@ export function PublicTonerRequestForm({
 
   const handlePrinterSelect = (printer: PrinterData) => {
     setSelectedPrinter(printer)
-    form.setValue('assetId', printer.assetId)
+    form.setValue('printerId', printer.printerId)
     setOpen(false)
   }
 
@@ -154,7 +153,7 @@ export function PublicTonerRequestForm({
         {/* Seleção de Impressora */}
         <FormField
           control={form.control}
-          name="assetId"
+          name="printerId"
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Impressora (Nº Patrimônio da TI)</FormLabel>
@@ -196,14 +195,14 @@ export function PublicTonerRequestForm({
                       <CommandGroup>
                         {printers.map((printer) => (
                           <CommandItem
-                            key={printer.assetId}
+                            key={printer.printerId}
                             value={printer.tag}
                             onSelect={() => handlePrinterSelect(printer)}
                           >
                             <Check
                               className={cn(
                                 'mr-2 h-4 w-4',
-                                selectedPrinter?.assetId === printer.assetId
+                                selectedPrinter?.printerId === printer.printerId
                                   ? 'opacity-100'
                                   : 'opacity-0',
                               )}

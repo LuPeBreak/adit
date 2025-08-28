@@ -7,9 +7,8 @@ import {
   type ActionResponse,
 } from '@/lib/types/action-response'
 type PrinterData = {
-  assetId: string
+  printerId: string
   tag: string
-  status: string
   sector: string
   department: string
   printerModel: string
@@ -23,14 +22,13 @@ export async function getPublicPrintersAction(): Promise<
     const printers = await prisma.asset.findMany({
       where: {
         assetType: 'PRINTER',
+        status: 'USING',
         printer: {
           isNot: null,
         },
       },
       select: {
-        id: true,
         tag: true,
-        status: true,
         sector: {
           select: {
             name: true,
@@ -59,9 +57,8 @@ export async function getPublicPrintersAction(): Promise<
     })
 
     const formattedPrinters = printers.map((asset) => ({
-      assetId: asset.id,
+      printerId: asset.printer?.id || '',
       tag: asset.tag,
-      status: asset.status,
       sector: asset.sector.name,
       department: asset.sector.department.name,
       printerModel: asset.printer?.printerModel.name || '',

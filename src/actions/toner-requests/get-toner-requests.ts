@@ -25,15 +25,19 @@ export const getTonerRequests = withPermissions(
           createdAt: true,
           updatedAt: true,
           notes: true,
-          asset: {
+          printer: {
             select: {
-              tag: true,
-              sector: {
+              asset: {
                 select: {
-                  name: true,
-                  department: {
+                  tag: true,
+                  sector: {
                     select: {
                       name: true,
+                      department: {
+                        select: {
+                          name: true,
+                        },
+                      },
                     },
                   },
                 },
@@ -53,9 +57,9 @@ export const getTonerRequests = withPermissions(
         requesterEmail: request.requesterEmail,
         requesterWhatsApp: request.requesterWhatsApp,
         selectedToner: request.selectedToner,
-        assetTag: request.asset.tag,
-        sector: request.asset.sector.name,
-        department: request.asset.sector.department.name,
+        assetTag: request.printer.asset.tag,
+        sector: request.printer.asset.sector.name,
+        department: request.printer.asset.sector.department.name,
         status: request.status,
         createdAt: request.createdAt,
         updatedAt: request.updatedAt,

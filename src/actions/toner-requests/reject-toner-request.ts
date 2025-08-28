@@ -42,16 +42,16 @@ export const rejectTonerRequestAction = withPermissions(
           requesterName: true,
           requesterWhatsApp: true,
           selectedToner: true,
-          asset: {
+          printer: {
             select: {
-              tag: true,
-              printer: {
+              asset: {
                 select: {
-                  printerModel: {
-                    select: {
-                      name: true,
-                    },
-                  },
+                  tag: true,
+                },
+              },
+              printerModel: {
+                select: {
+                  name: true,
                 },
               },
             },
@@ -95,9 +95,8 @@ export const rejectTonerRequestAction = withPermissions(
           requesterEmail: existingRequest.requesterEmail,
           rejectionReason,
           selectedToner: existingRequest.selectedToner,
-          printerTag: existingRequest.asset?.tag || 'N/A',
-          printerModel:
-            existingRequest.asset?.printer?.printerModel.name || 'N/A',
+          printerTag: existingRequest.printer?.asset?.tag || 'N/A',
+          printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
         }),
       })
 
@@ -108,9 +107,8 @@ export const rejectTonerRequestAction = withPermissions(
           requesterName: existingRequest.requesterName,
           rejectionReason,
           selectedToner: existingRequest.selectedToner,
-          printerTag: existingRequest.asset?.tag || 'N/A',
-          printerModel:
-            existingRequest.asset?.printer?.printerModel.name || 'N/A',
+          printerTag: existingRequest.printer?.asset?.tag || 'N/A',
+          printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
         }),
       })
 

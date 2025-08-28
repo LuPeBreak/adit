@@ -5,7 +5,7 @@ import {
 } from '@/lib/validations/name-validations'
 
 export const publicTonerRequestSchema = z.object({
-  assetId: z
+  printerId: z
     .string({ message: 'A impressora é obrigatória' })
     .cuid('ID da impressora inválido'),
   requesterName: createFullNameValidation('nome do requerente', 50),

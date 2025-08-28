@@ -33,7 +33,7 @@ export async function createPublicTonerRequestAction(
   }
 
   const {
-    assetId,
+    printerId,
     requesterName,
     registrationNumber,
     requesterEmail,
@@ -42,69 +42,68 @@ export async function createPublicTonerRequestAction(
   } = validatedFields.data
 
   try {
-    // Executar validações em paralelo para melhor performance
-    const [asset, existingPendingRequest] = await Promise.all([
-      // Verificar se o asset existe e é uma impressora
-      prisma.asset.findFirst({
-        where: {
-          id: assetId,
-          assetType: 'PRINTER',
-          printer: {
-            isNot: null,
-          },
+    // Buscar impressora e verificar pedido pendente em uma única query otimizada
+    const printer = await prisma.printer.findUnique({
+      where: {
+        id: printerId,
+        asset: {
+          status: 'USING', // Apenas impressoras em uso
         },
-        select: {
-          id: true,
-          tag: true,
-          sector: {
-            select: {
-              name: true,
-              department: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-          printer: {
-            select: {
-              printerModel: {
-                select: {
-                  name: true,
-                  toners: true,
+      },
+      select: {
+        id: true,
+        asset: {
+          select: {
+            tag: true,
+            status: true,
+            sector: {
+              select: {
+                name: true,
+                department: {
+                  select: {
+                    name: true,
+                  },
                 },
               },
             },
           },
         },
-      }),
-      // Verificar se já existe um pedido pendente para esta impressora
-      prisma.tonerRequest.findFirst({
-        where: {
-          assetId,
-          status: 'PENDING',
+        printerModel: {
+          select: {
+            name: true,
+            toners: true,
+          },
         },
-      }),
-    ])
+        tonerRequests: {
+          where: {
+            status: 'PENDING',
+          },
+          select: {
+            id: true,
+          },
+          take: 1,
+        },
+      },
+    })
 
-    if (!asset) {
+    if (!printer) {
       return createErrorResponse(
-        'Impressora não encontrada',
+        'Impressora não encontrada ou não está em uso. Apenas impressoras em uso podem ter pedidos de toner.',
         'NOT_FOUND_ERROR',
-        'assetId',
+        'printerId',
       )
     }
 
-    if (existingPendingRequest) {
+    if (printer.tonerRequests.length > 0) {
       return createErrorResponse(
         'Já existe um pedido de toner pendente para esta impressora. Aguarde a aprovação do pedido existente antes de criar um novo.',
         'VALIDATION_ERROR',
-        'assetId',
+        'printerId',
       )
     }
 
     // Verificar se o toner selecionado é válido para esta impressora
-    const availableToners = asset.printer?.printerModel?.toners || []
+    const availableToners = printer.printerModel?.toners || []
     if (!availableToners.includes(selectedToner)) {
       return createErrorResponse(
         'Toner selecionado não é compatível com esta impressora',
@@ -116,7 +115,7 @@ export async function createPublicTonerRequestAction(
     // Criar o pedido de toner
     await prisma.tonerRequest.create({
       data: {
-        assetId,
+        printerId: printer.id,
         requesterName,
         registrationNumber,
         requesterEmail,
@@ -136,11 +135,11 @@ export async function createPublicTonerRequestAction(
           requesterName,
           requesterEmail,
           requesterWhatsApp,
-          department: asset?.sector?.department?.name || 'N/A',
-          sector: asset?.sector?.name || 'N/A',
-          printerModel: asset?.printer?.printerModel?.name || 'N/A',
+          department: printer?.asset?.sector?.department?.name || 'N/A',
+          sector: printer?.asset?.sector?.name || 'N/A',
+          printerModel: printer?.printerModel?.name || 'N/A',
           selectedToner,
-          printerTag: asset?.tag || 'N/A',
+          printerTag: printer?.asset?.tag || 'N/A',
         }),
       }).catch((error) => {
         console.error('Erro ao enviar email para equipe de TI:', error)
@@ -155,8 +154,8 @@ export async function createPublicTonerRequestAction(
           requesterName,
           requesterEmail,
           selectedToner,
-          printerTag: asset?.tag || 'N/A',
-          printerModel: asset?.printer?.printerModel?.name || 'N/A',
+          printerTag: printer?.asset?.tag || 'N/A',
+          printerModel: printer?.printerModel?.name || 'N/A',
         }),
       }).catch((error) => {
         console.error('Erro ao enviar email de confirmação:', error)
@@ -169,8 +168,8 @@ export async function createPublicTonerRequestAction(
         text: createRequestConfirmationWhatsAppTemplate({
           requesterName,
           selectedToner,
-          printerTag: asset?.tag || 'N/A',
-          printerModel: asset?.printer?.printerModel?.name || 'N/A',
+          printerTag: printer?.asset?.tag || 'N/A',
+          printerModel: printer?.printerModel?.name || 'N/A',
         }),
       }).catch((error) => {
         console.error('Erro ao enviar WhatsApp de confirmação:', error)
