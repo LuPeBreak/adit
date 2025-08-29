@@ -85,31 +85,49 @@ export const approveTonerRequestAction = withPermissions(
         },
       })
 
+      // Preparar dados para notificações
+      const notificationData = {
+        requesterName: existingRequest.requesterName,
+        requesterEmail: existingRequest.requesterEmail,
+        selectedToner: existingRequest.selectedToner,
+        printerTag: existingRequest.printer?.asset?.tag || 'N/A',
+        printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
+      }
+
+      const notificationErrors: string[] = []
+
       // Enviar email de aprovação
-      await sendEmail({
-        email: existingRequest.requesterEmail,
-        subject: 'Pedido de Toner Aprovado - Equipe de TI PMBM',
-        message: createApprovalEmailTemplate({
-          requesterName: existingRequest.requesterName,
-          requesterEmail: existingRequest.requesterEmail,
-          selectedToner: existingRequest.selectedToner,
-          printerTag: existingRequest.printer?.asset?.tag || 'N/A',
-          printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
-        }),
-      })
+      try {
+        await sendEmail({
+          email: existingRequest.requesterEmail,
+          subject: 'Pedido de Toner Aprovado - Equipe de TI PMBM',
+          message: createApprovalEmailTemplate(notificationData),
+        })
+      } catch (error) {
+        console.error('Erro ao enviar email de aprovação:', error)
+        notificationErrors.push('Email')
+      }
 
       // Enviar mensagem WhatsApp de aprovação
-      await sendWhatsApp({
-        number: `55${existingRequest.requesterWhatsApp}`,
-        text: createApprovalWhatsAppTemplate({
-          requesterName: existingRequest.requesterName,
-          selectedToner: existingRequest.selectedToner,
-          printerTag: existingRequest.printer?.asset?.tag || 'N/A',
-          printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
-        }),
-      })
+      try {
+        await sendWhatsApp({
+          number: `55${existingRequest.requesterWhatsApp}`,
+          text: createApprovalWhatsAppTemplate(notificationData),
+        })
+      } catch (error) {
+        console.error('Erro ao enviar WhatsApp de aprovação:', error)
+        notificationErrors.push('WhatsApp')
+      }
 
       revalidatePath('/dashboard/toner-requests')
+
+      // Retornar com informações sobre falhas de notificação
+      if (notificationErrors.length > 0) {
+        return createErrorResponse(
+          `Pedido aprovado com sucesso, mas falha ao enviar notificações via: ${notificationErrors.join(' e ')}. Verifique as configurações de ${notificationErrors.join(' e ')}.`,
+          'NOTIFICATION_ERROR',
+        )
+      }
 
       return createSuccessResponse()
     } catch (error) {

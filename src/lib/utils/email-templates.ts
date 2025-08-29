@@ -36,6 +36,14 @@ export interface RequestConfirmationData {
   printerModel: string
 }
 
+export interface DeliveryEmailData {
+  requesterName: string
+  selectedToner: string
+  printerTag: string
+  printerModel: string
+  deliveryNote?: string
+}
+
 export function createApprovalEmailTemplate(data: ApprovalEmailData): string {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
@@ -76,6 +84,70 @@ export function createApprovalEmailTemplate(data: ApprovalEmailData): string {
               Email: ${process.env.ADMIN_EMAIL}<br>
               <br>
             🕒 <strong>Horário de retirada:</strong><br>
+              Segunda a sexta-feira: 8h às 12h e 14h às 17h
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px; margin: 0;">
+            Este é um email automático. Não responda a esta mensagem.
+          </p>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+export function createDeliveryEmailTemplate(data: DeliveryEmailData): string {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+      <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #8b5cf6; margin: 0; font-size: 24px;">📦 Toner Entregue</h1>
+        </div>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Olá <strong>${data.requesterName}</strong>,
+        </p>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Seu toner foi entregue com sucesso! O pedido foi finalizado pela equipe de TI.
+        </p>
+        
+        <div style="background-color: #f3f4f6; border-left: 4px solid #8b5cf6; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #6b7280; font-size: 14px; margin: 0; font-weight: 500;">
+            📝 <strong>Detalhes do pedido:</strong><br>
+            <strong>Toner:</strong> ${data.selectedToner}<br>
+            <strong>Nº Patrimônio:</strong> ${data.printerTag}<br>
+            <strong>Modelo da Impressora:</strong> ${data.printerModel}
+          </p>
+        </div>
+        ${
+          data.deliveryNote
+            ? `
+        <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #92400e; font-size: 14px; margin: 0; font-weight: 500;">
+            📝 <strong>Observações da entrega:</strong><br>
+            ${data.deliveryNote}
+          </p>
+        </div>`
+            : ''
+        }
+        
+        <div style="background-color: #f0fdf4; border-left: 4px solid #22c55e; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #15803d; font-size: 14px; margin: 0; font-weight: 500;">
+            ✅ <strong>Status:</strong><br>
+            Pedido finalizado com sucesso. O toner foi entregue e está pronto para uso.
+          </p>
+        </div>
+        
+        <div style="background-color: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #1e40af; font-size: 14px; margin: 0;">
+            📞 <strong>Contato:</strong><br>
+              Whatsapp: ${maskWhatsappNumber(process.env.ADMIN_WHATSAPP || '')}<br>
+              Email: ${process.env.ADMIN_EMAIL}<br>
+              <br>
+            🕒 <strong>Horário de atendimento:</strong><br>
               Segunda a sexta-feira: 8h às 12h e 14h às 17h
           </p>
         </div>

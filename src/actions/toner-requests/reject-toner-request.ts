@@ -86,33 +86,50 @@ export const rejectTonerRequestAction = withPermissions(
         },
       })
 
+      // Preparar dados para notificações
+      const notificationData = {
+        requesterName: existingRequest.requesterName,
+        requesterEmail: existingRequest.requesterEmail,
+        rejectionReason,
+        selectedToner: existingRequest.selectedToner,
+        printerTag: existingRequest.printer?.asset?.tag || 'N/A',
+        printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
+      }
+
+      const notificationErrors: string[] = []
+
       // Enviar email de rejeição
-      await sendEmail({
-        email: existingRequest.requesterEmail,
-        subject: 'Pedido de Toner Rejeitado - Equipe de TI PMBM',
-        message: createRejectionEmailTemplate({
-          requesterName: existingRequest.requesterName,
-          requesterEmail: existingRequest.requesterEmail,
-          rejectionReason,
-          selectedToner: existingRequest.selectedToner,
-          printerTag: existingRequest.printer?.asset?.tag || 'N/A',
-          printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
-        }),
-      })
+      try {
+        await sendEmail({
+          email: existingRequest.requesterEmail,
+          subject: 'Pedido de Toner Rejeitado - Equipe de TI PMBM',
+          message: createRejectionEmailTemplate(notificationData),
+        })
+      } catch (error) {
+        console.error('Erro ao enviar email de rejeição:', error)
+        notificationErrors.push('Email')
+      }
 
       // Enviar mensagem WhatsApp de rejeição
-      await sendWhatsApp({
-        number: `55${existingRequest.requesterWhatsApp}`,
-        text: createRejectionWhatsAppTemplate({
-          requesterName: existingRequest.requesterName,
-          rejectionReason,
-          selectedToner: existingRequest.selectedToner,
-          printerTag: existingRequest.printer?.asset?.tag || 'N/A',
-          printerModel: existingRequest.printer?.printerModel?.name || 'N/A',
-        }),
-      })
+      try {
+        await sendWhatsApp({
+          number: `55${existingRequest.requesterWhatsApp}`,
+          text: createRejectionWhatsAppTemplate(notificationData),
+        })
+      } catch (error) {
+        console.error('Erro ao enviar WhatsApp de rejeição:', error)
+        notificationErrors.push('WhatsApp')
+      }
 
       revalidatePath('/dashboard/toner-requests')
+
+      // Retornar com informações sobre falhas de notificação
+      if (notificationErrors.length > 0) {
+        return createErrorResponse(
+          `Pedido rejeitado com sucesso, mas falha ao enviar notificações via: ${notificationErrors.join(' e ')}. Verifique as configurações de ${notificationErrors.join(' e ')}.`,
+          'NOTIFICATION_ERROR',
+        )
+      }
 
       return createSuccessResponse()
     } catch (error) {

@@ -32,6 +32,14 @@ export interface RequestConfirmationWhatsAppData {
   printerModel: string
 }
 
+export interface DeliveryWhatsAppData {
+  requesterName: string
+  selectedToner: string
+  printerTag: string
+  printerModel: string
+  deliveryNote?: string
+}
+
 export function createApprovalWhatsAppTemplate(
   data: ApprovalWhatsAppData,
 ): string {
@@ -54,6 +62,41 @@ Se você está no prédio da prefeitura, a equipe de TI fará a entrega e instal
 • Email: ${process.env.ADMIN_EMAIL}
 
 🕒 *Horário de retirada:*
+Segunda a sexta-feira: 8h às 12h e 14h às 17h
+
+---
+*Equipe de TI - PMBM*`
+}
+
+export function createDeliveryWhatsAppTemplate(
+  data: DeliveryWhatsAppData,
+): string {
+  return `📦 *TONER ENTREGUE*
+
+Olá *${data.requesterName}*!
+
+Seu toner foi entregue com sucesso! O pedido foi finalizado pela equipe de TI.
+
+📝 *Detalhes do pedido:*
+• Toner: ${data.selectedToner}
+• Nº Patrimônio: ${data.printerTag}
+• Modelo da Impressora: ${data.printerModel}
+${
+  data.deliveryNote
+    ? `
+📝 *Observações da entrega:*
+${data.deliveryNote}
+`
+    : ''
+}
+✅ *Status:*
+Pedido finalizado com sucesso. O toner foi entregue e está pronto para uso.
+
+📞 *Contato:*
+• WhatsApp: ${maskWhatsappNumber(process.env.ADMIN_WHATSAPP || '')}
+• Email: ${process.env.ADMIN_EMAIL}
+
+🕒 *Horário de atendimento:*
 Segunda a sexta-feira: 8h às 12h e 14h às 17h
 
 ---
