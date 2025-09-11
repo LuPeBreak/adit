@@ -156,11 +156,7 @@ export function CreateUserDialog({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Cargo</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o cargo" />

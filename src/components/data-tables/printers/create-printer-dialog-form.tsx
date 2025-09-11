@@ -32,9 +32,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { SectorSelect } from '@/components/sector-select'
 import { BasicDialog } from '@/components/basic-dialog'
 import { createPrinterAction } from '@/actions/printers/create-printer'
-import { getSectors } from '@/actions/sectors/get-sectors'
+
 import { getPrinterModels } from '@/actions/printer-models/get-printer-models'
 import { toast } from 'sonner'
 import { useEffect, useState } from 'react'
@@ -52,12 +53,6 @@ interface CreatePrinterDialogFormProps {
   onOpenChange: (open: boolean) => void
 }
 
-interface Sector {
-  id: string
-  name: string
-  departmentName: string
-}
-
 interface PrinterModel {
   id: string
   name: string
@@ -72,11 +67,8 @@ export function CreatePrinterDialogForm({
   open,
   onOpenChange,
 }: CreatePrinterDialogFormProps) {
-  const [sectors, setSectors] = useState<Sector[]>([])
   const [printerModels, setPrinterModels] = useState<PrinterModel[]>([])
-  const [sectorOpen, setSectorOpen] = useState(false)
   const [printerModelOpen, setPrinterModelOpen] = useState(false)
-  const [isLoadingSectors, setIsLoadingSectors] = useState(false)
   const [isLoadingModels, setIsLoadingModels] = useState(false)
 
   const form = useForm<CreatePrinterData>({
@@ -93,33 +85,9 @@ export function CreatePrinterDialogForm({
 
   useEffect(() => {
     if (open) {
-      loadSectors()
       loadPrinterModels()
     }
   }, [open])
-
-  async function loadSectors() {
-    setIsLoadingSectors(true)
-    try {
-      const response = await getSectors()
-      if (response.success && response.data) {
-        const mappedSectors = response.data.map((sector) => ({
-          id: sector.id,
-          name: sector.name,
-          departmentName: sector.departmentName,
-        }))
-        setSectors(mappedSectors)
-      } else {
-        console.error('Erro ao carregar setores:', response.error)
-        toast.error('Erro ao carregar setores')
-      }
-    } catch (error) {
-      console.error('Erro ao carregar setores:', error)
-      toast.error('Erro ao carregar setores')
-    } finally {
-      setIsLoadingSectors(false)
-    }
-  }
 
   async function loadPrinterModels() {
     setIsLoadingModels(true)
@@ -216,10 +184,7 @@ export function CreatePrinterDialogForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione o status" />
@@ -329,77 +294,10 @@ export function CreatePrinterDialogForm({
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>Secretaria - Setor</FormLabel>
-                <Popover open={sectorOpen} onOpenChange={setSectorOpen}>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={sectorOpen}
-                        className={cn(
-                          'justify-between',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                        disabled={isLoadingSectors}
-                      >
-                        {isLoadingSectors ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Carregando...
-                          </>
-                        ) : field.value ? (
-                          (() => {
-                            const sector = sectors.find(
-                              (s) => s.id === field.value,
-                            )
-                            return sector
-                              ? `${sector.departmentName} - ${sector.name}`
-                              : 'Setor não encontrado'
-                          })()
-                        ) : (
-                          'Selecione um setor'
-                        )}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
-                    <Command
-                      filter={(value, search) => {
-                        const sectorText = value.toLowerCase()
-                        const searchText = search.toLowerCase()
-                        return sectorText.includes(searchText) ? 1 : 0
-                      }}
-                    >
-                      <CommandInput placeholder="Buscar setor..." />
-                      <CommandList>
-                        <CommandEmpty>Nenhum setor encontrado.</CommandEmpty>
-                        <CommandGroup>
-                          {sectors.map((sector) => (
-                            <CommandItem
-                              key={sector.id}
-                              value={`${sector.departmentName} - ${sector.name}`}
-                              onSelect={() => {
-                                form.setValue('sectorId', sector.id)
-                                setSectorOpen(false)
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  field.value === sector.id
-                                    ? 'opacity-100'
-                                    : 'opacity-0',
-                                )}
-                              />
-                              {sector.departmentName} - {sector.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <SectorSelect
+                  value={field.value}
+                  onValueChange={field.onChange}
+                />
                 <FormMessage />
               </FormItem>
             )}

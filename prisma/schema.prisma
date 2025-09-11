@@ -88,6 +88,7 @@ model Verification {
 
 enum AssetType {
   PRINTER
+  PHONE
   //COMPUTER
   //SWITCH
 }
@@ -112,6 +113,7 @@ model Asset {
   sectorId String @map("sector_id")
 
   printer       Printer?
+  phone         Phone?
   statusHistory AssetStatusHistory[]
 
   @@map("asset")
@@ -201,6 +203,28 @@ model TonerRequest {
   printerId String  @map("printer_id")
 
   @@map("toner_request")
+}
+
+enum PhoneType {
+  VOIP
+  ANALOG
+  DIGITAL
+}
+
+model Phone {
+  id           String    @id @default(cuid())
+  phoneNumber  String    @unique @map("phone_number")
+  brand        String
+  phoneType    PhoneType @map("phone_type")
+  ipAddress    String?   @unique @map("ip_address")
+  serialNumber String    @unique @map("serial_number")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  asset   Asset  @relation(fields: [assetId], references: [id])
+  assetId String @unique
+
+  @@map("phone")
 }
 
 model AssetStatusHistory {

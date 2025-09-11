@@ -3,6 +3,7 @@ import {
   Network,
   PackageOpen,
   Printer,
+  Phone,
   User,
   Users,
   FileText,
@@ -62,6 +63,17 @@ const menuLinks = {
         title: 'Pedidos de Toner',
         url: '/dashboard/toner-requests',
         icon: FileText,
+        roles: ['OPERATOR', 'ADMIN'],
+      },
+    ],
+  },
+  Telefones: {
+    roles: ['OPERATOR', 'ADMIN'],
+    links: [
+      {
+        title: 'Telefones',
+        url: '/dashboard/phones',
+        icon: Phone,
         roles: ['OPERATOR', 'ADMIN'],
       },
     ],

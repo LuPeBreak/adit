@@ -1,8 +1,12 @@
 import { Badge } from '@/components/ui/badge'
-import { AssetStatus, TonerRequestStatus } from '@/generated/prisma'
+import { AssetStatus, TonerRequestStatus, PhoneType } from '@/generated/prisma'
 
 // Classes base para padronizar o tamanho dos badges
 const baseClasses = 'w-20 justify-center text-center'
+
+// ========================================
+// ASSET STATUS BADGES
+// ========================================
 
 // Função para criar badges de AssetStatus
 export function getAssetStatusBadge(status: AssetStatus) {
@@ -61,6 +65,10 @@ export function getAssetStatusBadge(status: AssetStatus) {
   }
 }
 
+// ========================================
+// USER STATUS BADGES
+// ========================================
+
 // Função para criar badges de status de usuário (banido/ativo)
 export function getUserStatusBadge(banned: boolean) {
   if (banned) {
@@ -82,6 +90,10 @@ export function getUserStatusBadge(banned: boolean) {
     </Badge>
   )
 }
+
+// ========================================
+// TONER REQUEST STATUS BADGES
+// ========================================
 
 // Função para criar badges de TonerRequestStatus
 export function getTonerRequestStatusBadge(status: TonerRequestStatus) {
@@ -120,6 +132,49 @@ export function getTonerRequestStatusBadge(status: TonerRequestStatus) {
           className={`bg-red-50 text-red-700 border-red-200 ${baseClasses}`}
         >
           Rejeitado
+        </Badge>
+      )
+    default:
+      return (
+        <Badge variant="outline" className={baseClasses}>
+          Desconhecido
+        </Badge>
+      )
+  }
+}
+
+// ========================================
+// PHONE TYPE BADGES
+// ========================================
+
+// Função para criar badges de PhoneType
+export function getPhoneTypeBadge(phoneType: PhoneType) {
+  switch (phoneType) {
+    case PhoneType.VOIP:
+      return (
+        <Badge
+          variant="outline"
+          className={`bg-blue-50 text-blue-700 border-blue-200 ${baseClasses}`}
+        >
+          VoIP
+        </Badge>
+      )
+    case PhoneType.ANALOG:
+      return (
+        <Badge
+          variant="outline"
+          className={`bg-green-50 text-green-700 border-green-200 ${baseClasses}`}
+        >
+          Analógico
+        </Badge>
+      )
+    case PhoneType.DIGITAL:
+      return (
+        <Badge
+          variant="outline"
+          className={`bg-purple-50 text-purple-700 border-purple-200 ${baseClasses}`}
+        >
+          Digital
         </Badge>
       )
     default:

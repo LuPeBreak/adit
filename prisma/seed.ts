@@ -2,6 +2,7 @@ import {
   PrismaClient,
   AssetStatus,
   TonerRequestStatus,
+  PhoneType,
 } from '../src/generated/prisma'
 
 const prisma = new PrismaClient()
@@ -21,6 +22,7 @@ async function main() {
   await prisma.tonerRequest.deleteMany()
   await prisma.assetStatusHistory.deleteMany()
   await prisma.printer.deleteMany()
+  await prisma.phone.deleteMany()
   await prisma.asset.deleteMany()
   await prisma.printerModel.deleteMany()
   await prisma.sector.deleteMany()
@@ -130,7 +132,64 @@ async function main() {
   }
   console.log('Created 10 printers and their assets.')
 
-  // 4. Create 3 toner requests per printer (30 total)
+  // 4. Create 10 Phones and their corresponding Assets randomly across sectors
+  const phoneBrands = [
+    'Intelbras',
+    'Cisco',
+    'Yealink',
+    'Grandstream',
+    'Panasonic',
+  ]
+
+  for (let i = 1; i <= 10; i++) {
+    // Select a random sector and phone type
+    const randomSector = sectors[Math.floor(Math.random() * sectors.length)]
+    const randomPhoneType = getRandomEnumValue(PhoneType)
+    const randomBrand =
+      phoneBrands[Math.floor(Math.random() * phoneBrands.length)]
+
+    // Get random status for asset
+    const randomStatus = getRandomEnumValue(AssetStatus)
+
+    // Create the asset first
+    const asset = await prisma.asset.create({
+      data: {
+        tag: `TI-${(10 + i).toString().padStart(5, '0')}`,
+        assetType: 'PHONE',
+        status: randomStatus,
+        sectorId: randomSector.id,
+      },
+    })
+
+    // Create the phone linked to the asset
+    await prisma.phone.create({
+      data: {
+        phoneNumber: `3323${(2000 + i).toString()}`,
+        brand: randomBrand,
+        phoneType: randomPhoneType,
+        ipAddress:
+          randomPhoneType === 'VOIP' && Math.random() > 0.3
+            ? `192.168.2.${100 + i}`
+            : null,
+        serialNumber: `TEL-SN-${String(Math.random()).slice(2, 12)}`,
+        assetId: asset.id,
+      },
+    })
+
+    // Create initial status history entry for the asset
+    await prisma.assetStatusHistory.create({
+      data: {
+        assetId: asset.id,
+        status: randomStatus,
+        sectorId: randomSector.id,
+        changedBy: adminUser.id,
+        notes: 'Registro inicial do telefone no sistema',
+      },
+    })
+  }
+  console.log('Created 10 phones and their assets.')
+
+  // 5. Create 3 toner requests per printer (30 total)
   const requesterNames = [
     'João Silva',
     'Maria Santos',

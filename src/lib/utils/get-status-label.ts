@@ -1,4 +1,9 @@
-import { AssetStatus, TonerRequestStatus, AssetType } from '@/generated/prisma'
+import {
+  AssetStatus,
+  TonerRequestStatus,
+  AssetType,
+  PhoneType,
+} from '@/generated/prisma'
 
 // Função para converter AssetStatus para label amigável
 export function getAssetStatusLabel(status: AssetStatus): string {
@@ -39,6 +44,22 @@ export function getAssetTypeLabel(type: AssetType): string {
   switch (type) {
     case AssetType.PRINTER:
       return 'Impressora'
+    case AssetType.PHONE:
+      return 'Telefone'
+    default:
+      return type // Retorna o próprio valor se não houver um mapeamento específico
+  }
+}
+
+// Função para converter PhoneType para label amigável
+export function getPhoneTypeLabel(type: PhoneType): string {
+  switch (type) {
+    case PhoneType.VOIP:
+      return 'VoIP'
+    case PhoneType.ANALOG:
+      return 'Analógico'
+    case PhoneType.DIGITAL:
+      return 'Digital'
     default:
       return type // Retorna o próprio valor se não houver um mapeamento específico
   }

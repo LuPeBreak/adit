@@ -264,11 +264,7 @@ export function PublicTonerRequestForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Toner Desejado</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  value={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione o toner" />

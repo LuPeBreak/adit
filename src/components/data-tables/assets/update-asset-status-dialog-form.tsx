@@ -19,30 +19,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { SectorSelect } from '@/components/sector-select'
 import { BasicDialog } from '@/components/basic-dialog'
 import { updateAssetStatusAction } from '@/actions/assets/update-asset-status'
-import { getSectors } from '@/actions/sectors/get-sectors'
+
 import { toast } from 'sonner'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import {
   updateAssetStatusSchema,
   type UpdateAssetStatusData,
 } from '@/lib/schemas/asset'
-import { Loader2, Check, ChevronsUpDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Loader2 } from 'lucide-react'
 import { AssetStatus } from '@/generated/prisma'
 import { getAssetStatusLabel } from '@/lib/utils/get-status-label'
 
@@ -53,12 +40,6 @@ interface UpdateAssetStatusFormProps {
   assetTag: string
   open: boolean
   onOpenChange: (open: boolean) => void
-}
-
-interface Sector {
-  id: string
-  name: string
-  departmentName: string
 }
 
 const assetStatusOptions = Object.values(AssetStatus).map((status) => ({
@@ -74,10 +55,6 @@ export function UpdateAssetStatusForm({
   open,
   onOpenChange,
 }: UpdateAssetStatusFormProps) {
-  const [sectors, setSectors] = useState<Sector[]>([])
-  const [sectorOpen, setSectorOpen] = useState(false)
-  const [isLoadingSectors, setIsLoadingSectors] = useState(false)
-
   const form = useForm<UpdateAssetStatusData>({
     resolver: zodResolver(updateAssetStatusSchema),
     defaultValues: {
@@ -96,32 +73,8 @@ export function UpdateAssetStatusForm({
         sectorId: currentSectorId,
         notes: '',
       })
-      loadSectors()
     }
   }, [open, assetId, currentStatus, currentSectorId, form])
-
-  async function loadSectors() {
-    setIsLoadingSectors(true)
-    try {
-      const response = await getSectors()
-      if (response.success && response.data) {
-        const mappedSectors = response.data.map((sector) => ({
-          id: sector.id,
-          name: sector.name,
-          departmentName: sector.departmentName,
-        }))
-        setSectors(mappedSectors)
-      } else {
-        console.error('Erro ao carregar setores:', response.error)
-        toast.error('Erro ao carregar setores')
-      }
-    } catch (error) {
-      console.error('Erro ao carregar setores:', error)
-      toast.error('Erro ao carregar setores')
-    } finally {
-      setIsLoadingSectors(false)
-    }
-  }
 
   async function onSubmit(data: UpdateAssetStatusData) {
     const response = await updateAssetStatusAction(data)
@@ -154,10 +107,7 @@ export function UpdateAssetStatusForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Status</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione o status" />
@@ -180,79 +130,14 @@ export function UpdateAssetStatusForm({
             control={form.control}
             name="sectorId"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem>
                 <FormLabel>Secretaria - Setor</FormLabel>
-                <Popover open={sectorOpen} onOpenChange={setSectorOpen}>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={sectorOpen}
-                        className={cn(
-                          'justify-between',
-                          !field.value && 'text-muted-foreground',
-                        )}
-                        disabled={isLoadingSectors}
-                      >
-                        {isLoadingSectors ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Carregando...
-                          </>
-                        ) : field.value ? (
-                          (() => {
-                            const sector = sectors.find(
-                              (s) => s.id === field.value,
-                            )
-                            return sector
-                              ? `${sector.departmentName} - ${sector.name}`
-                              : 'Setor não encontrado'
-                          })()
-                        ) : (
-                          'Selecione um setor'
-                        )}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
-                    <Command
-                      filter={(value, search) => {
-                        const sectorText = value.toLowerCase()
-                        const searchText = search.toLowerCase()
-                        return sectorText.includes(searchText) ? 1 : 0
-                      }}
-                    >
-                      <CommandInput placeholder="Buscar setor..." />
-                      <CommandList>
-                        <CommandEmpty>Nenhum setor encontrado.</CommandEmpty>
-                        <CommandGroup>
-                          {sectors.map((sector) => (
-                            <CommandItem
-                              key={sector.id}
-                              value={`${sector.departmentName} - ${sector.name}`}
-                              onSelect={() => {
-                                form.setValue('sectorId', sector.id)
-                                setSectorOpen(false)
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  field.value === sector.id
-                                    ? 'opacity-100'
-                                    : 'opacity-0',
-                                )}
-                              />
-                              {sector.departmentName} - {sector.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <FormControl>
+                  <SectorSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

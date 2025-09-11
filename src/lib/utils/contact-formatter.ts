@@ -21,3 +21,27 @@ export function maskWhatsappNumber(whatsapp: string): string {
 
   return `(${areaCode}) ${firstPart}-${secondPart}`
 }
+
+/**
+ * Formata número de telefone com máscara apropriada
+ * @param phoneNumber - Número do telefone (8, 10 ou 11 dígitos)
+ * @returns Número formatado com máscara
+ */
+export function formatPhoneNumber(phoneNumber: string): string {
+  if (!phoneNumber || phoneNumber.length < 8) {
+    return phoneNumber
+  }
+
+  if (phoneNumber.length === 8) {
+    // Formato: XXXX-XXXX
+    return `${phoneNumber.slice(0, 4)}-${phoneNumber.slice(4)}`
+  } else if (phoneNumber.length === 10) {
+    // Formato: (XX) XXXX-XXXX
+    return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 6)}-${phoneNumber.slice(6)}`
+  } else if (phoneNumber.length === 11) {
+    // Formato: (XX) XXXXX-XXXX
+    return `(${phoneNumber.slice(0, 2)}) ${phoneNumber.slice(2, 7)}-${phoneNumber.slice(7)}`
+  }
+
+  return phoneNumber
+}
