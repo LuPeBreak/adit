@@ -14,7 +14,8 @@ export const statement = {
   phone: ['create', 'list', 'update', 'delete'],
   department: ['create', 'list', 'update', 'delete'],
   sector: ['create', 'list', 'update', 'delete'],
-  tonerRequest: ['list', 'update', 'delete'],
+  tonerRequest: ['list', 'update'],
+  maintenanceRequest: ['list', 'update'],
 } as const
 
 export const ac = createAccessControl(statement)
@@ -28,6 +29,7 @@ export const OPERATOR = ac.newRole({
   department: ['list'],
   sector: ['list'],
   tonerRequest: ['list', 'update'],
+  maintenanceRequest: ['list', 'update'],
   ...userAc.statements,
 })
 
@@ -39,7 +41,8 @@ export const ADMIN = ac.newRole({
   phone: ['create', 'list', 'update', 'delete'],
   department: ['create', 'list', 'update', 'delete'],
   sector: ['create', 'list', 'update', 'delete'],
-  tonerRequest: ['list', 'update', 'delete'],
+  tonerRequest: ['list', 'update'],
+  maintenanceRequest: ['list', 'update'],
   ...adminAc.statements,
 })
 

@@ -8,6 +8,7 @@ import {
   Users,
   FileText,
   LayoutDashboard,
+  Wrench,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -40,6 +41,12 @@ const menuLinks = {
         title: 'Todos os Ativos',
         url: '/dashboard/assets',
         icon: PackageOpen,
+        roles: ['OPERATOR', 'ADMIN'],
+      },
+      {
+        title: 'Pedidos de Manutenção',
+        url: '/dashboard/maintenance-requests',
+        icon: Wrench,
         roles: ['OPERATOR', 'ADMIN'],
       },
     ],

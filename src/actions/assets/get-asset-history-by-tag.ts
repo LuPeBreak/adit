@@ -5,8 +5,8 @@ import type { AssetType } from '@/generated/prisma'
 import { withPermissions } from '@/lib/auth/with-permissions'
 import prisma from '@/lib/prisma'
 import {
-  getAssetByTagSchema,
-  type GetAssetByTagData,
+  getAssetHistoryByTagSchema,
+  type GetAssetHistoryByTagData,
 } from '@/lib/schemas/asset'
 import {
   createSuccessResponse,
@@ -29,9 +29,9 @@ export const getAssetHistoryByTagAction = withPermissions(
   ],
   async (
     _,
-    data: GetAssetByTagData,
+    data: GetAssetHistoryByTagData,
   ): Promise<ActionResponse<AssetHistoryByTagResponse>> => {
-    const validatedFields = getAssetByTagSchema.safeParse(data)
+    const validatedFields = getAssetHistoryByTagSchema.safeParse(data)
 
     if (!validatedFields.success) {
       const firstError = validatedFields.error.errors[0]

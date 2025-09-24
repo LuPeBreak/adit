@@ -21,7 +21,6 @@ export function PhoneDetailsDialog({
   open,
   onOpenChange,
 }: PhoneDetailsDialogProps) {
-
   return (
     <BasicDialog
       open={open}

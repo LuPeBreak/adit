@@ -1,5 +1,10 @@
 import { Badge } from '@/components/ui/badge'
-import { AssetStatus, TonerRequestStatus, PhoneType } from '@/generated/prisma'
+import {
+  AssetStatus,
+  TonerRequestStatus,
+  PhoneType,
+  MaintenanceStatus,
+} from '@/generated/prisma'
 
 // Classes base para padronizar o tamanho dos badges
 const baseClasses = 'w-20 justify-center text-center'
@@ -132,6 +137,67 @@ export function getTonerRequestStatusBadge(status: TonerRequestStatus) {
           className={`bg-red-50 text-red-700 border-red-200 ${baseClasses}`}
         >
           Rejeitado
+        </Badge>
+      )
+    default:
+      return (
+        <Badge variant="outline" className={baseClasses}>
+          Desconhecido
+        </Badge>
+      )
+  }
+}
+
+// ========================================
+// MAINTENANCE STATUS BADGES
+// ========================================
+
+// Função para criar badges de MaintenanceStatus
+export function getMaintenanceStatusBadge(status: MaintenanceStatus) {
+  switch (status) {
+    case MaintenanceStatus.PENDING:
+      return (
+        <Badge
+          variant="outline"
+          className={`bg-yellow-50 text-yellow-700 border-yellow-200 ${baseClasses}`}
+        >
+          Pendente
+        </Badge>
+      )
+    case MaintenanceStatus.ANALYZING:
+      return (
+        <Badge
+          variant="outline"
+          className={`bg-blue-50 text-blue-700 border-blue-200 ${baseClasses}`}
+        >
+          Analisando
+        </Badge>
+      )
+    case MaintenanceStatus.MAINTENANCE:
+      return (
+        <Badge
+          variant="outline"
+          className={`bg-orange-50 text-orange-700 border-orange-200 ${baseClasses}`}
+        >
+          Manutenção
+        </Badge>
+      )
+    case MaintenanceStatus.COMPLETED:
+      return (
+        <Badge
+          variant="outline"
+          className={`bg-green-50 text-green-700 border-green-200 ${baseClasses}`}
+        >
+          Concluído
+        </Badge>
+      )
+    case MaintenanceStatus.CANCELLED:
+      return (
+        <Badge
+          variant="outline"
+          className={`bg-red-50 text-red-700 border-red-200 ${baseClasses}`}
+        >
+          Cancelado
         </Badge>
       )
     default:

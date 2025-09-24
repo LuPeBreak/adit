@@ -3,6 +3,7 @@ import {
   AssetStatus,
   TonerRequestStatus,
   PhoneType,
+  MaintenanceStatus,
 } from '../src/generated/prisma'
 
 const prisma = new PrismaClient()
@@ -19,6 +20,8 @@ async function main() {
   console.log('Start seeding ...')
 
   // Clean up previous data to avoid conflicts
+  await prisma.maintenanceRequestHistory.deleteMany()
+  await prisma.maintenanceRequest.deleteMany()
   await prisma.tonerRequest.deleteMany()
   await prisma.assetStatusHistory.deleteMany()
   await prisma.printer.deleteMany()
@@ -213,7 +216,7 @@ async function main() {
         data: {
           requesterName: randomRequester,
           registrationNumber: `REG${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
-          requesterWhatsApp: `(24) 9${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
+          requesterWhatsApp: `249${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
           requesterEmail: `${randomRequester.toLowerCase().replace(' ', '.')}@barramansa.rj.gov.br`,
           selectedToner: 'HP 58A Black', // Simplified for now
           status: randomStatus,
@@ -224,6 +227,89 @@ async function main() {
     }
   }
   console.log('Created 30 toner requests (3 per printer).')
+
+  // 6. Create maintenance requests for some assets (10 total - 5 printers + 5 phones)
+  const printerAssets = await prisma.asset.findMany({
+    where: { assetType: 'PRINTER' },
+    take: 5,
+    include: {
+      printer: true,
+    },
+  })
+
+  const phoneAssets = await prisma.asset.findMany({
+    where: { assetType: 'PHONE' },
+    take: 5,
+    include: {
+      phone: true,
+    },
+  })
+
+  const createdAssets = [...printerAssets, ...phoneAssets]
+
+  const maintenanceDescriptions = [
+    'Equipamento não está funcionando',
+    'Defeito no equipamento',
+    'Manutenção preventiva necessária',
+    'Equipamento apresentando falhas',
+    'Necessita limpeza e manutenção',
+    'Configuração do equipamento',
+    'Equipamento fazendo ruído anormal',
+    'Problema de conectividade',
+    'Atualização de software/firmware',
+    'Equipamento com funcionamento intermitente',
+    'Substituição de componentes',
+    'Calibração do equipamento',
+    'Equipamento travando constantemente',
+    'Verificação técnica solicitada',
+    'Equipamento apresentando lentidão',
+  ]
+
+  for (let i = 0; i < createdAssets.length; i++) {
+    const asset = createdAssets[i]
+    const randomRequester =
+      requesterNames[Math.floor(Math.random() * requesterNames.length)]
+    const randomStatus = getRandomEnumValue(MaintenanceStatus)
+    const description =
+      maintenanceDescriptions[
+        Math.floor(Math.random() * maintenanceDescriptions.length)
+      ]
+
+    const maintenanceRequest = await prisma.maintenanceRequest.create({
+      data: {
+        requesterName: randomRequester,
+        registrationNumber: `REG${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
+        requesterEmail: `${randomRequester.toLowerCase().replace(' ', '.')}@barramansa.rj.gov.br`,
+        requesterWhatsApp: `249${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
+        description,
+        status: randomStatus,
+        assetId: asset.id,
+      },
+    })
+
+    // Create initial history entry for the maintenance request
+    await prisma.maintenanceRequestHistory.create({
+      data: {
+        requestId: maintenanceRequest.id,
+        status: 'PENDING',
+        notes: 'Solicitação de manutenção criada',
+        changedBy: adminUser.id,
+      },
+    })
+
+    // If status is not PENDING, create additional history entries
+    if (randomStatus !== 'PENDING') {
+      await prisma.maintenanceRequestHistory.create({
+        data: {
+          requestId: maintenanceRequest.id,
+          status: randomStatus,
+          notes: `Status alterado para ${randomStatus}`,
+          changedBy: adminUser.id,
+        },
+      })
+    }
+  }
+  console.log('Created 10 maintenance requests with history.')
 
   console.log('Seeding finished successfully!')
 }

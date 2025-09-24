@@ -21,3 +21,13 @@ export function formatFullDate(date: Date): string {
     locale: ptBR,
   })
 }
+
+/**
+ * Formata uma data em formato padrão brasileiro
+ * Ex: "07/08/2025 09:15"
+ */
+export function formatDate(date: Date): string {
+  return format(date, 'dd/MM/yyyy HH:mm', {
+    locale: ptBR,
+  })
+}

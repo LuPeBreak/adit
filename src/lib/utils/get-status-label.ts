@@ -3,6 +3,7 @@ import {
   TonerRequestStatus,
   AssetType,
   PhoneType,
+  MaintenanceStatus,
 } from '@/generated/prisma'
 
 // Função para converter AssetStatus para label amigável
@@ -62,5 +63,23 @@ export function getPhoneTypeLabel(type: PhoneType): string {
       return 'Digital'
     default:
       return type // Retorna o próprio valor se não houver um mapeamento específico
+  }
+}
+
+// Função para converter MaintenanceStatus para label amigável
+export function getMaintenanceStatusLabel(status: MaintenanceStatus): string {
+  switch (status) {
+    case MaintenanceStatus.PENDING:
+      return 'Pendente'
+    case MaintenanceStatus.ANALYZING:
+      return 'Analisando'
+    case MaintenanceStatus.MAINTENANCE:
+      return 'Manutenção'
+    case MaintenanceStatus.COMPLETED:
+      return 'Concluído'
+    case MaintenanceStatus.CANCELLED:
+      return 'Cancelado'
+    default:
+      return status // Retorna o próprio valor se não houver um mapeamento específico
   }
 }

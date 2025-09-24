@@ -4,6 +4,7 @@ import { BasicDialog } from '@/components/basic-dialog'
 import type { TonerRequestsColumnType } from './toner-requests-table-types'
 import { getTonerRequestStatusBadge } from '@/lib/utils/get-status-badge'
 import { formatFullDate } from '@/lib/utils/format-date'
+import { formatPhoneNumber } from '@/lib/utils/contact-formatter'
 
 interface TonerRequestDetailsDialogProps {
   tonerRequest: TonerRequestsColumnType
@@ -50,7 +51,9 @@ export function TonerRequestDetailsDialog({
             </div>
             <div>
               <span className="font-medium text-blue-700">WhatsApp:</span>
-              <p className="text-blue-600">{tonerRequest.requesterWhatsApp}</p>
+              <p className="text-blue-600">
+                {formatPhoneNumber(tonerRequest.requesterWhatsApp)}
+              </p>
             </div>
           </div>
         </div>

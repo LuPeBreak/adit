@@ -12,7 +12,7 @@ export const updateAssetStatusSchema = z.object({
     .optional(),
 })
 
-export const getAssetByTagSchema = z.object({
+export const getAssetHistoryByTagSchema = z.object({
   tag: z.string().min(1, 'Número de patrimônio é obrigatório'),
 })
 
@@ -21,7 +21,9 @@ export const getAssetsMetricsByTypeSchema = z.object({
 })
 
 export type UpdateAssetStatusData = z.infer<typeof updateAssetStatusSchema>
-export type GetAssetByTagData = z.infer<typeof getAssetByTagSchema>
+export type GetAssetHistoryByTagData = z.infer<
+  typeof getAssetHistoryByTagSchema
+>
 export type GetAssetsMetricsByTypeData = z.infer<
   typeof getAssetsMetricsByTypeSchema
 >

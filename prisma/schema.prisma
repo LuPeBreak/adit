@@ -32,6 +32,7 @@ model User {
   banExpires DateTime?
 
   assetStatusChanges AssetStatusHistory[]
+  maintenanceHistory MaintenanceRequestHistory[] @relation("MaintenanceHistory")
 
   @@unique([email])
   @@map("user")
@@ -86,19 +87,42 @@ model Verification {
 
 // App Models
 
+model Department {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  manager      String
+  managerEmail String   @map("manager_email")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sectors Sector[]
+
+  @@map("department")
+}
+
+model Sector {
+  id           String   @id @default(cuid())
+  name         String
+  manager      String
+  managerEmail String   @map("manager_email")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId String     @map("department_id")
+
+  assets             Asset[]
+  assetStatusHistory AssetStatusHistory[]
+
+  @@unique([departmentId, name])
+  @@map("sector")
+}
+
 enum AssetType {
   PRINTER
   PHONE
   //COMPUTER
   //SWITCH
-}
-
-enum AssetStatus {
-  USING
-  STOCK
-  BROKEN
-  MAINTENANCE
-  RESERVED
 }
 
 model Asset {
@@ -112,11 +136,40 @@ model Asset {
   sector   Sector @relation(fields: [sectorId], references: [id])
   sectorId String @map("sector_id")
 
-  printer       Printer?
-  phone         Phone?
-  statusHistory AssetStatusHistory[]
+  printer             Printer?
+  phone               Phone?
+  statusHistory       AssetStatusHistory[]
+  maintenanceRequests MaintenanceRequest[]
 
   @@map("asset")
+}
+
+enum AssetStatus {
+  USING
+  STOCK
+  BROKEN
+  MAINTENANCE
+  RESERVED
+}
+
+model AssetStatusHistory {
+  id        String      @id @default(cuid())
+  status    AssetStatus
+  notes     String?
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  asset   Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  assetId String @map("asset_id")
+
+  sector   Sector @relation(fields: [sectorId], references: [id])
+  sectorId String @map("sector_id")
+
+  user      User   @relation(fields: [changedBy], references: [id])
+  changedBy String @map("changed_by")
+
+  @@index([assetId, createdAt(sort: Desc)])
+  @@index([createdAt(sort: Desc)])
+  @@map("asset_status_history")
 }
 
 model Printer {
@@ -149,37 +202,6 @@ model PrinterModel {
   @@map("printer_model")
 }
 
-model Department {
-  id           String   @id @default(cuid())
-  name         String   @unique
-  manager      String
-  managerEmail String   @map("manager_email")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  sectors Sector[]
-
-  @@map("department")
-}
-
-model Sector {
-  id           String   @id @default(cuid())
-  name         String
-  manager      String
-  managerEmail String   @map("manager_email")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  department   Department @relation(fields: [departmentId], references: [id])
-  departmentId String     @map("department_id")
-
-  assets             Asset[]
-  assetStatusHistory AssetStatusHistory[]
-
-  @@unique([departmentId, name])
-  @@map("sector")
-}
-
 enum TonerRequestStatus {
   PENDING
   APPROVED
@@ -190,7 +212,7 @@ enum TonerRequestStatus {
 model TonerRequest {
   id                 String             @id @default(cuid())
   requesterName      String             @map("requester_name")
-  registrationNumber String             @map("registration_number") // Employee registration number
+  registrationNumber String             @map("registration_number")
   requesterWhatsApp  String             @map("requester_whatsapp")
   requesterEmail     String             @map("requester_email")
   selectedToner      String             @map("selected_toner")
@@ -227,22 +249,46 @@ model Phone {
   @@map("phone")
 }
 
-model AssetStatusHistory {
-  id        String      @id @default(cuid())
-  status    AssetStatus
-  notes     String?
-  createdAt DateTime    @default(now()) @map("created_at")
+enum MaintenanceStatus {
+  PENDING
+  ANALYZING
+  MAINTENANCE
+  COMPLETED
+  CANCELLED
+}
 
-  asset   Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+model MaintenanceRequest {
+  id                 String            @id @default(cuid())
+  requesterName      String            @map("requester_name")
+  registrationNumber String            @map("registration_number")
+  requesterEmail     String            @map("requester_email")
+  requesterWhatsApp  String            @map("requester_whatsapp")
+  description        String
+  status             MaintenanceStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  asset   Asset  @relation(fields: [assetId], references: [id])
   assetId String @map("asset_id")
 
-  sector   Sector @relation(fields: [sectorId], references: [id])
-  sectorId String @map("sector_id")
+  // Histórico de mudanças de status
+  history MaintenanceRequestHistory[]
 
-  user      User   @relation(fields: [changedBy], references: [id])
-  changedBy String @map("changed_by")
+  @@map("maintenance_request")
+}
 
-  @@index([assetId, createdAt(sort: Desc)])
-  @@index([createdAt(sort: Desc)])
-  @@map("asset_status_history")
+model MaintenanceRequestHistory {
+  id        String            @id @default(cuid())
+  status    MaintenanceStatus
+  notes     String?
+  changedAt DateTime          @default(now())
+
+  requestId String
+  request   MaintenanceRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  changedBy String
+  user      User   @relation("MaintenanceHistory", fields: [changedBy], references: [id])
+
+  @@map("maintenance_request_history")
 }
