@@ -1,5 +1,24 @@
 import { maskWhatsappNumber } from './contact-formatter'
 
+// Interfaces para Maintenance Requests
+export interface MaintenanceRequestNotificationData {
+  requesterName: string
+  requesterEmail: string
+  requesterWhatsApp: string
+  department: string
+  sector: string
+  assetInfo: string
+  description: string
+}
+
+export interface MaintenanceRequestConfirmationData {
+  requesterName: string
+  requesterEmail: string
+  assetInfo: string
+  description: string
+}
+
+// Interfaces para Toner Requests
 export interface ApprovalEmailData {
   requesterName: string
   requesterEmail: string
@@ -44,6 +63,7 @@ export interface DeliveryEmailData {
   deliveryNote?: string
 }
 
+/** Templates para Toner Requests  */
 export function createApprovalEmailTemplate(data: ApprovalEmailData): string {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
@@ -313,6 +333,128 @@ export function createRequestConfirmationTemplate(
           <p style="color: #92400e; font-size: 14px; margin: 0;">
             🕒 <strong>Tempo de análise:</strong><br>
             Normalmente processamos os pedidos em até 2 horas.
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px; margin: 0;">
+            Este é um email automático. Não responda a esta mensagem.
+          </p>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+/** Templates para Maintenance Requests  */
+export function createMaintenanceRequestNotificationTemplate(
+  data: MaintenanceRequestNotificationData,
+): string {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+      <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #dc2626; margin: 0; font-size: 24px;">🔧 Novo Pedido de Manutenção</h1>
+        </div>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Um novo pedido de manutenção foi criado no sistema ADIT e aguarda análise.
+        </p>
+        
+        <div style="background-color: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #1e40af; margin: 0 0 10px 0; font-size: 16px;">👤 Detalhes do Solicitante</h3>
+          <p style="color: #1e40af; font-size: 14px; margin: 5px 0;"><strong>Nome:</strong> ${data.requesterName}</p>
+          <p style="color: #1e40af; font-size: 14px; margin: 5px 0;"><strong>Email:</strong> ${data.requesterEmail}</p>
+          <p style="color: #1e40af; font-size: 14px; margin: 5px 0;"><strong>WhatsApp:</strong> ${data.requesterWhatsApp}</p>
+          <p style="color: #1e40af; font-size: 14px; margin: 5px 0;"><strong>Departamento:</strong> ${data.department}</p>
+          <p style="color: #1e40af; font-size: 14px; margin: 5px 0;"><strong>Setor:</strong> ${data.sector}</p>
+        </div>
+        
+        <div style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #991b1b; margin: 0 0 10px 0; font-size: 16px;">🏷️ Informações do Ativo</h3>
+          <p style="color: #991b1b; font-size: 14px; margin: 5px 0;"><strong>Ativo:</strong> ${data.assetInfo}</p>
+        </div>
+        
+        <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #92400e; margin: 0 0 10px 0; font-size: 16px;">📝 Descrição do Problema</h3>
+          <p style="color: #92400e; font-size: 14px; margin: 5px 0; white-space: pre-wrap;">${data.description}</p>
+        </div>
+        
+        <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #92400e; font-size: 14px; margin: 0; font-weight: 500;">
+            ⏰ <strong>Ação Necessária:</strong><br>
+            Acesse o sistema ADIT para analisar e processar este pedido de manutenção.
+          </p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/maintenance-requests" 
+             style="display: inline-block; background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500;">
+            🔧 Acessar Pedidos de Manutenção
+          </a>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px; margin: 0;">
+            Este é um email automático. Não responda a esta mensagem.
+          </p>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+export function createMaintenanceRequestConfirmationTemplate(
+  data: MaintenanceRequestConfirmationData,
+): string {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+      <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #dc2626; margin: 0; font-size: 24px;">🔧 Pedido de Manutenção Recebido</h1>
+        </div>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Olá <strong>${data.requesterName}</strong>,
+        </p>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Recebemos seu pedido de manutenção e ele foi registrado com sucesso no sistema.
+        </p>
+        
+        <div style="background-color: #fef2f2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #991b1b; margin: 0 0 10px 0; font-size: 16px;">🏷️ Detalhes do Pedido</h3>
+          <p style="color: #991b1b; font-size: 14px; margin: 5px 0;"><strong>Ativo:</strong> ${data.assetInfo}</p>
+          <p style="color: #991b1b; font-size: 14px; margin: 5px 0;"><strong>Status:</strong> Aguardando Análise</p>
+        </div>
+        
+        <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #92400e; margin: 0 0 10px 0; font-size: 16px;">📝 Descrição Reportada</h3>
+          <p style="color: #92400e; font-size: 14px; margin: 5px 0; white-space: pre-wrap;">${data.description}</p>
+        </div>
+        
+        <div style="background-color: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #1e40af; font-size: 14px; margin: 0; font-weight: 500;">
+            📧 <strong>Próximos passos:</strong><br>
+            Nossa equipe de TI analisará seu pedido e entrará em contato para agendar a manutenção.
+          </p>
+        </div>
+        
+        <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #92400e; font-size: 14px; margin: 0;">
+            🕒 <strong>Tempo de análise:</strong><br>
+            Normalmente processamos os pedidos de manutenção em até 24 horas úteis.
+          </p>
+        </div>
+        
+        <div style="background-color: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #1e40af; font-size: 14px; margin: 0;">
+            📞 <strong>Contato:</strong><br>
+              WhatsApp: ${maskWhatsappNumber(process.env.ADMIN_WHATSAPP || '')}<br>
+              Email: ${process.env.ADMIN_EMAIL}<br>
+              <br>
+            🕒 <strong>Horário de atendimento:</strong><br>
+              Segunda a sexta-feira: 8h às 12h e 14h às 17h
           </p>
         </div>
         

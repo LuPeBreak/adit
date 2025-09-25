@@ -16,23 +16,22 @@ interface MaintenanceRequestUpdatesPageProps {
 export default async function MaintenanceRequestUpdatesPage({
   params,
 }: MaintenanceRequestUpdatesPageProps) {
-  
   const { id } = await params
 
-  const response = await getMaintenanceRequestsUpdates({id})
+  const response = await getMaintenanceRequestsUpdates({ id })
 
   const { maintenanceRequest, maintenanceRequestUpdates } = response.data || {}
 
   return (
     <DashboardContainer
       title={`Atualizações Pedido de Manutenção - ${maintenanceRequest?.requesterName || ''} - ${maintenanceRequest?.asset?.tag || ''}`}
-      description={`${getAssetTypeLabel((maintenanceRequest?.asset?.assetType || '') as AssetType) } - ${maintenanceRequest?.description || ''}`}
+      description={`${getAssetTypeLabel((maintenanceRequest?.asset?.assetType || '') as AssetType)} - ${maintenanceRequest?.description || ''}`}
     >
       {response.success ? (
         <DataTable
           columns={maintenanceRequestUpdatesTableColumns}
           data={maintenanceRequestUpdates || []}
-          toolbar={<GlobalTableToolbar/>}
+          toolbar={<GlobalTableToolbar />}
         />
       ) : (
         <div className="mt-6">

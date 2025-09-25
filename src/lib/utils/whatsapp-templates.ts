@@ -40,6 +40,13 @@ export interface DeliveryWhatsAppData {
   deliveryNote?: string
 }
 
+export interface MaintenanceRequestConfirmationWhatsAppData {
+  requesterName: string
+  assetTag: string
+  assetType: string
+  description: string
+}
+
 export function createApprovalWhatsAppTemplate(
   data: ApprovalWhatsAppData,
 ): string {
@@ -182,6 +189,31 @@ Você receberá uma mensagem quando seu pedido for aprovado ou rejeitado pela eq
 
 🕒 *Tempo de análise:*
 Normalmente processamos os pedidos em até 2 horas.
+
+---
+*Equipe de TI - PMBM*`
+}
+
+export function createMaintenanceRequestConfirmationWhatsAppTemplate(
+  data: MaintenanceRequestConfirmationWhatsAppData,
+): string {
+  return `✅ *PEDIDO DE MANUTENÇÃO RECEBIDO*
+
+Olá *${data.requesterName}*!
+
+Seu pedido de manutenção foi recebido com sucesso e está sendo processado pela nossa equipe.
+
+📋 *Resumo do Pedido:*
+• Nº Patrimônio: ${data.assetTag}
+• Tipo do Equipamento: ${data.assetType}
+• Descrição: ${data.description}
+• Status: *Aguardando Análise*
+
+📧 *Próximos passos:*
+Nossa equipe de TI entrará em contato para prosseguir com o atendimento ou solicitar mais informações se necessário.
+
+🕒 *Tempo de análise:*
+Normalmente processamos os pedidos em até 4 horas úteis.
 
 ---
 *Equipe de TI - PMBM*`

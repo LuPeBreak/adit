@@ -30,7 +30,9 @@ export const maintenanceRequestUpdatesTableColumns: ColumnDef<MaintenanceRequest
         <DataTableColumnHeader column={column} title={column.id} />
       ),
       cell: ({ row }) => {
-        return <span>{formatRelativeDate(new Date(row.original.changedAt))}</span>
+        return (
+          <span>{formatRelativeDate(new Date(row.original.changedAt))}</span>
+        )
       },
     },
     {
@@ -44,5 +46,4 @@ export const maintenanceRequestUpdatesTableColumns: ColumnDef<MaintenanceRequest
         return getMaintenanceStatusBadge(cell.getValue() as MaintenanceStatus)
       },
     },
-    
   ]
