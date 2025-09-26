@@ -18,6 +18,7 @@ import {
 } from '@/lib/utils/email-templates'
 import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
 import { createMaintenanceRequestConfirmationWhatsAppTemplate } from '@/lib/utils/whatsapp-templates'
+import { getAssetTypeLabel } from '@/lib/utils/get-status-label'
 
 export async function createPublicMaintenanceRequestAction(
   data: PublicMaintenanceRequestData,
@@ -118,7 +119,7 @@ export async function createPublicMaintenanceRequestAction(
           requesterWhatsApp,
           department: asset.sector.department.name,
           sector: asset.sector.name,
-          assetInfo: `${asset.tag} (${asset.assetType})`,
+          assetInfo: `${asset.tag} (${getAssetTypeLabel(asset.assetType)})`,
           description,
         }),
       }),
@@ -130,7 +131,7 @@ export async function createPublicMaintenanceRequestAction(
         message: createMaintenanceRequestConfirmationTemplate({
           requesterName,
           requesterEmail,
-          assetInfo: `${asset.tag} (${asset.assetType})`,
+          assetInfo: `${asset.tag} (${getAssetTypeLabel(asset.assetType)})`,
           description,
         }),
       }),
@@ -143,7 +144,7 @@ export async function createPublicMaintenanceRequestAction(
         text: createMaintenanceRequestConfirmationWhatsAppTemplate({
           requesterName,
           assetTag: asset.tag,
-          assetType: asset.assetType,
+          assetType: getAssetTypeLabel(asset.assetType),
           description,
         }),
       }),
