@@ -18,6 +18,14 @@ export interface MaintenanceRequestConfirmationData {
   description: string
 }
 
+export interface MaintenanceRequestStatusUpdateEmailData {
+  requesterName: string
+  assetTag: string
+  assetType: string
+  newStatus: string
+  notes: string
+}
+
 // Interfaces para Toner Requests
 export interface ApprovalEmailData {
   requesterName: string
@@ -458,6 +466,57 @@ export function createMaintenanceRequestConfirmationTemplate(
           </p>
         </div>
         
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+          <p style="color: #6b7280; font-size: 12px; margin: 0;">
+            Este é um email automático. Não responda a esta mensagem.
+          </p>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+export function createMaintenanceRequestStatusUpdateEmailTemplate(
+  data: MaintenanceRequestStatusUpdateEmailData,
+): string {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+      <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #0ea5e9; margin: 0; font-size: 24px;">🔧 Atualização de Status do Pedido</h1>
+        </div>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Olá <strong>${data.requesterName}</strong>,
+        </p>
+        
+        <p style="color: #374151; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+          Seu pedido de manutenção teve uma atualização de status.
+        </p>
+        
+        <div style="background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #0c4a6e; margin: 0 0 10px 0; font-size: 16px;">📋 Detalhes do Pedido</h3>
+          <p style="color: #0c4a6e; font-size: 14px; margin: 5px 0;"><strong>Nº Patrimônio:</strong> ${data.assetTag}</p>
+          <p style="color: #0c4a6e; font-size: 14px; margin: 5px 0;"><strong>Equipamento:</strong> ${data.assetType}</p>
+          <p style="color: #0c4a6e; font-size: 14px; margin: 5px 0;"><strong>Novo Status:</strong> ${data.newStatus}</p>
+        </div>
+
+        <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="color: #92400e; margin: 0 0 10px 0; font-size: 16px;">📝 Observações</h3>
+          <p style="color: #92400e; font-size: 14px; margin: 5px 0; white-space: pre-wrap;">${data.notes}</p>
+        </div>
+
+        <div style="background-color: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #1e40af; font-size: 14px; margin: 0;">
+            📞 <strong>Contato:</strong><br>
+              WhatsApp: ${maskWhatsappNumber(process.env.ADMIN_WHATSAPP || '')}<br>
+              Email: ${process.env.ADMIN_EMAIL}<br>
+              <br>
+            🕒 <strong>Horário de atendimento:</strong><br>
+              Segunda a sexta-feira: 8h às 12h e 14h às 17h
+          </p>
+        </div>
+
         <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
           <p style="color: #6b7280; font-size: 12px; margin: 0;">
             Este é um email automático. Não responda a esta mensagem.

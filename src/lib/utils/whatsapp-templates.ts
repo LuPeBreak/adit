@@ -47,6 +47,14 @@ export interface MaintenanceRequestConfirmationWhatsAppData {
   description: string
 }
 
+export interface MaintenanceRequestStatusUpdateWhatsAppData {
+  requesterName: string
+  assetTag: string
+  assetType: string
+  newStatus: string
+  notes: string
+}
+
 export function createApprovalWhatsAppTemplate(
   data: ApprovalWhatsAppData,
 ): string {
@@ -214,6 +222,34 @@ Nossa equipe de TI entrará em contato para prosseguir com o atendimento ou soli
 
 🕒 *Tempo de análise:*
 Normalmente processamos os pedidos em até 4 horas úteis.
+
+---
+*Equipe de TI - PMBM*`
+}
+
+export function createMaintenanceRequestStatusUpdateWhatsAppTemplate(
+  data: MaintenanceRequestStatusUpdateWhatsAppData,
+): string {
+  return `🔧 *ATUALIZAÇÃO DE STATUS DO PEDIDO*
+
+Olá *${data.requesterName}*!
+
+Seu pedido de manutenção foi atualizado.
+
+📋 *Detalhes do Pedido:*
+• Nº Patrimônio: ${data.assetTag}
+• Equipamento: ${data.assetType}
+• Novo Status: *${data.newStatus}*
+
+📝 *Observações:*
+${data.notes}
+
+📞 *Contato:*
+• WhatsApp: ${maskWhatsappNumber(process.env.ADMIN_WHATSAPP || '')}
+• Email: ${process.env.ADMIN_EMAIL}
+
+🕒 *Horário de atendimento:*
+Segunda a sexta-feira: 8h às 12h e 14h às 17h
 
 ---
 *Equipe de TI - PMBM*`

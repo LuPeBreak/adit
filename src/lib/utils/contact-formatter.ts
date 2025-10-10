@@ -45,3 +45,18 @@ export function formatPhoneNumber(phoneNumber: string): string {
 
   return phoneNumber
 }
+
+/**
+ * Normaliza números de WhatsApp para formato E.164 brasileiro simples (prefixo 55)
+ * - Remove quaisquer caracteres não numéricos
+ * - Garante prefixo único "55" no início
+ * - Não aplica máscara; retorna apenas dígitos
+ */
+export function normalizeWhatsappNumber(number: string): string {
+  if (!number) return ''
+  const digits = number.replace(/\D/g, '')
+  if (digits.startsWith('55')) {
+    return digits
+  }
+  return `55${digits}`
+}

@@ -19,6 +19,8 @@ import {
 import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
 import { createMaintenanceRequestConfirmationWhatsAppTemplate } from '@/lib/utils/whatsapp-templates'
 import { getAssetTypeLabel } from '@/lib/utils/get-status-label'
+import { normalizeWhatsappNumber } from '@/lib/utils/contact-formatter'
+import { AssetStatus, MaintenanceStatus } from '@/generated/prisma'
 
 export async function createPublicMaintenanceRequestAction(
   data: PublicMaintenanceRequestData,
@@ -47,7 +49,7 @@ export async function createPublicMaintenanceRequestAction(
     const asset = await prisma.asset.findUnique({
       where: {
         id: assetId,
-        status: 'USING', // Apenas ativos em uso
+        status: AssetStatus.USING, // Apenas ativos em uso
       },
       select: {
         id: true,
@@ -67,7 +69,11 @@ export async function createPublicMaintenanceRequestAction(
         maintenanceRequests: {
           where: {
             status: {
-              in: ['PENDING', 'ANALYZING', 'MAINTENANCE'],
+              in: [
+                MaintenanceStatus.PENDING,
+                MaintenanceStatus.ANALYZING,
+                MaintenanceStatus.MAINTENANCE,
+              ],
             },
           },
           select: {
@@ -103,28 +109,39 @@ export async function createPublicMaintenanceRequestAction(
         requesterEmail,
         requesterWhatsApp,
         description,
-        status: 'PENDING',
+        status: MaintenanceStatus.PENDING,
       },
     })
 
     // Executar notificações em paralelo para melhor performance
-    const notificationPromises = [
-      // Email para a equipe de TI
-      sendEmail({
-        email: process.env.ADMIN_EMAIL!,
-        subject: `Novo Pedido de Manutenção - ${asset.tag}`,
-        message: createMaintenanceRequestNotificationTemplate({
-          requesterName,
-          requesterEmail,
-          requesterWhatsApp,
-          department: asset.sector.department.name,
-          sector: asset.sector.name,
-          assetInfo: `${asset.tag} (${getAssetTypeLabel(asset.assetType)})`,
-          description,
-        }),
-      }),
+    const notificationPromises: Promise<unknown>[] = []
 
-      // Email de confirmação para o solicitante
+    // Email para a equipe de TI (somente se configurado)
+    const adminEmail = process.env.ADMIN_EMAIL
+    if (adminEmail && adminEmail.trim().length > 0) {
+      notificationPromises.push(
+        sendEmail({
+          email: adminEmail,
+          subject: `Novo Pedido de Manutenção - ${asset.tag}`,
+          message: createMaintenanceRequestNotificationTemplate({
+            requesterName,
+            requesterEmail,
+            requesterWhatsApp,
+            department: asset.sector.department.name,
+            sector: asset.sector.name,
+            assetInfo: `${asset.tag} (${getAssetTypeLabel(asset.assetType)})`,
+            description,
+          }),
+        }),
+      )
+    } else {
+      console.warn(
+        'ADMIN_EMAIL não configurado. Notificação para equipe de TI não será enviada.',
+      )
+    }
+
+    // Email de confirmação para o solicitante
+    notificationPromises.push(
       sendEmail({
         email: requesterEmail,
         subject: `Confirmação de Pedido de Manutenção - ${asset.tag}`,
@@ -135,20 +152,27 @@ export async function createPublicMaintenanceRequestAction(
           description,
         }),
       }),
+    )
 
-      // WhatsApp de confirmação para o solicitante
-      sendWhatsApp({
-        number: requesterWhatsApp.startsWith('55')
-          ? requesterWhatsApp
-          : `55${requesterWhatsApp}`,
-        text: createMaintenanceRequestConfirmationWhatsAppTemplate({
-          requesterName,
-          assetTag: asset.tag,
-          assetType: getAssetTypeLabel(asset.assetType),
-          description,
+    // WhatsApp de confirmação para o solicitante (somente se número normalizado válido)
+    const normalizedWhatsApp = normalizeWhatsappNumber(requesterWhatsApp)
+    if (normalizedWhatsApp && normalizedWhatsApp.length === 13) {
+      notificationPromises.push(
+        sendWhatsApp({
+          number: normalizedWhatsApp,
+          text: createMaintenanceRequestConfirmationWhatsAppTemplate({
+            requesterName,
+            assetTag: asset.tag,
+            assetType: getAssetTypeLabel(asset.assetType),
+            description,
+          }),
         }),
-      }),
-    ]
+      )
+    } else {
+      console.warn(
+        'Número de WhatsApp do solicitante inválido. Mensagem não será enviada.',
+      )
+    }
 
     // Aguardar todas as notificações (sem bloquear em caso de erro)
     await Promise.allSettled(notificationPromises)

@@ -43,8 +43,6 @@ import { AssetType } from '@/generated/prisma'
 import { toast } from 'sonner'
 import { formatPhoneNumber } from '@/lib/utils/contact-formatter'
 
-interface PublicMaintenanceRequestFormProps {}
-
 export function PublicMaintenanceRequestForm() {
   const [assets, setAssets] = useState<AssetData[]>([])
   const [selectedAsset, setSelectedAsset] = useState<AssetData | null>(null)
