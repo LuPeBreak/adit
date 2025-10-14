@@ -22,9 +22,22 @@ import {
   updateMaintenanceRequestStatusSchema,
   type UpdateMaintenanceRequestStatusData,
 } from '@/lib/schemas/maintenance-request'
-import { getMaintenanceStatusLabel, getAssetTypeLabel } from '@/lib/utils/get-status-label'
+import {
+  getMaintenanceStatusLabel,
+  getAssetStatusLabel,
+} from '@/lib/utils/get-status-label'
 import { updateMaintenanceRequestStatusAction } from '@/actions/maintenance-requests/update-maintenance-request-status'
 import type { MaintenanceStatus } from '@/generated/prisma'
+import { AssetStatus } from '@/generated/prisma'
+import { Checkbox } from '@/components/ui/checkbox'
+import { SectorSelect } from '@/components/sector-select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface UpdateMaintenanceRequestStatusDialogProps {
   maintenanceRequest: MaintenanceRequestsColumnType
@@ -43,6 +56,19 @@ export function UpdateMaintenanceRequestStatusDialog({
   const router = useRouter()
 
   // status alvo é recebido via props
+  type AssetUpdateDefaults = NonNullable<
+    UpdateMaintenanceRequestStatusData['assetUpdate']
+  >
+  const defaultAssetUpdate: AssetUpdateDefaults = {
+    updateAsset: targetStatus === 'MAINTENANCE' || targetStatus === 'COMPLETED',
+    status:
+      targetStatus === 'MAINTENANCE'
+        ? AssetStatus.MAINTENANCE
+        : targetStatus === 'COMPLETED'
+          ? AssetStatus.USING
+          : undefined,
+    sectorId: maintenanceRequest.assetSectorId,
+  }
 
   const form = useForm<UpdateMaintenanceRequestStatusData>({
     resolver: zodResolver(updateMaintenanceRequestStatusSchema),
@@ -50,6 +76,7 @@ export function UpdateMaintenanceRequestStatusDialog({
       id: maintenanceRequest.id,
       status: targetStatus,
       notes: '',
+      assetUpdate: defaultAssetUpdate,
     },
   })
 
@@ -57,7 +84,27 @@ export function UpdateMaintenanceRequestStatusDialog({
   useEffect(() => {
     form.setValue('id', maintenanceRequest.id)
     form.setValue('status', targetStatus)
-  }, [form, maintenanceRequest.id, targetStatus])
+    // Atualiza defaults do bloco de ativo ao mudar o status alvo
+    form.setValue(
+      'assetUpdate.updateAsset',
+      targetStatus === 'MAINTENANCE' || targetStatus === 'COMPLETED',
+    )
+    form.setValue(
+      'assetUpdate.status',
+      targetStatus === 'MAINTENANCE'
+        ? AssetStatus.MAINTENANCE
+        : targetStatus === 'COMPLETED'
+          ? AssetStatus.USING
+          : undefined,
+    )
+    form.setValue('assetUpdate.sectorId', maintenanceRequest.assetSectorId)
+  }, [
+    form,
+    maintenanceRequest.id,
+    maintenanceRequest.assetSectorId,
+    maintenanceRequest.assetStatus,
+    targetStatus,
+  ])
 
   const onSubmit = async (values: UpdateMaintenanceRequestStatusData) => {
     setIsLoading(true)
@@ -66,6 +113,13 @@ export function UpdateMaintenanceRequestStatusDialog({
       id: maintenanceRequest.id,
       status: targetStatus,
       notes: values.notes,
+      assetUpdate: values.assetUpdate?.updateAsset
+        ? {
+            updateAsset: true,
+            status: values.assetUpdate.status,
+            sectorId: values.assetUpdate.sectorId,
+          }
+        : undefined,
     })
     setIsLoading(false)
 
@@ -93,35 +147,19 @@ export function UpdateMaintenanceRequestStatusDialog({
       onOpenChange={onOpenChange}
       title={`Atualizar status: ${getMaintenanceStatusLabel(maintenanceRequest.status)} → ${getMaintenanceStatusLabel(targetStatus)}`}
       description={`O status será atualizado para "${getMaintenanceStatusLabel(targetStatus)}".`}
+      className="sm:max-w-[560px]"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="rounded-md border p-3 text-sm bg-muted">
-            <div className="grid grid-cols-1 gap-2">
-              <div>
-                <span className="font-medium">N° Patrimônio:</span>
-                <p className="text-muted-foreground font-mono">
-                  {maintenanceRequest.assetTag}
-                </p>
-              </div>
-              <div>
-                <span className="font-medium">Tipo do ativo:</span>
-                <p className="text-muted-foreground">
-                  {getAssetTypeLabel(maintenanceRequest.assetType)}
-                </p>
-              </div>
-              <div>
-                <span className="font-medium">Solicitante:</span>
-                <p className="text-muted-foreground">
-                  {maintenanceRequest.requesterName}
-                </p>
-              </div>
-              <div>
-                <span className="font-medium">Defeito informado:</span>
-                <p className="text-muted-foreground break-words">
-                  {maintenanceRequest.description}
-                </p>
-              </div>
+          <div className="rounded-md border p-3 bg-muted text-sm space-y-1">
+            <div className="text-muted-foreground font-mono">
+              {maintenanceRequest.assetTag}
+            </div>
+            <div className="text-muted-foreground">
+              {maintenanceRequest.sector}
+            </div>
+            <div className="text-muted-foreground">
+              {maintenanceRequest.department}
             </div>
           </div>
 
@@ -145,6 +183,92 @@ export function UpdateMaintenanceRequestStatusDialog({
             )}
           />
 
+          {/* Botões intermediários removidos: manter apenas os botões finais do formulário */}
+
+          {/* Atualização opcional do ativo */}
+          <div className="mt-6 space-y-3">
+            <FormField
+              control={form.control}
+              name="assetUpdate.updateAsset"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center gap-2 rounded-md border p-3">
+                  <FormControl>
+                    <Checkbox
+                      checked={!!field.value}
+                      onCheckedChange={(checked) => field.onChange(!!checked)}
+                      disabled={targetStatus === 'MAINTENANCE' || targetStatus === 'COMPLETED'}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Atualizar ativo (status e/ou setor)</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            {/* Campos aparecem apenas quando marcado */}
+            {form.watch('assetUpdate.updateAsset') && (
+              <div className="space-y-4">
+                {/* Status do ativo */}
+                <FormField
+                  control={form.control}
+                  name="assetUpdate.status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status do ativo</FormLabel>
+                      <Select
+                        disabled={targetStatus === 'MAINTENANCE'}
+                        value={field.value ?? ''}
+                        onValueChange={(v) => field.onChange(v as AssetStatus)}
+                      >
+                        <FormControl>
+                          <SelectTrigger
+                            disabled={targetStatus === 'MAINTENANCE'}
+                          >
+                            <SelectValue
+                              placeholder={getAssetStatusLabel(
+                                maintenanceRequest.assetStatus,
+                              )}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.values(AssetStatus).map((st) => (
+                            <SelectItem key={st} value={st}>
+                              {getAssetStatusLabel(st)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Setor do ativo */}
+                <FormField
+                  control={form.control}
+                  name="assetUpdate.sectorId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Setor</FormLabel>
+                      <FormControl>
+                        <SectorSelect
+                          value={field.value}
+                          onValueChange={(v) => field.onChange(v)}
+                          placeholder="Selecione o setor"
+                          className="w-[280px] sm:w-[360px]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Botões de ação no final do formulário */}
           <div className="flex justify-end gap-2">
             <Button
               type="button"
@@ -155,6 +279,7 @@ export function UpdateMaintenanceRequestStatusDialog({
                   id: maintenanceRequest.id,
                   status: targetStatus,
                   notes: '',
+                  assetUpdate: defaultAssetUpdate,
                 })
               }}
               disabled={isLoading}

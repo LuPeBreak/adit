@@ -1,9 +1,11 @@
-import { MaintenanceStatus, AssetType } from '@/generated/prisma'
+import { MaintenanceStatus, AssetType, AssetStatus } from '@/generated/prisma'
 import type { Row } from '@tanstack/react-table'
 
 export type MaintenanceRequestsColumnType = {
   id: string
   assetTag: string
+  assetStatus: AssetStatus
+  assetSectorId: string
   requesterName: string
   registrationNumber: string
   requesterEmail: string

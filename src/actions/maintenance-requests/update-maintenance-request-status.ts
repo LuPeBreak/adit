@@ -16,6 +16,7 @@ import { canTransition } from '@/lib/maintenance/transition-rules'
 import {
   getAssetTypeLabel,
   getMaintenanceStatusLabel,
+  getAssetStatusLabel,
 } from '@/lib/utils/get-status-label'
 import { sendEmail } from '@/lib/utils/email-service'
 import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
@@ -52,7 +53,10 @@ export const updateMaintenanceRequestStatusAction = withPermissions(
           requesterWhatsApp: true,
           asset: {
             select: {
+              id: true,
               tag: true,
+              status: true,
+              sectorId: true,
               assetType: true,
             },
           },
@@ -94,6 +98,59 @@ export const updateMaintenanceRequestStatusAction = withPermissions(
             changedBy: session.user.id,
           },
         })
+
+        // Atualização opcional do ativo (status e/ou setor)
+        // Regras:
+        // - Só executa se assetUpdate.updateAsset === true
+        // - Se nenhum campo resultar em mudança, pula silenciosamente
+        const assetUpdate = validatedFields.data.assetUpdate
+        if (assetUpdate?.updateAsset && existingRequest.asset?.id) {
+          const assetId = existingRequest.asset.id
+
+          const currentStatus = existingRequest.asset.status
+          const currentSectorId = existingRequest.asset.sectorId
+
+          const desiredStatus =
+            assetUpdate.status ??
+            (status === 'MAINTENANCE' ? 'MAINTENANCE' : undefined)
+          const desiredSectorId = assetUpdate.sectorId ?? currentSectorId
+
+          const willChangeStatus =
+            typeof desiredStatus !== 'undefined' &&
+            desiredStatus !== currentStatus
+          const willChangeSector = desiredSectorId !== currentSectorId
+
+          if (willChangeStatus || willChangeSector) {
+            const finalStatus = desiredStatus ?? currentStatus
+            await tx.asset.update({
+              where: { id: assetId },
+              data: {
+                status: finalStatus,
+                sectorId: desiredSectorId,
+              },
+            })
+
+            const autoNote = `Atualização automática pelo pedido de manutenção (${existingRequest.id}) — ${
+              willChangeStatus
+                ? `status: ${getAssetStatusLabel(finalStatus)}`
+                : ''
+            }${
+              willChangeSector
+                ? `${willChangeStatus ? '; ' : ''}setor atualizado`
+                : ''
+            }`
+
+            await tx.assetStatusHistory.create({
+              data: {
+                assetId,
+                status: finalStatus,
+                sectorId: desiredSectorId,
+                changedBy: session.user.id,
+                notes: autoNote,
+              },
+            })
+          }
+        }
       })
 
       const assetTag = existingRequest.asset?.tag || 'N/A'
@@ -159,6 +216,8 @@ export const updateMaintenanceRequestStatusAction = withPermissions(
       // Revalidar páginas relacionadas
       revalidatePath('/dashboard/maintenance-requests')
       revalidatePath(`/dashboard/maintenance-requests/${id}`)
+      revalidatePath('/dashboard/assets')
+      revalidatePath('/dashboard/printers')
 
       // Sempre retornar sucesso para não bloquear atualização.
       // Se houve falhas de notificação, retornar no payload para informar o usuário do sistema.

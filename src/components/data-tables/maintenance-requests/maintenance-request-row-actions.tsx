@@ -35,6 +35,7 @@ export function MaintenanceRequestRowActions({
   const [targetStatus, setTargetStatus] = useState<MaintenanceStatus | null>(
     null,
   )
+  const availableTargets = getAvailableTargets(maintenanceRequest.status)
 
   return (
     <>
@@ -76,12 +77,12 @@ export function MaintenanceRequestRowActions({
               Histórico
             </Link>
           </DropdownMenuItem>
-          
+
           {/* Ações de atualização de status baseadas nas transições disponíveis */}
-          {getAvailableTargets(maintenanceRequest.status).length > 0 && (
+          {availableTargets.length > 0 && (
             <>
               <DropdownMenuSeparator />
-              {getAvailableTargets(maintenanceRequest.status).map((status) => {
+              {availableTargets.map((status) => {
                 const label = getMaintenanceStatusLabel(status)
                 const onClick = () => {
                   setTargetStatus(status)
@@ -128,8 +129,6 @@ export function MaintenanceRequestRowActions({
               })}
             </>
           )}
-
-          
         </DropdownMenuContent>
       </DropdownMenu>
     </>

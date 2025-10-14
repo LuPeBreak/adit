@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableColumnHeader } from '../data-table-column-header'
 import { MaintenanceRequestsColumnType } from './maintenance-requests-table-types'
-import { formatRelativeDate } from '@/lib/utils/format-date'
+import { formatDate } from '@/lib/utils/format-date'
 import { getMaintenanceStatusBadge } from '@/lib/utils/get-status-badge'
 import { getAssetTypeLabel } from '@/lib/utils/get-status-label'
 import { MaintenanceRequestRowActions } from './maintenance-request-row-actions'
@@ -44,9 +44,7 @@ export const maintenanceRequestsTableColumns: ColumnDef<MaintenanceRequestsColum
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={column.id} />
       ),
-      cell: ({ cell }) => {
-        return formatRelativeDate(cell.getValue() as Date)
-      },
+      cell: ({ cell }) => formatDate(cell.getValue() as Date),
     },
     {
       accessorKey: 'status',

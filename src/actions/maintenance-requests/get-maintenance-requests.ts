@@ -26,6 +26,8 @@ export const getMaintenanceRequests = withPermissions(
           asset: {
             select: {
               tag: true,
+              status: true,
+              sectorId: true,
               assetType: true,
               sector: {
                 select: {
@@ -69,6 +71,8 @@ export const getMaintenanceRequests = withPermissions(
         requesterWhatsApp: request.requesterWhatsApp,
         description: request.description,
         assetTag: request.asset.tag,
+        assetStatus: request.asset.status,
+        assetSectorId: request.asset.sectorId,
         assetType: request.asset.assetType,
         sector: request.asset.sector.name,
         department: request.asset.sector.department.name,

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { MaintenanceStatus } from '@/generated/prisma'
+import { MaintenanceStatus, AssetStatus } from '@/generated/prisma'
 
 export const getMaintenanceRequestsUpdatesSchema = z.object({
   id: z.string().cuid('ID do pedido de manutenção inválido'),
@@ -16,6 +16,17 @@ export const updateMaintenanceRequestStatusSchema = z.object({
     .string({ message: 'As observações são obrigatórias' })
     .min(1, 'As observações são obrigatórias')
     .max(200, 'As observações devem ter no máximo 200 caracteres'),
+  assetUpdate: z
+    .object({
+      updateAsset: z.boolean(),
+      status: z
+        .nativeEnum(AssetStatus, {
+          message: 'Status do ativo inválido',
+        })
+        .optional(),
+      sectorId: z.string().cuid('ID do setor inválido').optional(),
+    })
+    .optional(),
 })
 
 export type UpdateMaintenanceRequestStatusData = z.infer<
