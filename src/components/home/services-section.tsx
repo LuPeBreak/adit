@@ -1,49 +1,52 @@
 import { Separator } from '@/components/ui/separator'
-import { Printer, Wrench, Users, Network, Boxes, Globe } from 'lucide-react'
+import { Printer, Monitor, User, Mail, Phone } from 'lucide-react'
 import { ServiceCard, type Service } from './service-card'
 
 const services: Service[] = [
   {
-    title: 'Pedido de Toner',
-    description: 'Solicite toners para impressoras do seu setor',
+    title: 'Solicitação de Toner',
+    description: 'Solicite toners para impressoras do seu setor de forma rápida e prática',
     icon: Printer,
     href: '/servicos/toner',
   },
   {
-    title: 'Manutenção de Impressoras',
-    description: 'Acompanhe o status de manutenção das impressoras',
-    icon: Wrench,
-    href: '/servicos/manutencao',
+    title: 'Manutenção de Impressora',
+    description: 'Solicite manutenção para impressoras com problemas técnicos ou necessidade de reparo.',
+    icon: Printer,
+    href: '/servicos/manutencao?assetType=PRINTER'
   },
   {
-    title: 'Criação de Usuários',
-    description: 'Solicite criação de usuários para sistemas da prefeitura',
-    icon: Users,
-    href: '/servicos/usuarios',
+    title: 'Manutenção de Telefone',
+    description: 'Solicite manutenção para telefones com problemas técnicos ou necessidade de reparo.',
+    icon: Phone,
+    href: '/servicos/manutencao?assetType=PHONE'
   },
   {
-    title: 'Acesso à Rede',
-    description: 'Solicite acesso à rede para novos equipamentos',
-    icon: Network,
-    href: '/servicos/rede',
+    title: 'Manutenção de Computador',
+    description: 'Solicite manutenção para computadores e equipamentos de informática.',
+    icon: Monitor,
+    href: '#',
+    isComingSoon: true
   },
   {
-    title: 'Acesso ao COPLAN',
-    description: 'Solicite acesso ao sistema de contabilidade',
-    icon: Boxes,
-    href: '/servicos/coplan',
+    title: 'Solicitação de Usuário',
+    description: 'Faça solicitações para outros sistemas e serviços da empresa.',
+    icon: User,
+    href: '#',
+    isComingSoon: true
   },
   {
-    title: 'Portal da Transparência',
-    description: 'Acesse o portal da transparência da prefeitura',
-    icon: Globe,
-    href: '/servicos/transparencia',
-  },
+    title: 'Criação de Email',
+    description: 'Solicite a criação de novos endereços de email corporativo.',
+    icon: Mail,
+    href: '#',
+    isComingSoon: true
+  }
 ]
 
 export function ServicesSection() {
   return (
-    <section id="servicos" className="py-20 px-6">
+    <section id="servicos" className="py-8 px-6">
       <div className="container mx-auto max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -56,7 +59,7 @@ export function ServicesSection() {
           <Separator className="mt-8 max-w-md mx-auto" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {services.map((service, index) => (
             <ServiceCard key={index} service={service} />
           ))}

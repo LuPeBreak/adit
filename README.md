@@ -2,128 +2,106 @@
 
 ## 📋 Sobre o Projeto
 
-O **ADIT** (Administração de Ativos da TI) é um sistema de gestão desenvolvido para otimizar o controle e a manutenção de ativos e serviços de TI da Prefeitura de Barra Mansa. O objetivo principal é proporcionar visibilidade, organização e um fluxo de trabalho otimizado para a equipe de TI, começando pela gestão eficiente de impressoras.
+O **ADIT** (Administração de Ativos da TI) é um sistema de gestão desenvolvido para otimizar o controle e a manutenção de ativos e serviços de TI da Prefeitura de Barra Mansa. O objetivo principal é proporcionar visibilidade, organização e um fluxo de trabalho otimizado para a equipe de TI, começando pela gestão eficiente de impressoras e telefones.
 
-### Funcionalidades Principais
+## 🎯 Funcionalidades Implementadas
 
-#### ✅ Já Implementadas
+### 🔐 Sistema de Autenticação
+- **Better-Auth**: Sistema robusto de autenticação
+- **Controle de acesso**: Roles ADMIN e OPERATOR
+- **Gerenciamento de usuários**: Criação, edição, banimento
+- **Sessões seguras**: Controle de sessões e tokens
 
-- **Sistema de Autenticação Robusto**: Implementado com Better-Auth, incluindo:
-  - Autenticação por email/senha
-  - Sistema de sessões seguras
-  - Controle de acesso baseado em roles (ADMIN e OPERATOR)
-  - Sistema de permissões granulares por recurso e ação
-  - Funcionalidades de banimento de usuários
+### 🏢 Gestão Organizacional
+- **Secretarias**: Criação e gerenciamento de secretarias
+- **Setores**: Vinculação de setores às secretarias
+- **Hierarquia**: Estrutura organizacional completa
 
-- **Gestão Completa de Ativos**: 
-  - Listagem de todos os ativos com filtros e busca
-  - Gestão específica de impressoras com informações detalhadas
-  - Controle de status dos ativos (Em Uso, Estoque, Quebrado, Manutenção, Reservado)
-  - Vinculação de ativos a setores e departamentos
+### 📱 Gestão de Ativos
+- **Ativos Gerais**: Sistema unificado para diferentes tipos de ativos
+- **Impressoras**: Gestão completa com modelos, toners e especificações
+- **Telefones**: Controle de telefones VOIP, analógicos e digitais
+- **Status de Ativos**: USING, STOCK, BROKEN, MAINTENANCE, RESERVED
+- **Histórico**: Rastreamento de mudanças de status
 
-- **Administração Organizacional**:
-  - Gerenciamento completo de departamentos e setores
-  - Controle hierárquico (Departamento → Setor → Ativo)
-  - Gestão de modelos de impressoras com especificações de toners
+### 🛠️ Serviços Públicos
+- **Solicitação de Toner**: Formulário público para pedidos de toner
+- **Solicitação de Manutenção**: Formulário público para manutenção de equipamentos
+- **Acompanhamento**: Sistema de status para solicitações
 
-- **Interface de Usuário Moderna**:
-  - Design responsivo com Tailwind CSS
-  - Componentes reutilizáveis com Shadcn/UI
-  - Tema escuro por padrão
-  - Tabelas interativas com TanStack Table (ordenação, filtros, paginação)
-  - Sidebar navegacional com controle de acesso por role
+### 📊 Gestão de Solicitações
+- **Pedidos de Toner**: Aprovação, entrega e rejeição
+- **Solicitações de Manutenção**: Controle de status (PENDING, ANALYZING, MAINTENANCE, COMPLETED, CANCELLED)
+- **Histórico**: Rastreamento completo de mudanças
 
-- **Controle de Usuários Avançado**:
-  - Criação e edição de usuários
-  - Sistema de roles com permissões diferenciadas
-  - Funcionalidade de banimento
-  - Alteração de senhas e informações pessoais
-
-#### 🔄 Em Desenvolvimento
-
-- Dashboard principal com estatísticas e métricas
-- Histórico de movimentações de ativos
-- Relatórios e exportação de dados
-- Sistema de notificações
-
-#### 📅 Planejadas para o Futuro
-
-- Expansão para outros tipos de ativos (computadores, switches, etc.)
-- Módulo de inventário automatizado
-- Sistema de chamados técnicos
-- Aplicativo mobile para técnicos em campo
-- Integração com sistemas externos
-- API REST para integrações
+### 🎨 Interface Moderna
+- **Design Responsivo**: Tailwind CSS com tema escuro
+- **Componentes Reutilizáveis**: Shadcn/UI
+- **Tabelas Interativas**: TanStack Table com filtros e paginação
+- **Navegação Intuitiva**: Sidebar com controle de acesso
 
 ## 🚀 Tecnologias
 
-O projeto utiliza um stack moderno e robusto:
+### Frontend
+- **Next.js 15**: Framework React com App Router
+- **React 19**: Biblioteca de interface
+- **TypeScript 5**: Tipagem estática
+- **Tailwind CSS 4**: Framework CSS utilitário
+- **Shadcn/UI**: Componentes acessíveis
+- **TanStack Table**: Tabelas interativas
+- **React Hook Form**: Gerenciamento de formulários
+- **Zod**: Validação de schemas
+- **Sonner**: Sistema de notificações
 
-### **Frontend**
-- **Next.js 15**: Framework React com App Router, Server Components e Server Actions
-- **React 19**: Biblioteca para construção de interfaces de usuário
-- **TypeScript 5**: Tipagem estática para maior segurança e produtividade
-- **Tailwind CSS 4**: Framework CSS utilitário para estilização
-- **Shadcn/UI**: Biblioteca de componentes acessíveis e customizáveis
-- **TanStack Table**: Biblioteca poderosa para tabelas interativas
-- **React Hook Form**: Gerenciamento de formulários com validação
-- **Zod**: Validação de schemas e tipagem
-- **Sonner**: Sistema de notificações toast
+### Backend & Database
+- **Next.js Server Actions**: API serverless
+- **Prisma ORM**: Object-Relational Mapping
+- **PostgreSQL**: Banco de dados relacional
+- **Better-Auth**: Sistema de autenticação
 
-### **Backend & Database**
-- **Next.js Server Actions**: API routes, Server Components e Server Actions
-- **Prisma ORM**: Object-Relational Mapping com type safety
-- **PostgreSQL**: Banco de dados relacional robusto
-- **Better-Auth**: Sistema de autenticação completo com:
-  - Plugin de administração
-  - Controle de acesso
-  - Gerenciamento de sessões
-  - Sistema de roles e permissões
-
-
-## 🔧 Instalação e Uso
+## 🔧 Instalação e Configuração
 
 ### Pré-requisitos
-
 - Node.js 18+
 - PostgreSQL
 - npm ou yarn
 
 ### Configuração
 
-1. Clone o repositório:
+1. **Clone o repositório:**
    ```bash
    git clone https://github.com/LuPeBreak/adit
    cd adit
    ```
 
-2. Instale as dependências:
+2. **Instale as dependências:**
    ```bash
    npm install
-   # ou
-   yarn
    ```
 
-3. Configure as variáveis de ambiente:
-   - Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
-   ```
+3. **Configure as variáveis de ambiente:**
+   Crie um arquivo `.env` na raiz do projeto:
+   ```env
+   # Database
    DATABASE_URL="postgresql://usuario:senha@localhost:5432/adit?schema=public"
-   BETTER_AUTH_SECRET=BETTER-AUTH-SECRET-KEY
-   BETTER_AUTH_URL=http://localhost:3000 
+   
+   # Authentication
+   BETTER_AUTH_SECRET="sua-chave-secreta-aqui"
+   BETTER_AUTH_URL="http://localhost:3000"
+   
+   # Admin Contact (opcional)
+   ADMIN_EMAIL="admin@barramansa.rj.gov.br"
+   ADMIN_WHATSAPP="24999999999"
    ```
 
-4. Execute as migrações do banco de dados:
+4. **Execute as migrações:**
    ```bash
    npx prisma migrate dev
-   # ou
-   yarn prisma migrate dev
    ```
 
-5. Popule o banco de dados com dados iniciais (opcional):
+5. **Popule o banco (opcional):**
    ```bash
    npx prisma db seed
-   # ou
-   yarn prisma db seed
    ```
 
 ### Executando o Projeto
@@ -131,163 +109,147 @@ O projeto utiliza um stack moderno e robusto:
 ```bash
 # Desenvolvimento
 npm run dev
-# ou
-yarn dev
 
 # Produção
 npm run build
 npm start
-# ou
-yarn build
-yarn start
 ```
 
 Acesse `http://localhost:3000` para visualizar a aplicação.
 
-## 📚 Arquitetura e Estrutura do Projeto
-
-### **Arquitetura Geral**
-O ADIT segue uma arquitetura moderna baseada em:
-- **Server-Side Rendering (SSR)** com Next.js App Router
-- **Server Actions** para operações de backend
-- **Component-Based Architecture** com React
-- **Type-Safe Database Access** com Prisma
-- **Role-Based Access Control (RBAC)** com Better-Auth
-
-### **Estrutura de Diretórios**
+## 📁 Estrutura do Projeto
 
 ```
 ├── prisma/                    # Configuração do banco de dados
-│   ├── migrations/           # Migrações do banco de dados
-│   ├── schema.prisma        # Schema do banco (modelos e relações)
-│   └── seed.ts              # Script de população inicial
-├── public/                   # Arquivos estáticos
-└── src/
-    ├── actions/             # Server Actions (operações do servidor)
-    │   ├── assets/          # Ações relacionadas a ativos
-    │   ├── auth/            # Ações de autenticação
-    │   ├── departments/     # Ações de departamentos
-    │   ├── printer-models/  # Ações de modelos de impressora
-    │   ├── printers/        # Ações de impressoras
-    │   ├── sectors/         # Ações de setores
-    │   └── users/           # Ações de usuários
-    ├── app/                 # Rotas da aplicação (App Router)
-    │   ├── (private)/       # Rotas protegidas (dashboard)
-    │   │   └── dashboard/   # Páginas do painel administrativo
-    │   ├── (public)/        # Rotas públicas (login, home)
-    │   ├── api/             # API routes (Better-Auth)
-    │   ├── globals.css      # Estilos globais
-    │   └── layout.tsx       # Layout raiz da aplicação
-    ├── components/          # Componentes React reutilizáveis
-    │   ├── account/         # Componentes de conta do usuário
-    │   ├── auth/            # Componentes de autenticação
-    │   ├── data-tables/     # Componentes de tabelas de dados
-    │   │   ├── assets/      # Tabela de ativos
-    │   │   ├── departments/ # Tabela de departamentos
-    │   │   ├── printers/    # Tabela de impressoras
-    │   │   ├── sectors/     # Tabela de setores
-    │   │   └── users/       # Tabela de usuários
-    │   ├── home/            # Componentes da página inicial
-    │   ├── sidebar/         # Componentes da barra lateral
-    │   └── ui/              # Componentes de UI base (Shadcn/UI)
-    ├── generated/           # Arquivos gerados pelo Prisma
-    │   └── prisma/          # Cliente Prisma tipado
-    ├── hooks/               # React Hooks personalizados
+│   ├── migrations/           # Migrações do banco
+│   ├── schema.prisma        # Schema do banco
+│   └── seed.ts              # Dados iniciais
+├── src/
+    ├── actions/             # Server Actions
+    │   ├── assets/          # Ações de ativos
+    │   ├── auth/            # Autenticação
+    │   ├── departments/     # Secretarias
+    │   ├── maintenance-requests/ # Solicitações de manutenção
+    │   ├── phones/          # Telefones
+    │   ├── printer-models/  # Modelos de impressora
+    │   ├── printers/        # Impressoras
+    │   ├── sectors/         # Setores
+    │   ├── toner-requests/  # Solicitações de toner
+    │   └── users/           # Usuários
+    ├── app/                 # Rotas da aplicação
+    │   ├── (private)/       # Área administrativa
+    │   │   └── dashboard/   # Painel de controle
+    │   ├── (public)/        # Área pública
+    │   │   ├── servicos/    # Serviços públicos
+    │   │   └── page.tsx     # Página inicial
+    │   └── api/             # API routes
+    ├── components/          # Componentes React
+    │   ├── data-tables/     # Tabelas de dados
+    │   ├── forms/           # Formulários
+    │   ├── home/            # Componentes da home
+    │   ├── sidebar/         # Navegação
+    │   ├── departments/     # Componentes para secretarias
+    │   ├── sectors/         # Componentes para setores
+    │   ├── assets/          # Componentes para ativos
+    │   ├── printers/        # Componentes para impressoras
+    │   ├── phones/          # Componentes para telefones
+    │   ├── requests/        # Componentes para solicitações
+    │   └── ui/              # Componentes base
     ├── lib/                 # Bibliotecas e configurações
     │   ├── auth/            # Configuração de autenticação
-    │   │   ├── auth.ts      # Configuração do Better-Auth
-    │   │   ├── permissions.ts # Sistema de permissões
-    │   │   └── with-permissions.ts # HOC para controle de acesso
-    │   ├── schemas/         # Schemas de validação Zod
-    │   ├── types/           # Tipos TypeScript personalizados
-    │   ├── utils/           # Funções utilitárias específicas
-    │   ├── prisma.ts        # Instância do cliente Prisma
-    │   └── utils.ts         # Utilitários gerais (cn, etc.)
+    │   ├── schemas/         # Schemas de validação
+    │   ├── types/           # Tipos TypeScript
+    │   └── utils/           # Utilitários
     └── middleware.ts        # Middleware de autenticação
 ```
 
-### **Padrões de Desenvolvimento**
+## 🗄️ Modelos de Dados
 
-- **Server Actions**: Todas as operações de banco são realizadas via Server Actions tipadas
-- **Validação**: Schemas Zod para validação de dados de entrada
-- **Permissões**: Sistema granular de permissões por recurso e ação
-- **Componentes**: Separação clara entre componentes de UI, lógica e dados
-- **Tipagem**: TypeScript em todo o projeto com tipos gerados pelo Prisma
-- **Responsividade**: Design mobile-first com Tailwind CSS
+### Principais Entidades
+- **User**: Usuários do sistema (ADMIN/OPERATOR)
+- **Session**: Sessões de autenticação dos usuários
+- **Account**: Contas vinculadas aos usuários
+- **Verification**: Tokens de verificação para autenticação
+- **Department**: Secretarias da prefeitura (organizadas hierarquicamente)
+- **Sector**: Setores que pertencem às secretarias
+- **Asset**: Ativos de TI (impressoras, telefones, etc.)
+- **AssetStatusHistory**: Histórico de status dos ativos
+- **Printer**: Impressoras específicas com informações detalhadas
+- **PrinterModel**: Modelos de impressoras disponíveis
+- **Phone**: Telefones do sistema
+- **PhoneType**: Tipos de telefones (fixo, móvel, etc.)
+- **TonerRequest**: Solicitações de toner para impressoras
+- **MaintenanceRequest**: Solicitações de manutenção de equipamentos
+- **MaintenanceRequestHistory**: Histórico das solicitações de manutenção
 
-## 🔍 Análise Técnica do Projeto
+### Organização Hierárquica
 
-### **✅ Pontos Fortes**
+Na Prefeitura Municipal de Barra Mansa, a organização segue a seguinte estrutura:
 
-#### **Arquitetura e Estrutura**
-- **Arquitetura moderna**: Uso do Next.js 15 com App Router e Server Components
-- **Separação de responsabilidades**: Clara divisão entre actions, components, lib e utils
-- **Type Safety**: TypeScript em todo o projeto com tipos gerados pelo Prisma
-- **Padrões consistentes**: Estrutura organizada e padronizada em todos os módulos
+- **Secretarias** (departments): Órgãos principais da prefeitura, cada uma com seu secretário que responde diretamente ao prefeito
+- **Setores** (sectors): Divisões internas das secretarias, responsáveis por áreas específicas de atuação
 
-#### **Sistema de Autenticação e Segurança**
-- **Better-Auth**: Implementação robusta com plugin de administração
-- **Controle granular**: Sistema de permissões por recurso e ação
-- **Middleware de proteção**: Rotas protegidas adequadamente
-- **Validação de dados**: Schemas Zod para validação de entrada
+> **Nota**: O termo "department" é usado no código como nomenclatura em inglês para as secretarias, mantendo a padronização técnica do sistema.
 
-#### **Interface e Experiência do Usuário**
-- **Design system consistente**: Uso do Shadcn/UI com componentes reutilizáveis
-- **Tabelas interativas**: TanStack Table com filtros, ordenação e paginação
-- **Responsividade**: Design adaptável para diferentes dispositivos
-- **Feedback visual**: Sistema de notificações com Sonner
+## 🌐 Serviços Disponíveis
 
-#### **Banco de Dados e ORM**
-- **Schema bem estruturado**: Relacionamentos claros entre entidades
-- **Migrações organizadas**: Histórico de mudanças no banco bem documentado
-- **Seed script**: População inicial de dados para desenvolvimento
-- **Prisma ORM**: Type-safe database access com geração automática de tipos
+### Gestão de Secretarias e Setores
+- **Secretarias**: Cadastro e gerenciamento das secretarias municipais
+- **Setores**: Organização dos setores dentro de cada secretaria
+- **Hierarquia**: Estrutura organizacional clara da prefeitura
 
-### **⚠️ Pontos de Melhoria**
+### Serviços Públicos (Implementados)
+1. **Solicitação de Toner** (`/servicos/toner`)
+   - Formulário para pedido de toner
+   - Seleção automática de toners compatíveis
+   - Notificação por email
 
-#### **Funcionalidades Pendentes**
-- **Dashboard principal**: Página inicial ainda básica, sem métricas ou gráficos
-- **Formulários de criação**: Alguns CRUDs podem estar incompletos
-- **Histórico de ações**: Falta auditoria de mudanças nos ativos
-- **Relatórios**: Sistema de exportação e relatórios não implementado
+2. **Solicitação de Manutenção** (`/servicos/manutencao`)
+   - Formulário para manutenção de equipamentos
+   - Acompanhamento de status
+   - Histórico de solicitações
 
-#### **Otimizações Técnicas**
-- **Middleware limitado**: Proteção apenas para `/dashboard`, poderia ser mais granular
-- **Error handling**: Tratamento de erros poderia ser mais robusto
-- **Caching**: Implementar cache para consultas frequentes
-- **Validação client-side**: Melhorar feedback em tempo real nos formulários
+### Área Administrativa
+- Dashboard com métricas
+- Gestão de ativos, usuários, secretarias
+- Controle de solicitações
+- Relatórios e históricos
 
-#### **Escalabilidade**
-- **Paginação**: Implementar paginação server-side para grandes volumes
-- **Busca avançada**: Sistema de busca mais sofisticado
-- **Logs**: Sistema de logging para monitoramento
-- **Testes**: Implementar testes unitários e de integração
+## 🔒 Sistema de Permissões
 
-### **🚀 Recomendações de Evolução**
+O sistema implementa controle de acesso baseado em funções (RBAC):
 
-#### **Curto Prazo**
-1. Completar dashboard principal com métricas básicas
-2. Implementar sistema de logs de auditoria
-3. Melhorar tratamento de erros e loading states
-4. Adicionar testes unitários para Server Actions
+- **ADMIN**: Acesso completo ao sistema
+  - Gerenciamento de usuários
+  - Gestão de secretarias e setores
+  - Controle de ativos (impressoras, telefones)
+  - Visualização e gerenciamento de todas as solicitações
+  
+- **OPERATOR**: Acesso limitado
+  - Visualização de solicitações
+  - Atualização de status de solicitações
+  - Acesso aos dados básicos do sistema
 
-#### **Médio Prazo**
-1. Sistema de relatórios e exportação
-2. API REST para integrações externas
-3. Sistema de notificações em tempo real
-4. Módulo de manutenção preventiva
+## 📞 Contato e Suporte
 
-#### **Longo Prazo**
-1. Aplicativo mobile para técnicos
-2. Integração com sistemas de monitoramento
-3. IA para predição de falhas
-4. Dashboard executivo com BI
+Para suporte técnico ou dúvidas sobre o sistema:
+- **Email**: Configurado via `ADMIN_EMAIL`
+- **WhatsApp**: Configurado via `ADMIN_WHATSAPP`
 
+## 🚀 Próximas Funcionalidades
 
-## 👨‍💻 Autor
+- Dashboard com métricas avançadas
+- Sistema de relatórios
+- API REST para integrações
+- Aplicativo mobile
+- Sistema de notificações em tempo real
+- Módulo de inventário automatizado
 
-Desenvolvido por [Luis Felipe de Paula Costa](https://github.com/lupebreak)
+## 👨‍💻 Desenvolvimento
+
+Desenvolvido para a Prefeitura Municipal de Barra Mansa
+Coordenadoria de Tecnologia da Informação
 
 ## 📄 Licença
 
-Este projeto está sob a licença [MIT](LICENSE).
+Este projeto está sob a licença MIT.

@@ -148,8 +148,9 @@ export function PublicTonerRequestForm({
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <div className="bg-card rounded-lg border shadow-sm p-4 sm:p-6">
+      <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
         {/* Seleção de Impressora */}
         <FormField
           control={form.control}
@@ -363,15 +364,18 @@ export function PublicTonerRequestForm({
 
         <Button
           type="submit"
-          className="w-full"
+          className="w-full h-11 sm:h-10"
           disabled={form.formState.isSubmitting || !selectedPrinter}
         >
           {form.formState.isSubmitting && (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
-          {form.formState.isSubmitting ? 'Enviando...' : 'Enviar Solicitação'}
+          <span className="text-sm sm:text-base">
+            {form.formState.isSubmitting ? 'Enviando...' : 'Enviar Solicitação'}
+          </span>
         </Button>
       </form>
     </Form>
+    </div>
   )
 }

@@ -99,13 +99,13 @@ export function PublicMaintenanceRequestForm() {
   }
 
   return (
-    <div className="bg-card rounded-lg border shadow-sm p-6">
+    <div className="bg-card rounded-lg border shadow-sm p-4 sm:p-6">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
           {/* Informações do Equipamento */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div className="border-b pb-2">
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">
                 Informações do Equipamento
               </h3>
             </div>
@@ -231,9 +231,9 @@ export function PublicMaintenanceRequestForm() {
           </div>
 
           {/* Dados do Requerente */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div className="border-b pb-2">
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">
                 Dados do Requerente
               </h3>
             </div>
@@ -311,39 +311,18 @@ export function PublicMaintenanceRequestForm() {
             />
           </div>
 
-          {/* Informações Importantes */}
-          <div className="bg-amber-50 dark:bg-amber-950/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
-            <div className="space-y-2">
-              <h4 className="font-medium text-amber-900 dark:text-amber-100 mb-2">
-                ⚠️ Informações Importantes
-              </h4>
-              <ul className="text-sm text-amber-700 dark:text-amber-300 space-y-1">
-                <li>
-                  • Certifique-se de que o número do patrimônio está correto
-                </li>
-                <li>
-                  • Descreva o problema de forma detalhada para agilizar o
-                  atendimento
-                </li>
-                <li>• Você receberá confirmações por e-mail e WhatsApp</li>
-                <li>• O pedido será analisado pela equipe de TI</li>
-              </ul>
-            </div>
-          </div>
-
           <Button
             type="submit"
-            className="w-full"
-            disabled={form.formState.isSubmitting}
-            size="lg"
+            className="w-full h-11 sm:h-10"
+            disabled={form.formState.isSubmitting || !selectedAsset}
           >
             {form.formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Enviando pedido...
+                <span className="text-sm sm:text-base">Enviando pedido...</span>
               </>
             ) : (
-              'Enviar Pedido de Manutenção'
+              <span className="text-sm sm:text-base">Enviar Pedido de Manutenção</span>
             )}
           </Button>
         </form>
