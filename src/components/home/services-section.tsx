@@ -1,14 +1,17 @@
 import { Separator } from '@/components/ui/separator'
-import { Printer, Monitor, User, Mail, Phone } from 'lucide-react'
+import { Printer, Monitor, User, Mail, Phone, Mouse, Projector, KeyRound } from 'lucide-react'
 import { ServiceCard, type Service } from './service-card'
 
 const services: Service[] = [
+  // Grupo 1: Serviços Ativos
   {
     title: 'Solicitação de Toner',
     description: 'Solicite toners para impressoras do seu setor de forma rápida e prática',
     icon: Printer,
     href: '/servicos/toner',
   },
+  
+  // Grupo 2: Manutenções (todas juntas)
   {
     title: 'Manutenção de Impressora',
     description: 'Solicite manutenção para impressoras com problemas técnicos ou necessidade de reparo.',
@@ -28,10 +31,35 @@ const services: Service[] = [
     href: '#',
     isComingSoon: true
   },
+  
+  // Grupo 3: Gestão de Usuários e Senhas (temas próximos)
   {
     title: 'Solicitação de Usuário',
-    description: 'Faça solicitações para outros sistemas e serviços da empresa.',
+    description: 'Faça solicitações para criação de usuários em sistemas de prefeitura de Barra Mansa.',
     icon: User,
+    href: '#',
+    isComingSoon: true
+  },
+  {
+    title: 'Redefinição de Senha',
+    description: 'Solicite a redefinição de senhas para sistemas externos da prefeitura.',
+    icon: KeyRound,
+    href: '#',
+    isComingSoon: true
+  },
+  
+  // Grupo 4: Outros Serviços
+  {
+    title: 'Solicitação de Periféricos',
+    description: 'Solicite mouse, teclado, fones de ouvido e outros periféricos para seu posto de trabalho.',
+    icon: Mouse,
+    href: '#',
+    isComingSoon: true
+  },
+  {
+    title: 'Agendamento de Projetor',
+    description: 'Agende o empréstimo de projetores para apresentações e reuniões.',
+    icon: Projector,
     href: '#',
     isComingSoon: true
   },
