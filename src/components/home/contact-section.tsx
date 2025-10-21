@@ -23,7 +23,7 @@ export function ContactSection() {
     try {
       await navigator.clipboard.writeText(adminEmail)
       toast.success('Email copiado para a área de transferência!')
-    } catch (err) {
+    } catch {
       toast.error('Erro ao copiar email')
     }
   }
@@ -36,7 +36,8 @@ export function ContactSection() {
             Contato e Suporte
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-            Precisa de ajuda? Entre em contato com a Coordenadoria de Tecnologia da Informação
+            Precisa de ajuda? Entre em contato com a Coordenadoria de Tecnologia
+            da Informação
           </p>
         </div>
 
@@ -56,7 +57,7 @@ export function ContactSection() {
                 </p>
               </div>
             </div>
-            <Button 
+            <Button
               onClick={handleWhatsAppClick}
               className="w-full bg-green-600 hover:bg-green-700 text-sm sm:text-base"
             >
@@ -80,7 +81,7 @@ export function ContactSection() {
                 </p>
               </div>
             </div>
-            <Button 
+            <Button
               onClick={handleEmailClick}
               variant="outline"
               className="w-full text-sm sm:text-base"

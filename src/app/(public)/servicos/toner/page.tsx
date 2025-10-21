@@ -23,7 +23,7 @@ export default function TonerRequestPage() {
 
         <PublicTonerRequestForm />
       </div>
-      
+
       <ContactSection />
     </div>
   )

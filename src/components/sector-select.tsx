@@ -68,7 +68,7 @@ export function SectorSelect({
   const selectedSector = sectors.find((sector) => sector.id === value)
   const getDisplayText = (sector: Sector) =>
     `${generateAcronymWithFallback(sector.departmentName)} - ${sector.name}`
-  
+
   // Função para busca que inclui tanto a sigla quanto o nome completo
   const getSearchText = (sector: Sector) =>
     `${sector.departmentName} ${generateAcronymWithFallback(sector.departmentName)} ${sector.name}`

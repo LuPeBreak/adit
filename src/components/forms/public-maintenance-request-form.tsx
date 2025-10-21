@@ -101,7 +101,10 @@ export function PublicMaintenanceRequestForm() {
   return (
     <div className="bg-card rounded-lg border shadow-sm p-4 sm:p-6">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 sm:space-y-6"
+        >
           {/* Informações do Equipamento */}
           <div className="space-y-3 sm:space-y-4">
             <div className="border-b pb-2">
@@ -322,7 +325,9 @@ export function PublicMaintenanceRequestForm() {
                 <span className="text-sm sm:text-base">Enviando pedido...</span>
               </>
             ) : (
-              <span className="text-sm sm:text-base">Enviar Pedido de Manutenção</span>
+              <span className="text-sm sm:text-base">
+                Enviar Pedido de Manutenção
+              </span>
             )}
           </Button>
         </form>

@@ -36,6 +36,10 @@ import {
 import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
+  maskWhatsappNumber,
+  normalizeWhatsappNumber,
+} from '@/lib/utils/contact-formatter'
+import {
   publicTonerRequestSchema,
   type PublicTonerRequestData,
 } from '@/lib/schemas/public-toner-request'
@@ -64,26 +68,6 @@ export function PublicTonerRequestForm({
     null,
   )
   const [open, setOpen] = useState(false)
-
-  // Função para formatar WhatsApp
-  const formatWhatsApp = (value: string) => {
-    // Remove tudo que não é dígito
-    const numbers = value.replace(/\D/g, '')
-
-    // Aplica a máscara (XX) XXXXX-XXXX
-    if (numbers.length <= 2) {
-      return numbers
-    } else if (numbers.length <= 7) {
-      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`
-    } else {
-      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`
-    }
-  }
-
-  // Função para extrair apenas números do WhatsApp
-  const extractWhatsAppNumbers = (value: string) => {
-    return value.replace(/\D/g, '')
-  }
 
   const form = useForm<PublicTonerRequestData>({
     resolver: zodResolver(publicTonerRequestSchema),
@@ -150,232 +134,238 @@ export function PublicTonerRequestForm({
   return (
     <div className="bg-card rounded-lg border shadow-sm p-4 sm:p-6">
       <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
-        {/* Seleção de Impressora */}
-        <FormField
-          control={form.control}
-          name="printerId"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Impressora (Nº Patrimônio da TI)</FormLabel>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={open}
-                      className={cn(
-                        'justify-between',
-                        !field.value && 'text-muted-foreground',
-                      )}
-                      disabled={form.formState.isSubmitting}
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4 sm:space-y-6"
+        >
+          {/* Seleção de Impressora */}
+          <FormField
+            control={form.control}
+            name="printerId"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Impressora (Nº Patrimônio da TI)</FormLabel>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className={cn(
+                          'justify-between',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                        disabled={form.formState.isSubmitting}
+                      >
+                        {selectedPrinter
+                          ? `${selectedPrinter.tag} - ${selectedPrinter.printerModel}`
+                          : form.formState.isSubmitting
+                            ? 'Carregando impressoras...'
+                            : 'Selecione uma impressora'}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command
+                      filter={(value, search) => {
+                        const printerText = value.toLowerCase()
+                        const searchText = search.toLowerCase()
+                        return printerText.includes(searchText) ? 1 : 0
+                      }}
                     >
-                      {selectedPrinter
-                        ? `${selectedPrinter.tag} - ${selectedPrinter.printerModel}`
-                        : form.formState.isSubmitting
-                          ? 'Carregando impressoras...'
-                          : 'Selecione uma impressora'}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
-                  <Command
-                    filter={(value, search) => {
-                      const printerText = value.toLowerCase()
-                      const searchText = search.toLowerCase()
-                      return printerText.includes(searchText) ? 1 : 0
-                    }}
-                  >
-                    <CommandInput placeholder="Pesquisar impressora pelo numero de patrimonio da TI..." />
-                    <CommandList>
-                      <CommandEmpty>
-                        Nenhuma impressora encontrada.
-                      </CommandEmpty>
-                      <CommandGroup>
-                        {printers.map((printer) => (
-                          <CommandItem
-                            key={printer.printerId}
-                            value={printer.tag}
-                            onSelect={() => handlePrinterSelect(printer)}
-                          >
-                            <Check
-                              className={cn(
-                                'mr-2 h-4 w-4',
-                                selectedPrinter?.printerId === printer.printerId
-                                  ? 'opacity-100'
-                                  : 'opacity-0',
-                              )}
-                            />
-                            <div className="flex flex-col">
-                              <span className="font-medium">
-                                {printer.tag} - {printer.printerModel}
-                              </span>
-                              <span className="text-sm text-muted-foreground">
-                                {printer.sector} - {printer.department}
-                              </span>
-                            </div>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                      <CommandInput placeholder="Pesquisar impressora pelo numero de patrimonio da TI..." />
+                      <CommandList>
+                        <CommandEmpty>
+                          Nenhuma impressora encontrada.
+                        </CommandEmpty>
+                        <CommandGroup>
+                          {printers.map((printer) => (
+                            <CommandItem
+                              key={printer.printerId}
+                              value={printer.tag}
+                              onSelect={() => handlePrinterSelect(printer)}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  selectedPrinter?.printerId ===
+                                    printer.printerId
+                                    ? 'opacity-100'
+                                    : 'opacity-0',
+                                )}
+                              />
+                              <div className="flex flex-col">
+                                <span className="font-medium">
+                                  {printer.tag} - {printer.printerModel}
+                                </span>
+                                <span className="text-sm text-muted-foreground">
+                                  {printer.sector} - {printer.department}
+                                </span>
+                              </div>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        {/* Dados da Impressora Selecionada */}
-        {selectedPrinter && (
-          <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-            <div className="space-y-2">
-              <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
-                Dados da Impressora Selecionada
-              </h4>
-              <div className="space-y-1">
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  <strong>Patrimônio:</strong> {selectedPrinter.tag}
-                </p>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  <strong>Modelo:</strong> {selectedPrinter.printerModel}
-                </p>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  <strong>Setor:</strong> {selectedPrinter.sector}
-                </p>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  <strong>Secretaria:</strong> {selectedPrinter.department}
-                </p>
-                <p className="text-sm text-amber-700 dark:text-amber-400 mt-2">
-                  ⚠️ Caso os dados acima estejam incorretos, entre em contato
-                  com a TI.
-                </p>
+          {/* Dados da Impressora Selecionada */}
+          {selectedPrinter && (
+            <div className="bg-blue-50 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="space-y-2">
+                <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                  Dados da Impressora Selecionada
+                </h4>
+                <div className="space-y-1">
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    <strong>Patrimônio:</strong> {selectedPrinter.tag}
+                  </p>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    <strong>Modelo:</strong> {selectedPrinter.printerModel}
+                  </p>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    <strong>Setor:</strong> {selectedPrinter.sector}
+                  </p>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    <strong>Secretaria:</strong> {selectedPrinter.department}
+                  </p>
+                  <p className="text-sm text-amber-700 dark:text-amber-400 mt-2">
+                    ⚠️ Caso os dados acima estejam incorretos, entre em contato
+                    com a TI.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Seleção de Toner */}
-        {selectedPrinter && (
-          <FormField
-            control={form.control}
-            name="selectedToner"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Toner Desejado</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Selecione o toner" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {selectedPrinter.availableToners.map((toner) => (
-                      <SelectItem key={toner} value={toner}>
-                        {toner}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
-        {/* Dados do Requerente */}
-        <div className="space-y-4">
-          <div className="border-b pb-2">
-            <h3 className="text-lg font-semibold text-foreground">
-              Dados do Requerente
-            </h3>
-          </div>
-
-          <FormField
-            control={form.control}
-            name="requesterName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nome Completo</FormLabel>
-                <FormControl>
-                  <Input placeholder="Digite seu nome completo" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="registrationNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Matrícula</FormLabel>
-                <FormControl>
-                  <Input placeholder="Digite sua matrícula" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requesterEmail"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>E-mail</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Digite seu e-mail"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="requesterWhatsApp"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>WhatsApp</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="(XX) XXXXX-XXXX"
-                    value={formatWhatsApp(field.value)}
-                    onChange={(e) => {
-                      const numbers = extractWhatsAppNumbers(e.target.value)
-                      field.onChange(numbers)
-                    }}
-                    maxLength={15}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <Button
-          type="submit"
-          className="w-full h-11 sm:h-10"
-          disabled={form.formState.isSubmitting || !selectedPrinter}
-        >
-          {form.formState.isSubmitting && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           )}
-          <span className="text-sm sm:text-base">
-            {form.formState.isSubmitting ? 'Enviando...' : 'Enviar Solicitação'}
-          </span>
-        </Button>
-      </form>
-    </Form>
+
+          {/* Seleção de Toner */}
+          {selectedPrinter && (
+            <FormField
+              control={form.control}
+              name="selectedToner"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Toner Desejado</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione o toner" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {selectedPrinter.availableToners.map((toner) => (
+                        <SelectItem key={toner} value={toner}>
+                          {toner}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {/* Dados do Requerente */}
+          <div className="space-y-4">
+            <div className="border-b pb-2">
+              <h3 className="text-lg font-semibold text-foreground">
+                Dados do Requerente
+              </h3>
+            </div>
+
+            <FormField
+              control={form.control}
+              name="requesterName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome Completo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Digite seu nome completo" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="registrationNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Matrícula</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Digite sua matrícula" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="requesterEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>E-mail</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Digite seu e-mail"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="requesterWhatsApp"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>WhatsApp</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="(XX) XXXXX-XXXX"
+                      value={maskWhatsappNumber(field.value)}
+                      onChange={(e) => {
+                        const numbers = normalizeWhatsappNumber(e.target.value)
+                        field.onChange(numbers)
+                      }}
+                      maxLength={15}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full h-11 sm:h-10"
+            disabled={form.formState.isSubmitting || !selectedPrinter}
+          >
+            {form.formState.isSubmitting && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            <span className="text-sm sm:text-base">
+              {form.formState.isSubmitting
+                ? 'Enviando...'
+                : 'Enviar Solicitação'}
+            </span>
+          </Button>
+        </form>
+      </Form>
     </div>
   )
 }

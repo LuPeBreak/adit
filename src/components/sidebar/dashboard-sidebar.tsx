@@ -9,6 +9,7 @@ import {
   FileText,
   LayoutDashboard,
   Wrench,
+  Eye,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -47,6 +48,12 @@ const menuLinks = {
         title: 'Pedidos de Manutenção',
         url: '/dashboard/maintenance-requests',
         icon: Wrench,
+        roles: ['OPERATOR', 'ADMIN'],
+      },
+      {
+        title: 'Preview Templates (Temp)',
+        url: '/dashboard/templates-preview',
+        icon: Eye,
         roles: ['OPERATOR', 'ADMIN'],
       },
     ],

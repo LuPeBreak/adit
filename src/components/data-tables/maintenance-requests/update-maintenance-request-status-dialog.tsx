@@ -196,7 +196,10 @@ export function UpdateMaintenanceRequestStatusDialog({
                     <Checkbox
                       checked={!!field.value}
                       onCheckedChange={(checked) => field.onChange(!!checked)}
-                      disabled={targetStatus === 'MAINTENANCE' || targetStatus === 'COMPLETED'}
+                      disabled={
+                        targetStatus === 'MAINTENANCE' ||
+                        targetStatus === 'COMPLETED'
+                      }
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">

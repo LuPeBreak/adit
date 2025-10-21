@@ -11,13 +11,13 @@ import {
   createErrorResponse,
   type ActionResponse,
 } from '@/lib/types/action-response'
-import { sendEmail } from '@/lib/utils/email-service'
+import { sendEmail } from '@/lib/notifications/services/email-service'
+import { sendWhatsApp } from '@/lib/notifications/services/whatsapp-service'
 import {
   createMaintenanceRequestNotificationTemplate,
   createMaintenanceRequestConfirmationTemplate,
-} from '@/lib/utils/email-templates'
-import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
-import { createMaintenanceRequestConfirmationWhatsAppTemplate } from '@/lib/utils/whatsapp-templates'
+} from '@/lib/notifications/templates/maintenance-request/email-template'
+import { createMaintenanceRequestConfirmationWhatsAppTemplate } from '@/lib/notifications/templates/maintenance-request/whatsapp-template'
 import { getAssetTypeLabel } from '@/lib/utils/get-status-label'
 import { normalizeWhatsappNumber } from '@/lib/utils/contact-formatter'
 import { AssetStatus, MaintenanceStatus } from '@/generated/prisma'
@@ -121,16 +121,19 @@ export async function createPublicMaintenanceRequestAction(
     if (adminEmail && adminEmail.trim().length > 0) {
       notificationPromises.push(
         sendEmail({
-          email: adminEmail,
+          to: adminEmail,
           subject: `Novo Pedido de Manutenção - ${asset.tag}`,
-          message: createMaintenanceRequestNotificationTemplate({
+          html: createMaintenanceRequestNotificationTemplate({
             requesterName,
             requesterEmail,
             requesterWhatsApp,
             department: asset.sector.department.name,
             sector: asset.sector.name,
-            assetInfo: `${asset.tag} (${getAssetTypeLabel(asset.assetType)})`,
+            assetTag: asset.tag,
+            assetType: getAssetTypeLabel(asset.assetType),
             description,
+            notes: description,
+            status: 'PENDING',
           }),
         }),
       )
@@ -143,13 +146,19 @@ export async function createPublicMaintenanceRequestAction(
     // Email de confirmação para o solicitante
     notificationPromises.push(
       sendEmail({
-        email: requesterEmail,
+        to: requesterEmail,
         subject: `Confirmação de Pedido de Manutenção - ${asset.tag}`,
-        message: createMaintenanceRequestConfirmationTemplate({
+        html: createMaintenanceRequestConfirmationTemplate({
           requesterName,
           requesterEmail,
-          assetInfo: `${asset.tag} (${getAssetTypeLabel(asset.assetType)})`,
+          requesterWhatsApp,
+          department: asset.sector.department.name,
+          sector: asset.sector.name,
+          assetTag: asset.tag,
+          assetType: getAssetTypeLabel(asset.assetType),
           description,
+          notes: description,
+          status: 'PENDING',
         }),
       }),
     )
@@ -159,12 +168,15 @@ export async function createPublicMaintenanceRequestAction(
     if (normalizedWhatsApp && normalizedWhatsApp.length === 13) {
       notificationPromises.push(
         sendWhatsApp({
-          number: normalizedWhatsApp,
-          text: createMaintenanceRequestConfirmationWhatsAppTemplate({
+          to: normalizedWhatsApp,
+          message: createMaintenanceRequestConfirmationWhatsAppTemplate({
             requesterName,
             assetTag: asset.tag,
             assetType: getAssetTypeLabel(asset.assetType),
+            department: asset.sector?.department?.name || 'Não informado',
+            sector: asset.sector?.name || 'Não informado',
             description,
+            status: 'PENDING',
           }),
         }),
       )

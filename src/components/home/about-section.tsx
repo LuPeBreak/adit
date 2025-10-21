@@ -17,8 +17,9 @@ export function AboutSection() {
             Sobre o ADIT
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-            O ADIT é uma plataforma desenvolvida para facilitar a solicitação e o gerenciamento 
-            de serviços de TI na Prefeitura Municipal de Barra Mansa.
+            O ADIT é uma plataforma desenvolvida para facilitar a solicitação e
+            o gerenciamento de serviços de TI na Prefeitura Municipal de Barra
+            Mansa.
           </p>
         </div>
 
@@ -42,9 +43,9 @@ export function AboutSection() {
               Objetivo do Sistema
             </h3>
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Proporcionar maior visibilidade, organização e otimização do fluxo de trabalho 
-              da equipe de TI, centralizando as solicitações de serviços e facilitando o 
-              acompanhamento de cada demanda.
+              Proporcionar maior visibilidade, organização e otimização do fluxo
+              de trabalho da equipe de TI, centralizando as solicitações de
+              serviços e facilitando o acompanhamento de cada demanda.
             </p>
           </div>
         </div>

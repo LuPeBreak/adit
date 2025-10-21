@@ -1,30 +1,30 @@
 import { z } from 'zod'
+import { TonerRequestStatus } from '@/generated/prisma'
 
-// Schema para aprovar pedido de toner
-export const approveTonerRequestSchema = z.object({
-  tonerRequestId: z.string().min(1, 'ID do pedido é obrigatório'),
-})
+// Schema unificado para atualização de status de pedidos de toner
+export const updateTonerRequestStatusSchema = z
+  .object({
+    id: z.string().min(1, 'ID do pedido é obrigatório'),
+    status: z.nativeEnum(TonerRequestStatus, {
+      errorMap: () => ({ message: 'Status inválido' }),
+    }),
+    notes: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // Notes é obrigatório para REJECTED
+      if (data.status === TonerRequestStatus.REJECTED) {
+        return data.notes && data.notes.trim().length > 0
+      }
+      // Notes é opcional para APPROVED e DELIVERED
+      return true
+    },
+    {
+      message: 'Observação é obrigatória para pedidos rejeitados',
+      path: ['notes'],
+    },
+  )
 
-export type ApproveTonerRequestData = z.infer<typeof approveTonerRequestSchema>
-
-// Schema para rejeitar pedido de toner
-export const rejectTonerRequestSchema = z.object({
-  tonerRequestId: z.string().min(1, 'ID do pedido é obrigatório'),
-  rejectionReason: z
-    .string()
-    .min(1, 'Motivo da rejeição é obrigatório')
-    .refine(
-      (value) => value.replace(/\s/g, '').length >= 5,
-      'O motivo da rejeição deve ter pelo menos 5 caracteres',
-    ),
-})
-
-export type RejectTonerRequestData = z.infer<typeof rejectTonerRequestSchema>
-
-// Schema para marcar pedido como entregue
-export const deliverTonerRequestSchema = z.object({
-  tonerRequestId: z.string().min(1, 'ID do pedido é obrigatório'),
-  deliveryNote: z.string().optional(),
-})
-
-export type DeliverTonerRequestData = z.infer<typeof deliverTonerRequestSchema>
+export type UpdateTonerRequestStatusData = z.infer<
+  typeof updateTonerRequestStatusSchema
+>

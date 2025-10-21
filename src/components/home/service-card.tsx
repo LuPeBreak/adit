@@ -20,19 +20,23 @@ export function ServiceCard({ service }: ServiceCardProps) {
   const CardContent = (
     <>
       <div className="flex items-start gap-3 sm:gap-4 mb-3">
-        <div className={`p-2 rounded-md shrink-0 ${
-          isComingSoon 
-            ? 'bg-muted text-muted-foreground' 
-            : 'bg-primary/10 text-primary'
-        }`}>
+        <div
+          className={`p-2 rounded-md shrink-0 ${
+            isComingSoon
+              ? 'bg-muted text-muted-foreground'
+              : 'bg-primary/10 text-primary'
+          }`}
+        >
           <Icon size={20} className="sm:w-6 sm:h-6" />
         </div>
         <div className="flex-1">
-          <h3 className={`text-lg sm:text-xl font-semibold leading-tight ${
-            isComingSoon 
-              ? 'text-muted-foreground' 
-              : 'group-hover:text-primary transition-colors'
-          }`}>
+          <h3
+            className={`text-lg sm:text-xl font-semibold leading-tight ${
+              isComingSoon
+                ? 'text-muted-foreground'
+                : 'group-hover:text-primary transition-colors'
+            }`}
+          >
             {title}
           </h3>
           {isComingSoon && (
@@ -42,9 +46,11 @@ export function ServiceCard({ service }: ServiceCardProps) {
           )}
         </div>
       </div>
-      <p className={`text-sm sm:text-base flex-grow leading-relaxed ${
-        isComingSoon ? 'text-muted-foreground/70' : 'text-muted-foreground'
-      }`}>
+      <p
+        className={`text-sm sm:text-base flex-grow leading-relaxed ${
+          isComingSoon ? 'text-muted-foreground/70' : 'text-muted-foreground'
+        }`}
+      >
         {description}
       </p>
       {!isComingSoon && (

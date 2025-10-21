@@ -24,7 +24,7 @@ export default async function DepartmentsPage() {
       ) : (
         <div className="mt-6">
           <ErrorAlert
-            title="Erro ao carregar departamentos"
+            title="Erro ao carregar Secretarias"
             message={
               response.error?.message ||
               'Ocorreu um erro inesperado ao carregar os dados.'

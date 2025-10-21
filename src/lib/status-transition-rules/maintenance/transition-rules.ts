@@ -36,7 +36,7 @@ export function canTransition(
   return { allowed: true }
 }
 
-export function getAvailableTargets(
+export function getValidStatusTransitions(
   current: MaintenanceStatus,
 ): MaintenanceStatus[] {
   return allowedTransitions[current]

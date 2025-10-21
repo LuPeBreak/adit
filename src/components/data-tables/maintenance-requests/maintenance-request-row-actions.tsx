@@ -22,7 +22,7 @@ import type { MaintenanceRequestRowActionsProps } from './maintenance-requests-t
 import { MaintenanceRequestDetailsDialog } from './maintenance-request-details-dialog'
 import { UpdateMaintenanceRequestStatusDialog } from './update-maintenance-request-status-dialog'
 import Link from 'next/link'
-import { getAvailableTargets } from '@/lib/maintenance/transition-rules'
+import { getValidStatusTransitions } from '@/lib/status-transition-rules/maintenance/transition-rules'
 import { getMaintenanceStatusLabel } from '@/lib/utils/get-status-label'
 import { MaintenanceStatus } from '@/generated/prisma'
 
@@ -35,7 +35,7 @@ export function MaintenanceRequestRowActions({
   const [targetStatus, setTargetStatus] = useState<MaintenanceStatus | null>(
     null,
   )
-  const availableTargets = getAvailableTargets(maintenanceRequest.status)
+  const availableTargets = getValidStatusTransitions(maintenanceRequest.status)
 
   return (
     <>

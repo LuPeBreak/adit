@@ -23,7 +23,7 @@ export default function MaintenanceRequestPage() {
 
         <PublicMaintenanceRequestForm />
       </div>
-      
+
       <ContactSection />
     </div>
   )

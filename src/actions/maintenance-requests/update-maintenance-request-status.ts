@@ -2,27 +2,24 @@
 
 import { revalidatePath } from 'next/cache'
 import { withPermissions } from '@/lib/auth/with-permissions'
-import prisma from '@/lib/prisma'
 import {
   createSuccessResponse,
   createErrorResponse,
-  type ActionResponse,
 } from '@/lib/types/action-response'
+import type { ActionResponse } from '@/lib/types/action-response'
+import type { UpdateMaintenanceRequestStatusData } from '@/lib/schemas/maintenance-request'
+import prisma from '@/lib/prisma'
+import { updateMaintenanceRequestStatusSchema } from '@/lib/schemas/maintenance-request'
+import { canTransition } from '@/lib/status-transition-rules/maintenance/transition-rules'
 import {
-  updateMaintenanceRequestStatusSchema,
-  type UpdateMaintenanceRequestStatusData,
-} from '@/lib/schemas/maintenance-request'
-import { canTransition } from '@/lib/maintenance/transition-rules'
-import {
-  getAssetTypeLabel,
-  getMaintenanceStatusLabel,
   getAssetStatusLabel,
+  getAssetTypeLabel,
 } from '@/lib/utils/get-status-label'
-import { sendEmail } from '@/lib/utils/email-service'
-import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
-import { createMaintenanceRequestStatusUpdateEmailTemplate } from '@/lib/utils/email-templates'
-import { createMaintenanceRequestStatusUpdateWhatsAppTemplate } from '@/lib/utils/whatsapp-templates'
 import { normalizeWhatsappNumber } from '@/lib/utils/contact-formatter'
+import { sendEmail } from '@/lib/notifications/services/email-service'
+import { sendWhatsApp } from '@/lib/notifications/services/whatsapp-service'
+import { createMaintenanceRequestStatusUpdateTemplate } from '@/lib/notifications/templates/maintenance-request/email-template'
+import { createMaintenanceRequestStatusUpdateWhatsAppTemplate } from '@/lib/notifications/templates/maintenance-request/whatsapp-template'
 
 export const updateMaintenanceRequestStatusAction = withPermissions(
   [{ resource: 'maintenanceRequest', action: ['update'] }],
@@ -58,6 +55,16 @@ export const updateMaintenanceRequestStatusAction = withPermissions(
               status: true,
               sectorId: true,
               assetType: true,
+              sector: {
+                select: {
+                  name: true,
+                  department: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -153,42 +160,62 @@ export const updateMaintenanceRequestStatusAction = withPermissions(
         }
       })
 
-      const assetTag = existingRequest.asset?.tag || 'N/A'
-      const assetTypeLabel = existingRequest.asset?.assetType
-        ? getAssetTypeLabel(existingRequest.asset.assetType)
-        : 'N/A'
-      const newStatusLabel = getMaintenanceStatusLabel(status)
-
       // Enviar notificações em paralelo e consolidar erros
-      const notifications = [
+      const notifications: Array<{
+        channel: 'Email' | 'WhatsApp'
+        promise: Promise<unknown>
+      }> = [
         {
           channel: 'Email' as const,
           promise: sendEmail({
-            email: existingRequest.requesterEmail,
+            to: existingRequest.requesterEmail,
             subject: 'Atualização de Status - Pedido de Manutenção',
-            message: createMaintenanceRequestStatusUpdateEmailTemplate({
+            html: createMaintenanceRequestStatusUpdateTemplate({
               requesterName: existingRequest.requesterName,
-              assetTag,
-              assetType: assetTypeLabel,
-              newStatus: newStatusLabel,
+              requesterEmail: existingRequest.requesterEmail,
+              requesterWhatsApp: existingRequest.requesterWhatsApp,
+              department:
+                existingRequest.asset?.sector?.department?.name ||
+                'Não informado',
+              sector: existingRequest.asset?.sector?.name || 'Não informado',
+              assetTag: existingRequest.asset?.tag || 'N/A',
+              assetType: existingRequest.asset?.assetType
+                ? getAssetTypeLabel(existingRequest.asset.assetType)
+                : 'N/A',
               notes,
-            }),
-          }),
-        },
-        {
-          channel: 'WhatsApp' as const,
-          promise: sendWhatsApp({
-            number: normalizeWhatsappNumber(existingRequest.requesterWhatsApp),
-            text: createMaintenanceRequestStatusUpdateWhatsAppTemplate({
-              requesterName: existingRequest.requesterName,
-              assetTag,
-              assetType: assetTypeLabel,
-              newStatus: newStatusLabel,
-              notes,
+              status: data.status,
             }),
           }),
         },
       ]
+
+      // Adicionar WhatsApp se disponível
+      if (existingRequest.requesterWhatsApp) {
+        const normalizedWhatsApp = normalizeWhatsappNumber(
+          existingRequest.requesterWhatsApp,
+        )
+        if (normalizedWhatsApp) {
+          notifications.push({
+            channel: 'WhatsApp' as const,
+            promise: sendWhatsApp({
+              to: normalizedWhatsApp,
+              message: createMaintenanceRequestStatusUpdateWhatsAppTemplate({
+                requesterName: existingRequest.requesterName,
+                assetTag: existingRequest.asset?.tag || 'N/A',
+                assetType: existingRequest.asset?.assetType
+                  ? getAssetTypeLabel(existingRequest.asset.assetType)
+                  : 'N/A',
+                department:
+                  existingRequest.asset?.sector?.department?.name ||
+                  'Não informado',
+                sector: existingRequest.asset?.sector?.name || 'Não informado',
+                notes,
+                status: data.status,
+              }),
+            }),
+          })
+        }
+      }
 
       const results = await Promise.allSettled(
         notifications.map((n) => n.promise),

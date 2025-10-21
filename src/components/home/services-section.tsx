@@ -1,75 +1,92 @@
 import { Separator } from '@/components/ui/separator'
-import { Printer, Monitor, User, Mail, Phone, Mouse, Projector, KeyRound } from 'lucide-react'
+import {
+  Printer,
+  Monitor,
+  User,
+  Mail,
+  Phone,
+  Mouse,
+  Projector,
+  KeyRound,
+} from 'lucide-react'
 import { ServiceCard, type Service } from './service-card'
 
 const services: Service[] = [
   // Grupo 1: Serviços Ativos
   {
     title: 'Solicitação de Toner',
-    description: 'Solicite toners para impressoras do seu setor de forma rápida e prática',
+    description:
+      'Solicite toners para impressoras do seu setor de forma rápida e prática',
     icon: Printer,
     href: '/servicos/toner',
   },
-  
+
   // Grupo 2: Manutenções (todas juntas)
   {
     title: 'Manutenção de Impressora',
-    description: 'Solicite manutenção para impressoras com problemas técnicos ou necessidade de reparo.',
+    description:
+      'Solicite manutenção para impressoras com problemas técnicos ou necessidade de reparo.',
     icon: Printer,
-    href: '/servicos/manutencao?assetType=PRINTER'
+    href: '/servicos/manutencao?assetType=PRINTER',
   },
   {
     title: 'Manutenção de Telefone',
-    description: 'Solicite manutenção para telefones com problemas técnicos ou necessidade de reparo.',
+    description:
+      'Solicite manutenção para telefones com problemas técnicos ou necessidade de reparo.',
     icon: Phone,
-    href: '/servicos/manutencao?assetType=PHONE'
+    href: '/servicos/manutencao?assetType=PHONE',
   },
   {
     title: 'Manutenção de Computador',
-    description: 'Solicite manutenção para computadores e equipamentos de informática.',
+    description:
+      'Solicite manutenção para computadores e equipamentos de informática.',
     icon: Monitor,
     href: '#',
-    isComingSoon: true
+    isComingSoon: true,
   },
-  
+
   // Grupo 3: Gestão de Usuários e Senhas (temas próximos)
   {
     title: 'Solicitação de Usuário',
-    description: 'Faça solicitações para criação de usuários em sistemas de prefeitura de Barra Mansa.',
+    description:
+      'Faça solicitações para criação de usuários em sistemas de prefeitura de Barra Mansa.',
     icon: User,
     href: '#',
-    isComingSoon: true
+    isComingSoon: true,
   },
   {
     title: 'Redefinição de Senha',
-    description: 'Solicite a redefinição de senhas para sistemas externos da prefeitura.',
+    description:
+      'Solicite a redefinição de senhas para sistemas externos da prefeitura.',
     icon: KeyRound,
     href: '#',
-    isComingSoon: true
+    isComingSoon: true,
   },
-  
+
   // Grupo 4: Outros Serviços
   {
     title: 'Solicitação de Periféricos',
-    description: 'Solicite mouse, teclado, fones de ouvido e outros periféricos para seu posto de trabalho.',
+    description:
+      'Solicite mouse, teclado, fones de ouvido e outros periféricos para seu posto de trabalho.',
     icon: Mouse,
     href: '#',
-    isComingSoon: true
+    isComingSoon: true,
   },
   {
     title: 'Agendamento de Projetor',
-    description: 'Agende o empréstimo de projetores para apresentações e reuniões.',
+    description:
+      'Agende o empréstimo de projetores para apresentações e reuniões.',
     icon: Projector,
     href: '#',
-    isComingSoon: true
+    isComingSoon: true,
   },
   {
     title: 'Criação de Email',
     description: 'Solicite a criação de novos endereços de email corporativo.',
     icon: Mail,
     href: '#',
-    isComingSoon: true
-  }
+    isComingSoon: true,
+  },
 ]
 
 export function ServicesSection() {

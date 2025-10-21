@@ -1,6 +1,6 @@
 interface WhatsAppData {
-  number: string
-  text: string
+  to: string
+  message: string
 }
 
 export async function sendWhatsApp(whatsappData: WhatsAppData): Promise<void> {
@@ -15,8 +15,8 @@ export async function sendWhatsApp(whatsappData: WhatsAppData): Promise<void> {
           Authorization: `Bearer ${process.env.EVOLUTION_API_TOKEN}`,
         },
         body: JSON.stringify({
-          number: whatsappData.number,
-          text: whatsappData.text,
+          number: whatsappData.to,
+          text: whatsappData.message,
           linkPreview: false,
         }),
       },

@@ -11,13 +11,15 @@ import {
   createErrorResponse,
   type ActionResponse,
 } from '@/lib/types/action-response'
-import { sendEmail } from '@/lib/utils/email-service'
+import { sendEmail } from '@/lib/notifications/services/email-service'
+import { sendWhatsApp } from '@/lib/notifications/services/whatsapp-service'
 import {
-  createNewRequestNotificationTemplate,
-  createRequestConfirmationTemplate,
-} from '@/lib/utils/email-templates'
-import { sendWhatsApp } from '@/lib/utils/whatsapp-service'
-import { createRequestConfirmationWhatsAppTemplate } from '@/lib/utils/whatsapp-templates'
+  createTonerRequestNotificationTemplate,
+  createTonerRequestConfirmationTemplate,
+} from '@/lib/notifications/templates/toner-request/email-template'
+import { createTonerRequestConfirmationWhatsAppTemplate } from '@/lib/notifications/templates/toner-request/whatsapp-template'
+import { normalizeWhatsappNumber } from '@/lib/utils/contact-formatter'
+import { TonerRequestStatus } from '@/generated/prisma'
 
 export async function createPublicTonerRequestAction(
   data: PublicTonerRequestData,
@@ -42,30 +44,16 @@ export async function createPublicTonerRequestAction(
   } = validatedFields.data
 
   try {
-    // Buscar impressora e verificar pedido pendente em uma única query otimizada
+    // Buscar a impressora pelo ID, verificar compatibilidade e pedidos pendentes em uma única query
     const printer = await prisma.printer.findUnique({
       where: {
         id: printerId,
-        asset: {
-          status: 'USING', // Apenas impressoras em uso
-        },
       },
       select: {
         id: true,
         asset: {
           select: {
             tag: true,
-            status: true,
-            sector: {
-              select: {
-                name: true,
-                department: {
-                  select: {
-                    name: true,
-                  },
-                },
-              },
-            },
           },
         },
         printerModel: {
@@ -76,10 +64,12 @@ export async function createPublicTonerRequestAction(
         },
         tonerRequests: {
           where: {
-            status: 'PENDING',
+            status: TonerRequestStatus.PENDING,
           },
           select: {
             id: true,
+            status: true,
+            createdAt: true,
           },
           take: 1,
         },
@@ -88,27 +78,28 @@ export async function createPublicTonerRequestAction(
 
     if (!printer) {
       return createErrorResponse(
-        'Impressora não encontrada ou não está em uso. Apenas impressoras em uso podem ter pedidos de toner.',
+        'Impressora não encontrada.',
         'NOT_FOUND_ERROR',
         'printerId',
       )
     }
 
-    if (printer.tonerRequests.length > 0) {
+    // Verificar se o toner é compatível com a impressora
+    const compatibleToners = printer.printerModel?.toners
+    if (!compatibleToners?.includes(selectedToner)) {
       return createErrorResponse(
-        'Já existe um pedido de toner pendente para esta impressora. Aguarde a aprovação do pedido existente antes de criar um novo.',
+        'O toner selecionado não é compatível com esta impressora.',
         'VALIDATION_ERROR',
-        'printerId',
+        'selectedToner',
       )
     }
 
-    // Verificar se o toner selecionado é válido para esta impressora
-    const availableToners = printer.printerModel?.toners || []
-    if (!availableToners.includes(selectedToner)) {
+    // Verificar se já existe um pedido pendente para esta impressora
+    if (printer.tonerRequests.length > 0) {
       return createErrorResponse(
-        'Toner selecionado não é compatível com esta impressora',
+        'Já existe um pedido de toner pendente para esta impressora. Aguarde a conclusão do pedido atual antes de solicitar um novo.',
         'VALIDATION_ERROR',
-        'selectedToner',
+        'printerId',
       )
     }
 
@@ -121,63 +112,72 @@ export async function createPublicTonerRequestAction(
         requesterEmail,
         requesterWhatsApp,
         selectedToner,
-        status: 'PENDING',
+        status: TonerRequestStatus.PENDING,
       },
     })
 
     // Executar notificações em paralelo para melhor performance
-    const notificationPromises = [
-      // Email para a equipe de TI
-      sendEmail({
-        email: process.env.ADMIN_EMAIL!,
-        subject: 'Novo Pedido de Toner - Sistema ADIT',
-        message: createNewRequestNotificationTemplate({
-          requesterName,
-          requesterEmail,
-          requesterWhatsApp,
-          department: printer?.asset?.sector?.department?.name || 'N/A',
-          sector: printer?.asset?.sector?.name || 'N/A',
-          printerModel: printer?.printerModel?.name || 'N/A',
-          selectedToner,
-          printerTag: printer?.asset?.tag || 'N/A',
-        }),
-      }).catch((error) => {
-        console.error('Erro ao enviar email para equipe de TI:', error)
-        return null
-      }),
+    const notificationPromises: Promise<unknown>[] = []
 
-      // Email de confirmação para o solicitante
+    // Email para a equipe de TI (somente se configurado)
+    const adminEmail = process.env.ADMIN_EMAIL
+    if (adminEmail && adminEmail.trim().length > 0) {
+      notificationPromises.push(
+        sendEmail({
+          to: adminEmail,
+          subject: `Novo Pedido de Toner - ${printer.asset.tag}`,
+          html: createTonerRequestNotificationTemplate({
+            requesterName,
+            requesterEmail,
+            selectedToner,
+            printerTag: printer.asset.tag,
+            printerModel: printer.printerModel?.name || 'N/A',
+            status: 'PENDING',
+          }),
+        }).catch((error) => {
+          console.error('Erro ao enviar email para equipe de TI:', error)
+        }),
+      )
+    }
+
+    // Email de confirmação para o solicitante
+    notificationPromises.push(
       sendEmail({
-        email: requesterEmail,
+        to: requesterEmail,
         subject: 'Pedido de Toner Recebido - Equipe de TI PMBM',
-        message: createRequestConfirmationTemplate({
+        html: createTonerRequestConfirmationTemplate({
           requesterName,
           requesterEmail,
           selectedToner,
-          printerTag: printer?.asset?.tag || 'N/A',
-          printerModel: printer?.printerModel?.name || 'N/A',
+          printerTag: printer.asset.tag,
+          printerModel: printer.printerModel?.name || 'N/A',
+          status: 'PENDING',
         }),
       }).catch((error) => {
         console.error('Erro ao enviar email de confirmação:', error)
-        return null
       }),
+    )
 
-      // WhatsApp de confirmação para o solicitante
-      sendWhatsApp({
-        number: `55${requesterWhatsApp}`,
-        text: createRequestConfirmationWhatsAppTemplate({
-          requesterName,
-          selectedToner,
-          printerTag: printer?.asset?.tag || 'N/A',
-          printerModel: printer?.printerModel?.name || 'N/A',
+    // WhatsApp de confirmação para o solicitante (somente se número normalizado válido)
+    const normalizedWhatsApp = normalizeWhatsappNumber(requesterWhatsApp)
+    if (normalizedWhatsApp && normalizedWhatsApp.length === 13) {
+      notificationPromises.push(
+        sendWhatsApp({
+          to: normalizedWhatsApp,
+          message: createTonerRequestConfirmationWhatsAppTemplate({
+            requesterName,
+            selectedToner,
+            printerTag: printer.asset.tag,
+            printerModel: printer.printerModel?.name || 'N/A',
+            status: 'PENDING',
+          }),
+        }).catch((error) => {
+          console.error('Erro ao enviar WhatsApp de confirmação:', error)
         }),
-      }).catch((error) => {
-        console.error('Erro ao enviar WhatsApp de confirmação:', error)
-        return null
-      }),
-    ]
+      )
+    }
 
-    // Aguardar todas as notificações sem bloquear em caso de erro
+    // Aguardar todas as notificações (sem bloquear em caso de erro)
     await Promise.allSettled(notificationPromises)
 
     revalidatePath('/dashboard/toner-requests')

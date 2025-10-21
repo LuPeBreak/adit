@@ -1,7 +1,7 @@
 interface EmailData {
-  email: string
+  to: string
   subject: string
-  message: string
+  html: string
 }
 
 export async function sendEmail(emailData: EmailData): Promise<void> {
@@ -11,7 +11,11 @@ export async function sendEmail(emailData: EmailData): Promise<void> {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(emailData),
+      body: JSON.stringify({
+        email: emailData.to,
+        subject: emailData.subject,
+        message: emailData.html,
+      }),
     })
 
     if (!response.ok) {
