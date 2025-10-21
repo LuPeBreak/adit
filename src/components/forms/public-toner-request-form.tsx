@@ -40,9 +40,9 @@ import {
   normalizeWhatsappNumber,
 } from '@/lib/utils/contact-formatter'
 import {
-  publicTonerRequestSchema,
-  type PublicTonerRequestData,
-} from '@/lib/schemas/public-toner-request'
+  createPublicTonerRequestSchema,
+  type CreatePublicTonerRequestData,
+} from '@/lib/schemas/toner-request'
 import { createPublicTonerRequestAction } from '@/actions/toner-requests/create-public-toner-request'
 import { getPublicPrintersAction } from '@/actions/printers/get-public-printers'
 import { toast } from 'sonner'
@@ -69,8 +69,8 @@ export function PublicTonerRequestForm({
   )
   const [open, setOpen] = useState(false)
 
-  const form = useForm<PublicTonerRequestData>({
-    resolver: zodResolver(publicTonerRequestSchema),
+  const form = useForm<CreatePublicTonerRequestData>({
+    resolver: zodResolver(createPublicTonerRequestSchema),
     defaultValues: {
       printerId: '',
       requesterName: '',
@@ -107,7 +107,7 @@ export function PublicTonerRequestForm({
     form.setValue('selectedToner', '')
   }, [selectedPrinter, form])
 
-  const onSubmit = async (data: PublicTonerRequestData) => {
+  const onSubmit = async (data: CreatePublicTonerRequestData) => {
     try {
       const result = await createPublicTonerRequestAction(data)
 

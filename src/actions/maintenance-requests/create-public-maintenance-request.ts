@@ -3,9 +3,9 @@
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import {
-  publicMaintenanceRequestSchema,
-  type PublicMaintenanceRequestData,
-} from '@/lib/schemas/public-maintenance-request'
+  createPublicMaintenanceRequestSchema,
+  type CreatePublicMaintenanceRequestData,
+} from '@/lib/schemas/maintenance-request'
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -23,9 +23,9 @@ import { normalizeWhatsappNumber } from '@/lib/utils/contact-formatter'
 import { AssetStatus, MaintenanceStatus } from '@/generated/prisma'
 
 export async function createPublicMaintenanceRequestAction(
-  data: PublicMaintenanceRequestData,
-): Promise<ActionResponse<void>> {
-  const validatedFields = publicMaintenanceRequestSchema.safeParse(data)
+  data: CreatePublicMaintenanceRequestData,
+): Promise<ActionResponse> {
+  const validatedFields = createPublicMaintenanceRequestSchema.safeParse(data)
   if (!validatedFields.success) {
     const firstError = validatedFields.error.errors[0]
     return createErrorResponse(

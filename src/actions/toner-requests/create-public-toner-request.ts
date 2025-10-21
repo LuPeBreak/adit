@@ -3,9 +3,9 @@
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import {
-  publicTonerRequestSchema,
-  type PublicTonerRequestData,
-} from '@/lib/schemas/public-toner-request'
+  createPublicTonerRequestSchema,
+  type CreatePublicTonerRequestData,
+} from '@/lib/schemas/toner-request'
 import {
   createSuccessResponse,
   createErrorResponse,
@@ -22,9 +22,9 @@ import { normalizeWhatsappNumber } from '@/lib/utils/contact-formatter'
 import { TonerRequestStatus } from '@/generated/prisma'
 
 export async function createPublicTonerRequestAction(
-  data: PublicTonerRequestData,
-): Promise<ActionResponse<void>> {
-  const validatedFields = publicTonerRequestSchema.safeParse(data)
+  data: CreatePublicTonerRequestData,
+): Promise<ActionResponse> {
+  const validatedFields = createPublicTonerRequestSchema.safeParse(data)
   if (!validatedFields.success) {
     const firstError = validatedFields.error.errors[0]
     return createErrorResponse(

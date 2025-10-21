@@ -30,9 +30,9 @@ import {
 import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
-  publicMaintenanceRequestSchema,
-  type PublicMaintenanceRequestData,
-} from '@/lib/schemas/public-maintenance-request'
+  createPublicMaintenanceRequestSchema,
+  type CreatePublicMaintenanceRequestData,
+} from '@/lib/schemas/maintenance-request'
 import { createPublicMaintenanceRequestAction } from '@/actions/maintenance-requests/create-public-maintenance-request'
 import {
   getPublicAssetsAction,
@@ -48,8 +48,8 @@ export function PublicMaintenanceRequestForm() {
   const [selectedAsset, setSelectedAsset] = useState<AssetData | null>(null)
   const [open, setOpen] = useState(false)
 
-  const form = useForm<PublicMaintenanceRequestData>({
-    resolver: zodResolver(publicMaintenanceRequestSchema),
+  const form = useForm<CreatePublicMaintenanceRequestData>({
+    resolver: zodResolver(createPublicMaintenanceRequestSchema),
     defaultValues: {
       assetId: '',
       requesterName: '',
@@ -75,7 +75,7 @@ export function PublicMaintenanceRequestForm() {
     loadAssets()
   }, [])
 
-  const onSubmit = async (data: PublicMaintenanceRequestData) => {
+  const onSubmit = async (data: CreatePublicMaintenanceRequestData) => {
     try {
       const result = await createPublicMaintenanceRequestAction(data)
 
