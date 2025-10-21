@@ -9,6 +9,8 @@ import {
   type ActionResponse,
 } from '@/lib/types/action-response'
 import { createUserSchema, type CreateUserData } from '@/lib/schemas/user'
+import { sendEmail } from '@/lib/notifications/services/email-service'
+import { createUserCreatedNotificationTemplate } from '@/lib/notifications/templates/user/email-template'
 
 export const createUserAction = withPermissions(
   [{ resource: 'user', action: ['create'] }],
@@ -39,19 +41,27 @@ export const createUserAction = withPermissions(
         return createErrorResponse('Erro ao criar usuário')
       }
 
-      // TODO: Implementar envio de email com credenciais de login
-      // Aqui seria enviado um email com:
-      // - Nome do usuário
-      // - Email de login
-      // - Senha (se gerada automaticamente)
-      // - Link para o sistema
-      // - Instruções de primeiro acesso
+      // Envio de email de boas-vindas para o usuário criado
+      const baseUrl = process.env.BETTER_AUTH_URL || ''
+      const loginUrl = `${baseUrl}/login`
 
-      console.log('TODO: Enviar email de boas-vindas para:', email)
-      console.log('Credenciais:', {
-        email,
-        password: '[senha definida pelo admin]',
-      })
+      try {
+        await sendEmail({
+          to: email,
+          subject: 'Bem-vindo ao Sistema ADIT - PMBM',
+          html: createUserCreatedNotificationTemplate({
+            userName: name,
+            userEmail: email,
+            userPassword: password,
+            loginUrl,
+          }),
+        })
+
+        console.log('Email de boas-vindas enviado com sucesso para:', email)
+      } catch (emailError) {
+        console.error('Erro ao enviar email de boas-vindas:', emailError)
+        // Não falha a criação do usuário se o email não for enviado
+      }
 
       revalidatePath('/dashboard/users')
 
