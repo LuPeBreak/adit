@@ -31,6 +31,11 @@ import {
   createMaintenanceRequestStatusUpdateWhatsAppTemplate,
 } from '@/lib/notifications/templates/maintenance-request/whatsapp-template'
 
+import {
+  createUserCreatedNotificationTemplate,
+  createUserPasswordUpdatedEmailTemplate,
+} from '@/lib/notifications/templates/user/email-template'
+
 import { MaintenanceStatus, TonerRequestStatus } from '@/generated/prisma'
 
 import DashboardContainer from '@/components/dashboard-container'
@@ -167,6 +172,21 @@ const mockMaintenanceData = {
   description:
     'Computador não liga mais após queda de energia. LED da fonte pisca em vermelho.',
   status: 'PENDING' as MaintenanceStatus,
+}
+
+// Dados mock para templates de usuário
+const mockUserCreatedData = {
+  userName: 'Carlos Eduardo Silva',
+  userEmail: 'carlos.eduardo@pmbm.gov.br',
+  userPassword: 'TempPass123!',
+  loginUrl: 'https://adit.pmbm.gov.br/login',
+}
+
+const mockUserPasswordUpdatedData = {
+  userName: 'Carlos Eduardo Silva',
+  userEmail: 'carlos.eduardo@pmbm.gov.br',
+  newPassword: 'NewPass456!',
+  loginUrl: 'https://adit.pmbm.gov.br/login',
 }
 
 export default function TemplatesPreviewPage() {
@@ -579,6 +599,60 @@ export default function TemplatesPreviewPage() {
                       createMaintenanceRequestNotificationTemplate(
                         mockMaintenanceData,
                       ),
+                  }}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Seção de Templates de Usuário */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+            <Badge variant="default">Usuário</Badge>
+            Templates de Usuário
+          </h2>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Usuário Criado */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Email - Usuário Criado</CardTitle>
+                <CardDescription>
+                  Template enviado quando um novo usuário é criado
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className="border rounded p-4 bg-gray-50 text-sm"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      createUserCreatedNotificationTemplate(
+                        mockUserCreatedData,
+                      ),
+                  }}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Senha Alterada */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Email - Senha Alterada</CardTitle>
+                <CardDescription>
+                  Template enviado quando a senha do usuário é alterada pelo
+                  admin
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className="border rounded p-4 bg-gray-50 text-sm"
+                  dangerouslySetInnerHTML={{
+                    __html: createUserPasswordUpdatedEmailTemplate(
+                      mockUserPasswordUpdatedData,
+                    ),
                   }}
                 />
               </CardContent>
