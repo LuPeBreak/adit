@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Pencil, Trash } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,12 +13,14 @@ import {
 } from '@/components/ui/dropdown-menu'
 import type { SectorRowActionsProps } from './sectors-table-types'
 import { SectorDialogForm } from './sector-dialog-form'
+import { SectorDetailsDialog } from './sector-details-dialog'
 import { DeleteSectorConfirmationDialog } from './delete-sector-confirmation-dialog'
 
 export function SectorRowActions({ row }: SectorRowActionsProps) {
   const sector = row.original
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
 
   return (
     <>
@@ -32,6 +34,10 @@ export function SectorRowActions({ row }: SectorRowActionsProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => setIsDetailsDialogOpen(true)}>
+            <Eye />
+            Ver detalhes
+          </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
             <Pencil />
             Editar
@@ -47,6 +53,12 @@ export function SectorRowActions({ row }: SectorRowActionsProps) {
         sector={sector}
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
+      />
+
+      <SectorDetailsDialog
+        sector={sector}
+        open={isDetailsDialogOpen}
+        onOpenChange={setIsDetailsDialogOpen}
       />
 
       <SectorDialogForm

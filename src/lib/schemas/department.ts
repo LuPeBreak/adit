@@ -7,8 +7,12 @@ import {
 
 export const createDepartmentSchema = z.object({
   name: createEntityNameValidation('nome da secretaria', 100),
+  acronym: z.string().min(1, 'Sigla é obrigatória'),
   manager: createFullNameValidation('responsável da secretaria', 50),
   managerEmail: createEmailValidation('email do responsável da secretaria', 50),
+  contact: z.string().optional(),
+  address: z.string().optional(),
+  website: z.string().url('URL inválida').optional().or(z.literal('')),
 })
 
 export const updateDepartmentSchema = createDepartmentSchema.extend({

@@ -90,8 +90,12 @@ model Verification {
 model Department {
   id           String   @id @default(cuid())
   name         String   @unique
+  acronym      String   @unique // Department acronym (required and unique)
   manager      String
   managerEmail String   @map("manager_email")
+  contact      String?  // Phone or mobile number (optional)
+  address      String?  // Department address (optional)
+  website      String?  // Department website link (optional)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -103,8 +107,11 @@ model Department {
 model Sector {
   id           String   @id @default(cuid())
   name         String
+  acronym      String   // Sector acronym (required)
   manager      String
   managerEmail String   @map("manager_email")
+  contact      String?  // Phone or mobile number (optional)
+  address      String?  // Sector address (optional)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -115,6 +122,7 @@ model Sector {
   assetStatusHistory AssetStatusHistory[]
 
   @@unique([departmentId, name])
+  @@unique([departmentId, acronym]) // Acronym must be unique within the same department
   @@map("sector")
 }
 

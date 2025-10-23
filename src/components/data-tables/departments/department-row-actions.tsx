@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Pencil, Trash } from 'lucide-react'
+import { MoreHorizontal, Pencil, Trash, Eye } from 'lucide-react'
 
 import { DepartmentDialogForm } from './department-dialog-form'
+import { DepartmentDetailsDialog } from './department-details-dialog'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
   const department = row.original
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
 
   return (
     <>
@@ -33,6 +35,10 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => setIsDetailsDialogOpen(true)}>
+            <Eye />
+            Ver detalhes
+          </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
             <Pencil />
             Editar
@@ -48,6 +54,11 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
         initialData={department}
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
+      />
+      <DepartmentDetailsDialog
+        department={department}
+        open={isDetailsDialogOpen}
+        onOpenChange={setIsDetailsDialogOpen}
       />
       <DeleteDepartmentConfirmationDialog
         department={department}

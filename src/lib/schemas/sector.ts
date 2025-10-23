@@ -6,12 +6,13 @@ import {
 } from '@/lib/validations/name-validations'
 
 export const createSectorSchema = z.object({
-  name: createEntityNameValidation('nome do setor', 80),
+  name: createEntityNameValidation('nome do setor', 100),
+  acronym: z.string().min(1, 'Sigla é obrigatória'),
   manager: createFullNameValidation('responsável do setor', 50),
   managerEmail: createEmailValidation('email do responsável do setor', 50),
-  departmentId: z
-    .string({ message: 'A secretaria é obrigatória' })
-    .cuid('Secretaria invalida'),
+  contact: z.string().optional(),
+  address: z.string().optional(),
+  departmentId: z.string().cuid('ID da secretaria inválido'),
 })
 
 export const updateSectorSchema = createSectorSchema.extend({

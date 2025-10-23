@@ -17,8 +17,11 @@ export const getSectors = withPermissions(
         select: {
           id: true,
           name: true,
+          acronym: true,
           manager: true,
           managerEmail: true,
+          contact: true,
+          address: true,
           departmentId: true,
           department: {
             select: {
@@ -34,8 +37,11 @@ export const getSectors = withPermissions(
       const mappedSectors = sectors.map((sector) => ({
         id: sector.id,
         name: sector.name,
+        acronym: sector.acronym,
         manager: sector.manager,
         managerEmail: sector.managerEmail,
+        contact: sector.contact || undefined,
+        address: sector.address || undefined,
         departmentId: sector.departmentId,
         departmentName: sector.department.name,
       }))

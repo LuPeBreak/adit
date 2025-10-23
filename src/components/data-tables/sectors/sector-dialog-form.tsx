@@ -40,8 +40,11 @@ type SectorFormValues = CreateSectorData
 export interface SectorFormData {
   id?: string
   name: string
+  acronym: string
   manager: string
   managerEmail: string
+  contact?: string
+  address?: string
   departmentId: string
 }
 
@@ -69,8 +72,11 @@ export function SectorDialogForm({
     resolver: zodResolver(createSectorSchema),
     defaultValues: {
       name: initialData?.name ?? '',
+      acronym: initialData?.acronym ?? '',
       manager: initialData?.manager ?? '',
       managerEmail: initialData?.managerEmail ?? '',
+      contact: initialData?.contact ?? '',
+      address: initialData?.address ?? '',
       departmentId: initialData?.departmentId ?? '',
     },
   })
@@ -238,6 +244,19 @@ export function SectorDialogForm({
           />
           <FormField
             control={form.control}
+            name="acronym"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sigla</FormLabel>
+                <FormControl>
+                  <Input placeholder="DEV" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="manager"
             render={({ field }) => (
               <FormItem>
@@ -261,6 +280,32 @@ export function SectorDialogForm({
                     placeholder="desenvolvimento@example.com"
                     {...field}
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="contact"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Contato (Opcional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="(11) 99999-9999" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Endereço (Opcional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Sala 101, 1º Andar" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

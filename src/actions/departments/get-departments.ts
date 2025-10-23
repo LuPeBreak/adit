@@ -17,15 +17,30 @@ export const getDepartments = withPermissions(
         select: {
           id: true,
           name: true,
+          acronym: true,
           manager: true,
           managerEmail: true,
+          contact: true,
+          address: true,
+          website: true,
         },
         orderBy: {
           name: 'asc',
         },
       })
 
-      return createSuccessResponse(departments)
+      const mappedDepartments = departments.map((department) => ({
+        id: department.id,
+        name: department.name,
+        acronym: department.acronym,
+        manager: department.manager,
+        managerEmail: department.managerEmail,
+        contact: department.contact || undefined,
+        address: department.address || undefined,
+        website: department.website || undefined,
+      }))
+
+      return createSuccessResponse(mappedDepartments)
     } catch (error) {
       console.error('Erro ao buscar secretarias:', error)
       return createErrorResponse('Erro interno do servidor')

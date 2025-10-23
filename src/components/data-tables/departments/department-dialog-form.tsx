@@ -114,6 +114,19 @@ export function DepartmentDialogForm({
           />
           <FormField
             control={form.control}
+            name="acronym"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sigla</FormLabel>
+                <FormControl>
+                  <Input placeholder="TI" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="manager"
             render={({ field }) => (
               <FormItem>
@@ -135,6 +148,48 @@ export function DepartmentDialogForm({
                   <Input
                     id="managerEmail"
                     placeholder="informatica@example.com"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="contact"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Contato (Opcional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="(11) 99999-9999" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Endereço (Opcional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Rua das Flores, 123" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="website"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Website (Opcional)</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="https://secretaria.example.com"
                     {...field}
                   />
                 </FormControl>

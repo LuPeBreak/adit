@@ -14,6 +14,13 @@ export const departmentsTableColumns: ColumnDef<DepartmentsColumnType>[] = [
     ),
   },
   {
+    accessorKey: 'acronym',
+    id: 'Sigla',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title={column.id} />
+    ),
+  },
+  {
     accessorKey: 'manager',
     id: 'Responsável',
     header: ({ column }) => (

@@ -26,30 +26,50 @@ export const createDepartmentAction = withPermissions(
       )
     }
 
-    const { name, manager, managerEmail } = validatedFields.data
+    const { name, acronym, manager, managerEmail, contact, address, website } =
+      validatedFields.data
 
     try {
       await prisma.department.create({
         data: {
           name,
+          acronym,
           manager,
           managerEmail,
+          contact,
+          address,
+          website,
         },
       })
 
       revalidatePath('/dashboard/departments')
 
       return createSuccessResponse()
-    } catch (error) {
+    } catch (error: unknown) {
       // depois podemos mandar isso para uma ferramenta de monitoramento como Sentry
       console.error('Erro ao criar secretaria:', error)
 
       if (typeof error === 'object' && error !== null && 'code' in error) {
         if (error.code === 'P2002') {
+          const target = (error as { meta?: { target?: string[] } }).meta
+            ?.target
+          if (target?.includes('name')) {
+            return createErrorResponse(
+              'Já existe uma secretaria com este nome',
+              'DUPLICATE_ERROR',
+              'name',
+            )
+          }
+          if (target?.includes('acronym')) {
+            return createErrorResponse(
+              'Já existe uma secretaria com esta sigla',
+              'DUPLICATE_ERROR',
+              'acronym',
+            )
+          }
           return createErrorResponse(
-            'Já existe uma secretaria com este nome',
+            'Já existe uma secretaria com estes dados',
             'DUPLICATE_ERROR',
-            'name',
           )
         }
       }

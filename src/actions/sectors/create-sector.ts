@@ -23,14 +23,25 @@ export const createSectorAction = withPermissions(
       )
     }
 
-    const { name, manager, managerEmail, departmentId } = validatedFields.data
+    const {
+      name,
+      acronym,
+      manager,
+      managerEmail,
+      contact,
+      address,
+      departmentId,
+    } = validatedFields.data
 
     try {
       await prisma.sector.create({
         data: {
           name,
+          acronym,
           manager,
           managerEmail,
+          contact,
+          address,
           departmentId,
         },
       })
@@ -38,16 +49,31 @@ export const createSectorAction = withPermissions(
       revalidatePath('/dashboard/sectors')
 
       return createSuccessResponse()
-    } catch (error) {
+    } catch (error: unknown) {
       // depois podemos mandar isso para uma ferramenta de monitoramento como Sentry
       console.error('Erro ao criar setor:', error)
 
       if (typeof error === 'object' && error !== null && 'code' in error) {
         if (error.code === 'P2002') {
+          const target = (error as { meta?: { target?: string[] } }).meta
+            ?.target
+          if (target?.includes('name')) {
+            return createErrorResponse(
+              'Já existe um setor com este nome nesta secretaria',
+              'DUPLICATE_ERROR',
+              'name',
+            )
+          }
+          if (target?.includes('acronym')) {
+            return createErrorResponse(
+              'Já existe um setor com esta sigla nesta secretaria',
+              'DUPLICATE_ERROR',
+              'acronym',
+            )
+          }
           return createErrorResponse(
-            'Já existe um setor com este nome nesta secretaria',
+            'Já existe um setor com estes dados nesta secretaria',
             'DUPLICATE_ERROR',
-            'name',
           )
         }
         if (error.code === 'P2003') {

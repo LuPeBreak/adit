@@ -67,12 +67,16 @@ async function main() {
 
   // 2. Create Departments and their Sectors
   const sectors = []
-  for (let i = 1; i <= 50; i++) {
+  for (let i = 1; i <= 10; i++) {
     const department = await prisma.department.create({
       data: {
         name: `Secretaria de Exemplo ${i}`,
+        acronym: `SEC${i.toString().padStart(2, '0')}`, // Adding acronym field
         manager: `Gestor da Secretaria ${i}`,
         managerEmail: `gestor.secretaria${i}@example.com`,
+        contact: `(11) 9${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`, // Random phone
+        address: `Rua da Secretaria ${i}, ${Math.floor(Math.random() * 900) + 100}`, // Random address
+        website: `https://secretaria${i}.example.com`, // Website URL
       },
     })
 
@@ -80,8 +84,11 @@ async function main() {
       const sector = await prisma.sector.create({
         data: {
           name: `Setor ${j} da Secretaria ${i}`,
+          acronym: `S${i}${j}`, // Adding acronym field
           manager: `Chefe de Setor ${j}`,
           managerEmail: `chefe.setor${i}-${j}@example.com`,
+          contact: `(11) 9${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`, // Random phone
+          address: `Sala ${j}0${i}, Andar ${j}`, // Random address
           departmentId: department.id,
         },
       })

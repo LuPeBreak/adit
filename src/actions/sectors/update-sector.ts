@@ -34,7 +34,7 @@ export const updateSectorAction = withPermissions(
       revalidatePath('/dashboard/sectors')
 
       return createSuccessResponse()
-    } catch (error) {
+    } catch (error: unknown) {
       // depois podemos mandar isso para uma ferramenta de monitoramento como Sentry
       console.error('Erro ao atualizar setor:', error)
 
@@ -47,10 +47,25 @@ export const updateSectorAction = withPermissions(
           )
         }
         if (error.code === 'P2002') {
+          const target = (error as { meta?: { target?: string[] } }).meta
+            ?.target
+          if (target?.includes('name')) {
+            return createErrorResponse(
+              'Já existe um setor com este nome nesta secretaria',
+              'DUPLICATE_ERROR',
+              'name',
+            )
+          }
+          if (target?.includes('acronym')) {
+            return createErrorResponse(
+              'Já existe um setor com esta sigla nesta secretaria',
+              'DUPLICATE_ERROR',
+              'acronym',
+            )
+          }
           return createErrorResponse(
-            'Já existe um setor com este nome nesta secretaria',
+            'Já existe um setor com estes dados nesta secretaria',
             'DUPLICATE_ERROR',
-            'name',
           )
         }
         if (error.code === 'P2003') {

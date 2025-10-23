@@ -50,10 +50,25 @@ export const updateDepartmentAction = withPermissions(
           )
         }
         if (error.code === 'P2002') {
+          const target = (error as { meta?: { target?: string[] } }).meta
+            ?.target
+          if (target?.includes('name')) {
+            return createErrorResponse(
+              'Já existe uma secretaria com este nome',
+              'DUPLICATE_ERROR',
+              'name',
+            )
+          }
+          if (target?.includes('acronym')) {
+            return createErrorResponse(
+              'Já existe uma secretaria com esta sigla',
+              'DUPLICATE_ERROR',
+              'acronym',
+            )
+          }
           return createErrorResponse(
-            'Já existe uma secretaria com este nome',
+            'Já existe uma secretaria com estes dados',
             'DUPLICATE_ERROR',
-            'name',
           )
         }
       }

@@ -13,7 +13,13 @@ export const sectorsTableColumns: ColumnDef<SectorsColumnType>[] = [
       <DataTableColumnHeader column={column} title={column.id} />
     ),
   },
-
+  {
+    accessorKey: 'acronym',
+    id: 'Sigla',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title={column.id} />
+    ),
+  },
   {
     accessorKey: 'manager',
     id: 'Responsável',
