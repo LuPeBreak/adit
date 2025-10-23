@@ -9,7 +9,6 @@ import {
   FileText,
   LayoutDashboard,
   Wrench,
-  Eye,
 } from 'lucide-react'
 import {
   Sidebar,

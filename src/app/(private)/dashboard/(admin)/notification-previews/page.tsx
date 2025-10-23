@@ -629,7 +629,9 @@ export default function TemplatesPage() {
                   className="border rounded p-4 bg-gray-50 text-sm"
                   dangerouslySetInnerHTML={{
                     __html:
-                      createUserCreatedNotificationTemplate(mockUserCreatedData),
+                      createUserCreatedNotificationTemplate(
+                        mockUserCreatedData,
+                      ),
                   }}
                 />
               </CardContent>
