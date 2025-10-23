@@ -50,12 +50,6 @@ const menuLinks = {
         icon: Wrench,
         roles: ['OPERATOR', 'ADMIN'],
       },
-      {
-        title: 'Preview Templates (Temp)',
-        url: '/dashboard/templates-preview',
-        icon: Eye,
-        roles: ['OPERATOR', 'ADMIN'],
-      },
     ],
   },
   Impressoras: {
@@ -92,15 +86,9 @@ const menuLinks = {
       },
     ],
   },
-  Administração: {
+  'Estrutura Organizacional': {
     roles: ['ADMIN'],
     links: [
-      {
-        title: 'Usuários',
-        url: '/dashboard/users',
-        icon: User,
-        roles: ['ADMIN'],
-      },
       {
         title: 'Secretarias',
         url: '/dashboard/departments',
@@ -111,6 +99,23 @@ const menuLinks = {
         title: 'Setores',
         url: '/dashboard/sectors',
         icon: Users,
+        roles: ['ADMIN'],
+      },
+    ],
+  },
+  Administração: {
+    roles: ['ADMIN'],
+    links: [
+      {
+        title: 'Usuários',
+        url: '/dashboard/users',
+        icon: User,
+        roles: ['ADMIN'],
+      },
+      {
+        title: 'Preview de Notificações',
+        url: '/dashboard/notification-previews',
+        icon: FileText,
         roles: ['ADMIN'],
       },
     ],

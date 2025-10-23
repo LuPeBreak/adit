@@ -53,7 +53,7 @@ const mockTonerDataPending = {
   status: 'PENDING' as TonerRequestStatus,
 }
 
-// Dados para toner APROVADO (sem observações)
+// Dados falsos para toner - APPROVED (com observações)
 const mockTonerDataApproved = {
   requesterName: 'João Silva Santos',
   requesterEmail: 'joao.silva@pmbm.gov.br',
@@ -66,7 +66,7 @@ const mockTonerDataApproved = {
   status: 'APPROVED' as TonerRequestStatus,
 }
 
-// Dados para toner REJEITADO (com observações vindas do rejectionReason)
+// Dados falsos para toner - REJECTED (com observações)
 const mockTonerDataRejected = {
   requesterName: 'João Silva Santos',
   requesterEmail: 'joao.silva@pmbm.gov.br',
@@ -81,7 +81,7 @@ const mockTonerDataRejected = {
   status: 'REJECTED' as TonerRequestStatus,
 }
 
-// Dados para toner ENTREGUE (com observações da entrega)
+// Dados falsos para toner - DELIVERED (com observações)
 const mockTonerDataDelivered = {
   requesterName: 'João Silva Santos',
   requesterEmail: 'joao.silva@pmbm.gov.br',
@@ -96,8 +96,7 @@ const mockTonerDataDelivered = {
   status: 'DELIVERED' as TonerRequestStatus,
 }
 
-// Dados falsos para manutenção - PENDING (sem observações)
-// Dados para manutenção com observações de atualização de status
+// Dados falsos para manutenção - MAINTENANCE (com observações)
 const mockMaintenanceDataWithNotes = {
   requesterName: 'Maria Oliveira Costa',
   requesterEmail: 'maria.oliveira@pmbm.gov.br',
@@ -113,7 +112,7 @@ const mockMaintenanceDataWithNotes = {
   status: 'MAINTENANCE' as MaintenanceStatus,
 }
 
-// Dados para manutenção em análise
+// Dados falsos para manutenção - ANALYZING (com observações)
 const mockMaintenanceDataAnalyzing = {
   requesterName: 'Maria Oliveira Costa',
   requesterEmail: 'maria.oliveira@pmbm.gov.br',
@@ -129,7 +128,7 @@ const mockMaintenanceDataAnalyzing = {
   status: 'ANALYZING' as MaintenanceStatus,
 }
 
-// Dados para manutenção concluída
+// Dados falsos para manutenção - COMPLETED (com observações)
 const mockMaintenanceDataCompleted = {
   requesterName: 'Maria Oliveira Costa',
   requesterEmail: 'maria.oliveira@pmbm.gov.br',
@@ -145,7 +144,7 @@ const mockMaintenanceDataCompleted = {
   status: 'COMPLETED' as MaintenanceStatus,
 }
 
-// Dados para manutenção cancelada
+// Dados falsos para manutenção - CANCELLED (com observações)
 const mockMaintenanceDataCancelled = {
   requesterName: 'Maria Oliveira Costa',
   requesterEmail: 'maria.oliveira@pmbm.gov.br',
@@ -174,7 +173,7 @@ const mockMaintenanceData = {
   status: 'PENDING' as MaintenanceStatus,
 }
 
-// Dados mock para templates de usuário
+// Dados falsos para usuário criado
 const mockUserCreatedData = {
   userName: 'Carlos Eduardo Silva',
   userEmail: 'carlos.eduardo@pmbm.gov.br',
@@ -189,7 +188,7 @@ const mockUserPasswordUpdatedData = {
   loginUrl: 'https://adit.pmbm.gov.br/login',
 }
 
-export default function TemplatesPreviewPage() {
+export default function TemplatesPage() {
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
@@ -199,7 +198,7 @@ export default function TemplatesPreviewPage() {
   if (!isClient) {
     return (
       <DashboardContainer
-        title="Preview de Templates"
+        title="Templates de Notificação"
         description="Visualize como ficam os templates de notificação"
       >
         <div className="space-y-8 mt-6">
@@ -212,7 +211,7 @@ export default function TemplatesPreviewPage() {
   }
   return (
     <DashboardContainer
-      title="Preview de Templates"
+      title="Templates de Notificação"
       description="Visualize como ficam os templates de notificação"
     >
       <div className="space-y-8 mt-6">
@@ -232,6 +231,7 @@ export default function TemplatesPreviewPage() {
                   Template enviado ao solicitante (sem observações)
                 </CardDescription>
               </CardHeader>
+
               <CardContent>
                 <div
                   className="border rounded p-4 bg-gray-50 text-sm"
@@ -266,7 +266,7 @@ export default function TemplatesPreviewPage() {
               <CardHeader>
                 <CardTitle>Email - Status: Aprovado</CardTitle>
                 <CardDescription>
-                  Template com observações da aprovação
+                  Template enviado quando pedido é aprovado
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -285,7 +285,7 @@ export default function TemplatesPreviewPage() {
               <CardHeader>
                 <CardTitle>WhatsApp - Status: Aprovado</CardTitle>
                 <CardDescription>
-                  Template com observações da aprovação
+                  Template WhatsApp quando pedido é aprovado
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -302,7 +302,7 @@ export default function TemplatesPreviewPage() {
               <CardHeader>
                 <CardTitle>Email - Status: Rejeitado</CardTitle>
                 <CardDescription>
-                  Template com observações do motivo da rejeição
+                  Template enviado quando pedido é rejeitado (com observações)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -321,7 +321,7 @@ export default function TemplatesPreviewPage() {
               <CardHeader>
                 <CardTitle>WhatsApp - Status: Rejeitado</CardTitle>
                 <CardDescription>
-                  Template com observações do motivo da rejeição
+                  Template WhatsApp quando pedido é rejeitado (com observações)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -338,7 +338,7 @@ export default function TemplatesPreviewPage() {
               <CardHeader>
                 <CardTitle>Email - Status: Entregue</CardTitle>
                 <CardDescription>
-                  Template com observações da entrega
+                  Template enviado quando toner é entregue (com observações)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -357,7 +357,7 @@ export default function TemplatesPreviewPage() {
               <CardHeader>
                 <CardTitle>WhatsApp - Status: Entregue</CardTitle>
                 <CardDescription>
-                  Template com observações da entrega
+                  Template WhatsApp quando toner é entregue (com observações)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -369,17 +369,17 @@ export default function TemplatesPreviewPage() {
               </CardContent>
             </Card>
 
-            {/* Notificação para Administradores */}
-            <Card className="md:col-span-2">
+            {/* Notificação para Admin */}
+            <Card>
               <CardHeader>
-                <CardTitle>Email - Notificação para Administradores</CardTitle>
+                <CardTitle>Email - Notificação para Admin</CardTitle>
                 <CardDescription>
-                  Template enviado para a equipe de TI quando há um novo pedido
+                  Template enviado para administradores quando há novo pedido
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div
-                  className="border rounded p-4 bg-blue-50 text-sm"
+                  className="border rounded p-4 bg-gray-50 text-sm"
                   dangerouslySetInnerHTML={{
                     __html:
                       createTonerRequestNotificationTemplate(
@@ -397,7 +397,7 @@ export default function TemplatesPreviewPage() {
         {/* Seção de Templates de Manutenção */}
         <div>
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <Badge variant="outline">Manutenção</Badge>
+            <Badge variant="secondary">Manutenção</Badge>
             Templates de Pedidos de Manutenção
           </h2>
 
@@ -427,7 +427,7 @@ export default function TemplatesPreviewPage() {
               <CardHeader>
                 <CardTitle>WhatsApp - Confirmação de Pedido</CardTitle>
                 <CardDescription>
-                  Template de confirmação via WhatsApp (sem observações)
+                  Template enviado via WhatsApp (sem observações)
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -439,12 +439,12 @@ export default function TemplatesPreviewPage() {
               </CardContent>
             </Card>
 
-            {/* Status Em Análise */}
+            {/* Status: Analisando */}
             <Card>
               <CardHeader>
-                <CardTitle>Email - Em Análise</CardTitle>
+                <CardTitle>Email - Status: Analisando</CardTitle>
                 <CardDescription>
-                  Template para status ANALYZING
+                  Template enviado quando pedido está sendo analisado
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -461,9 +461,9 @@ export default function TemplatesPreviewPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>WhatsApp - Em Análise</CardTitle>
+                <CardTitle>WhatsApp - Status: Analisando</CardTitle>
                 <CardDescription>
-                  Template para status ANALYZING
+                  Template WhatsApp quando pedido está sendo analisado
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -475,12 +475,12 @@ export default function TemplatesPreviewPage() {
               </CardContent>
             </Card>
 
-            {/* Status Em Manutenção */}
+            {/* Status: Em Manutenção */}
             <Card>
               <CardHeader>
-                <CardTitle>Email - Em Manutenção</CardTitle>
+                <CardTitle>Email - Status: Em Manutenção</CardTitle>
                 <CardDescription>
-                  Template para status MAINTENANCE
+                  Template enviado quando equipamento está em manutenção
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -497,9 +497,9 @@ export default function TemplatesPreviewPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>WhatsApp - Em Manutenção</CardTitle>
+                <CardTitle>WhatsApp - Status: Em Manutenção</CardTitle>
                 <CardDescription>
-                  Template para status MAINTENANCE
+                  Template WhatsApp quando equipamento está em manutenção
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -511,12 +511,12 @@ export default function TemplatesPreviewPage() {
               </CardContent>
             </Card>
 
-            {/* Status Concluído */}
+            {/* Status: Concluído */}
             <Card>
               <CardHeader>
-                <CardTitle>Email - Concluído</CardTitle>
+                <CardTitle>Email - Status: Concluído</CardTitle>
                 <CardDescription>
-                  Template para status COMPLETED
+                  Template enviado quando manutenção é concluída
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -533,9 +533,9 @@ export default function TemplatesPreviewPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>WhatsApp - Concluído</CardTitle>
+                <CardTitle>WhatsApp - Status: Concluído</CardTitle>
                 <CardDescription>
-                  Template para status COMPLETED
+                  Template WhatsApp quando manutenção é concluída
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -547,12 +547,12 @@ export default function TemplatesPreviewPage() {
               </CardContent>
             </Card>
 
-            {/* Status Cancelado */}
+            {/* Status: Cancelado */}
             <Card>
               <CardHeader>
-                <CardTitle>Email - Cancelado</CardTitle>
+                <CardTitle>Email - Status: Cancelado</CardTitle>
                 <CardDescription>
-                  Template para status CANCELLED
+                  Template enviado quando pedido é cancelado
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -569,9 +569,9 @@ export default function TemplatesPreviewPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>WhatsApp - Cancelado</CardTitle>
+                <CardTitle>WhatsApp - Status: Cancelado</CardTitle>
                 <CardDescription>
-                  Template para status CANCELLED
+                  Template WhatsApp quando pedido é cancelado
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -583,17 +583,17 @@ export default function TemplatesPreviewPage() {
               </CardContent>
             </Card>
 
-            {/* Notificação para Administradores */}
-            <Card className="md:col-span-2">
+            {/* Notificação para Admin */}
+            <Card>
               <CardHeader>
-                <CardTitle>Email - Notificação para Administradores</CardTitle>
+                <CardTitle>Email - Notificação para Admin</CardTitle>
                 <CardDescription>
-                  Template enviado para a equipe de TI quando há um novo pedido
+                  Template enviado para administradores quando há novo pedido
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div
-                  className="border rounded p-4 bg-blue-50 text-sm"
+                  className="border rounded p-4 bg-gray-50 text-sm"
                   dangerouslySetInnerHTML={{
                     __html:
                       createMaintenanceRequestNotificationTemplate(
@@ -611,8 +611,8 @@ export default function TemplatesPreviewPage() {
         {/* Seção de Templates de Usuário */}
         <div>
           <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <Badge variant="default">Usuário</Badge>
-            Templates de Usuário
+            <Badge variant="secondary">Usuário</Badge>
+            Templates de Gerenciamento de Usuários
           </h2>
 
           <div className="grid gap-6 md:grid-cols-2">
@@ -629,21 +629,18 @@ export default function TemplatesPreviewPage() {
                   className="border rounded p-4 bg-gray-50 text-sm"
                   dangerouslySetInnerHTML={{
                     __html:
-                      createUserCreatedNotificationTemplate(
-                        mockUserCreatedData,
-                      ),
+                      createUserCreatedNotificationTemplate(mockUserCreatedData),
                   }}
                 />
               </CardContent>
             </Card>
 
-            {/* Senha Alterada */}
+            {/* Senha Atualizada */}
             <Card>
               <CardHeader>
-                <CardTitle>Email - Senha Alterada</CardTitle>
+                <CardTitle>Email - Senha Atualizada</CardTitle>
                 <CardDescription>
-                  Template enviado quando a senha do usuário é alterada pelo
-                  admin
+                  Template enviado quando a senha do usuário é atualizada
                 </CardDescription>
               </CardHeader>
               <CardContent>
