@@ -35,7 +35,7 @@ export const getPrinters = withPermissions(
                   name: true,
                   department: {
                     select: {
-                      name: true,
+                      acronym: true,
                     },
                   },
                 },
@@ -62,7 +62,7 @@ export const getPrinters = withPermissions(
           status: printer.asset.status,
           sectorId: printer.asset.sectorId,
           sector: printer.asset.sector.name,
-          department: printer.asset.sector.department.name,
+          department: printer.asset.sector.department.acronym,
         }
       })
 

@@ -34,7 +34,7 @@ export async function getPublicPrintersAction(): Promise<
             name: true,
             department: {
               select: {
-                name: true,
+                acronym: true,
               },
             },
           },
@@ -60,9 +60,11 @@ export async function getPublicPrintersAction(): Promise<
       printerId: asset.printer?.id || '',
       tag: asset.tag,
       sector: asset.sector.name,
-      department: asset.sector.department.name,
+      department: asset.sector.department.acronym,
       printerModel: asset.printer?.printerModel.name || '',
-      availableToners: asset.printer?.printerModel.toners || [],
+      availableToners: (asset.printer?.printerModel.toners || [])
+        .slice()
+        .sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' })),
     }))
 
     return createSuccessResponse(formattedPrinters)

@@ -25,7 +25,7 @@ export const getAssets = withPermissions(
               name: true,
               department: {
                 select: {
-                  name: true,
+                  acronym: true,
                 },
               },
             },
@@ -44,7 +44,7 @@ export const getAssets = withPermissions(
           status: asset.status,
           sector: asset.sector.name,
           sectorId: asset.sector.id,
-          department: asset.sector.department.name,
+          department: asset.sector.department.acronym,
         }
       })
 

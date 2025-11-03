@@ -10,6 +10,7 @@ export type SectorsColumnType = {
   address?: string
   departmentId: string
   departmentName: string
+  departmentAcronym: string
 }
 
 export interface SectorRowActionsProps {

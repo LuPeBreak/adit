@@ -32,7 +32,7 @@ export async function getPublicAssetsAction(): Promise<
             name: true,
             department: {
               select: {
-                name: true,
+                acronym: true,
               },
             },
           },
@@ -48,7 +48,7 @@ export async function getPublicAssetsAction(): Promise<
       tag: asset.tag,
       assetType: asset.assetType,
       sector: asset.sector.name,
-      department: asset.sector.department.name,
+      department: asset.sector.department.acronym,
     }))
 
     return createSuccessResponse(formattedAssets)

@@ -34,7 +34,7 @@ export const getPhones = withPermissions(
                   name: true,
                   department: {
                     select: {
-                      name: true,
+                      acronym: true,
                     },
                   },
                 },
@@ -71,7 +71,7 @@ export const getPhones = withPermissions(
           status: phone.asset.status,
           sectorId: phone.asset.sectorId,
           sector: phone.asset.sector.name,
-          department: phone.asset.sector.department.name,
+          department: phone.asset.sector.department.acronym,
           createdAt: phone.createdAt,
           updatedAt: phone.updatedAt,
           lastStatusUpdate:

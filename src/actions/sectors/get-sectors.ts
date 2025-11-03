@@ -26,6 +26,7 @@ export const getSectors = withPermissions(
           department: {
             select: {
               name: true,
+              acronym: true,
             },
           },
         },
@@ -44,6 +45,7 @@ export const getSectors = withPermissions(
         address: sector.address || undefined,
         departmentId: sector.departmentId,
         departmentName: sector.department.name,
+        departmentAcronym: sector.department.acronym,
       }))
 
       return createSuccessResponse(mappedSectors)

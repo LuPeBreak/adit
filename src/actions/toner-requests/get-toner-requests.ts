@@ -35,7 +35,7 @@ export const getTonerRequests = withPermissions(
                       name: true,
                       department: {
                         select: {
-                          name: true,
+                          acronym: true,
                         },
                       },
                     },
@@ -59,7 +59,7 @@ export const getTonerRequests = withPermissions(
         selectedToner: request.selectedToner,
         assetTag: request.printer.asset.tag,
         sector: request.printer.asset.sector.name,
-        department: request.printer.asset.sector.department.name,
+        department: request.printer.asset.sector.department.acronym,
         status: request.status,
         createdAt: request.createdAt,
         updatedAt: request.updatedAt,

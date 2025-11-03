@@ -18,12 +18,12 @@ import {
 import { getSectors } from '@/actions/sectors/get-sectors'
 import { Loader2, Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { generateAcronymWithFallback } from '@/lib/utils/generate-acronym'
 
 interface Sector {
   id: string
   name: string
   departmentName: string
+  departmentAcronym?: string
 }
 
 interface SectorSelectProps {
@@ -67,11 +67,11 @@ export function SectorSelect({
 
   const selectedSector = sectors.find((sector) => sector.id === value)
   const getDisplayText = (sector: Sector) =>
-    `${generateAcronymWithFallback(sector.departmentName)} - ${sector.name}`
+    `${sector.departmentAcronym ?? sector.departmentName} - ${sector.name}`
 
   // Função para busca que inclui tanto a sigla quanto o nome completo
   const getSearchText = (sector: Sector) =>
-    `${sector.departmentName} ${generateAcronymWithFallback(sector.departmentName)} ${sector.name}`
+    `${sector.departmentName} ${sector.departmentAcronym} ${sector.name}`
 
   // Função de filtro customizada para o Command
   const filterFunction = (value: string, search: string) => {
