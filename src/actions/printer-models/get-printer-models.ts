@@ -29,7 +29,15 @@ export const getPrinterModels = withPermissions(
         },
       })
 
-      return createSuccessResponse(printerModels)
+      // Garantir que os toners venham ordenados alfabeticamente
+      const sortedPrinterModels = printerModels.map((model) => ({
+        ...model,
+        toners: (model.toners || [])
+          .slice()
+          .sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' })),
+      }))
+
+      return createSuccessResponse(sortedPrinterModels)
     } catch (error) {
       console.error('Erro ao buscar modelos de impressora:', error)
       return createErrorResponse('Erro interno do servidor')
