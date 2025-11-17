@@ -6,22 +6,24 @@ import {
   createErrorResponse,
   type ActionResponse,
 } from '@/lib/types/action-response'
+import { AssetType } from '@/generated/prisma'
 
 export type AssetData = {
   assetId: string
   tag: string
-  assetType: string
+  assetType: AssetType
   sector: string
   department: string
 }
 
-export async function getPublicAssetsAction(): Promise<
-  ActionResponse<AssetData[]>
-> {
+export async function getPublicAssetsAction({
+  assetType,
+}: { assetType?: AssetType } = {}): Promise<ActionResponse<AssetData[]>> {
   try {
     const assets = await prisma.asset.findMany({
       where: {
         status: 'USING',
+        ...(assetType && { assetType }),
       },
       select: {
         id: true,

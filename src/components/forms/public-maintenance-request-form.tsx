@@ -42,11 +42,21 @@ import { getAssetTypeLabel } from '@/lib/utils/get-status-label'
 import { AssetType } from '@/generated/prisma'
 import { toast } from 'sonner'
 import { formatPhoneNumber } from '@/lib/utils/contact-formatter'
+import { useSearchParams } from 'next/navigation'
 
 export function PublicMaintenanceRequestForm() {
   const [assets, setAssets] = useState<AssetData[]>([])
   const [selectedAsset, setSelectedAsset] = useState<AssetData | null>(null)
   const [open, setOpen] = useState(false)
+  const [isLoadingAssets, setIsLoadingAssets] = useState(false)
+  const searchParams = useSearchParams()
+  const assetTypeParam = searchParams.get('assetType') || undefined
+  const assetType =
+    assetTypeParam === 'PRINTER'
+      ? AssetType.PRINTER
+      : assetTypeParam === 'PHONE'
+        ? AssetType.PHONE
+        : undefined
 
   const form = useForm<CreatePublicMaintenanceRequestData>({
     resolver: zodResolver(createPublicMaintenanceRequestSchema),
@@ -63,17 +73,21 @@ export function PublicMaintenanceRequestForm() {
   useEffect(() => {
     const loadAssets = async () => {
       try {
-        const result = await getPublicAssetsAction()
+        setIsLoadingAssets(true)
+        const result = await getPublicAssetsAction({ assetType })
         if (result.success && result.data) {
           setAssets(result.data)
         }
       } catch (error) {
         console.error('Erro ao carregar ativos:', error)
+        toast.error('Falha ao carregar ativos')
+      } finally {
+        setIsLoadingAssets(false)
       }
     }
 
     loadAssets()
-  }, [])
+  }, [assetType])
 
   const onSubmit = async (data: CreatePublicMaintenanceRequestData) => {
     try {
@@ -107,18 +121,22 @@ export function PublicMaintenanceRequestForm() {
         >
           {/* Informações do Equipamento */}
           <div className="space-y-3 sm:space-y-4">
-            <div className="border-b pb-2">
-              <h3 className="text-base sm:text-lg font-semibold text-foreground">
-                Informações do Equipamento
-              </h3>
-            </div>
+          <div className="border-b pb-2">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">
+              Informações do Equipamento
+            </h3>
+          </div>
 
             <FormField
               control={form.control}
               name="assetId"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Ativo (Nº Patrimônio)</FormLabel>
+                  <FormLabel>
+                    {assetType
+                      ? `${getAssetTypeLabel(assetType)} (Nº Patrimônio)`
+                      : 'Ativo (Nº Patrimônio)'}
+                  </FormLabel>
                   <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -126,15 +144,20 @@ export function PublicMaintenanceRequestForm() {
                           variant="outline"
                           role="combobox"
                           aria-expanded={open}
+                          aria-label={
+                            assetType
+                              ? `Selecionar Patrimônio de ${getAssetTypeLabel(assetType)}`
+                              : 'Selecionar Patrimônio'
+                          }
                           className={cn(
                             'justify-between',
                             !field.value && 'text-muted-foreground',
                           )}
-                          disabled={form.formState.isSubmitting}
+                          disabled={form.formState.isSubmitting || isLoadingAssets}
                         >
                           {selectedAsset
-                            ? `${selectedAsset.tag} - ${getAssetTypeLabel(selectedAsset.assetType as AssetType)}`
-                            : form.formState.isSubmitting
+                            ? `${selectedAsset.tag} - ${getAssetTypeLabel(selectedAsset.assetType)}`
+                            : isLoadingAssets
                               ? 'Carregando ativos...'
                               : 'Selecione um ativo'}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -165,7 +188,7 @@ export function PublicMaintenanceRequestForm() {
                                   <span className="font-medium">
                                     {asset.tag} -{' '}
                                     {getAssetTypeLabel(
-                                      asset.assetType as AssetType,
+                                      asset.assetType
                                     )}
                                   </span>
                                   <span className="text-sm text-muted-foreground">
@@ -197,7 +220,7 @@ export function PublicMaintenanceRequestForm() {
                     </p>
                     <p className="text-sm text-blue-700 dark:text-blue-300">
                       <strong>Tipo:</strong>{' '}
-                      {getAssetTypeLabel(selectedAsset.assetType as AssetType)}
+                      {getAssetTypeLabel(selectedAsset.assetType)}
                     </p>
                     <p className="text-sm text-blue-700 dark:text-blue-300">
                       <strong>Setor:</strong> {selectedAsset.sector}
