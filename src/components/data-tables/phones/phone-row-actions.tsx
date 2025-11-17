@@ -1,15 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  MoreHorizontal,
-  Pencil,
-  Trash,
-  History,
-  Waypoints,
-  Eye,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Pencil, Trash, History, Waypoints, Eye } from 'lucide-react'
+import { RowActionsButton } from '@/components/data-tables/row-actions-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +18,7 @@ import Link from 'next/link'
 import { DeletePhoneConfirmationDialog } from './delete-phone-confirmation-dialog'
 import { UpdatePhoneDialogForm } from './update-phone-dialog-form'
 import { PhoneDetailsDialog } from './phone-details-dialog'
+import type { Role } from '@/generated/prisma'
 
 export function PhoneRowActions({ row }: PhoneRowActionsProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -32,19 +26,30 @@ export function PhoneRowActions({ row }: PhoneRowActionsProps) {
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
 
-  const { data: session } = authClient.useSession()
-
   const phone = row.original
-  const isAdmin = session?.user.role === 'ADMIN'
+
+  // Permissions (síncrono via role)
+  const { data: session } = authClient.useSession()
+  if (!session?.user.role) return <RowActionsButton />
+
+  const canDelete = authClient.admin.checkRolePermission({
+    permissions: { phone: ['delete'] },
+    role: session.user.role as Role,
+  })
+  const canUpdateAsset = authClient.admin.checkRolePermission({
+    permissions: { asset: ['update'] },
+    role: session.user.role as Role,
+  })
+  const canUpdate = authClient.admin.checkRolePermission({
+    permissions: { phone: ['update'] },
+    role: session.user.role as Role,
+  })
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <RowActionsButton />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
@@ -53,21 +58,25 @@ export function PhoneRowActions({ row }: PhoneRowActionsProps) {
             <Eye />
             Ver Detalhes
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
-            <Pencil />
-            Editar
-          </DropdownMenuItem>
-          {isAdmin && (
+          {canUpdate && (
+            <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
+              <Pencil />
+              Editar
+            </DropdownMenuItem>
+          )}
+          {canDelete && (
             <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
               <Trash className="text-destructive" />
               <span className="text-destructive">Deletar</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setStatusDialogOpen(true)}>
-            <Waypoints />
-            Atualizar Estado
-          </DropdownMenuItem>
+          {canUpdateAsset && (
+            <DropdownMenuItem onClick={() => setStatusDialogOpen(true)}>
+              <Waypoints />
+              Atualizar Estado
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
             <Link href={`/dashboard/assets/status-history/${phone.tag}`}>
               <History />
@@ -92,7 +101,7 @@ export function PhoneRowActions({ row }: PhoneRowActionsProps) {
         onOpenChange={setEditDialogOpen}
       />
 
-      {isAdmin && (
+      {canDelete && (
         <DeletePhoneConfirmationDialog
           phone={phone}
           open={deleteDialogOpen}

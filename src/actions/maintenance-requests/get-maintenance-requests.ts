@@ -8,12 +8,30 @@ import {
   type ActionResponse,
 } from '@/lib/types/action-response'
 import type { MaintenanceRequestsColumnType } from '@/components/data-tables/maintenance-requests/maintenance-requests-table-types'
+import { AssetType, type Role } from '@/generated/prisma'
 
 export const getMaintenanceRequests = withPermissions(
   [{ resource: 'maintenanceRequest', action: ['list'] }],
-  async (): Promise<ActionResponse<MaintenanceRequestsColumnType[]>> => {
+  async (session): Promise<ActionResponse<MaintenanceRequestsColumnType[]>> => {
     try {
+      const role = session.user.role as Role
+      const assetTypeFilter =
+        role === 'OPERATOR_PRINTERS'
+          ? AssetType.PRINTER
+          : role === 'OPERATOR_PHONES'
+            ? AssetType.PHONE
+            : undefined
       const maintenanceRequests = await prisma.maintenanceRequest.findMany({
+        where:
+          assetTypeFilter !== undefined
+            ? {
+                asset: {
+                  is: {
+                    assetType: assetTypeFilter,
+                  },
+                },
+              }
+            : undefined,
         select: {
           id: true,
           requesterName: true,
@@ -41,53 +59,37 @@ export const getMaintenanceRequests = withPermissions(
               },
             },
           },
-          history: {
-            select: {
-              status: true,
-              notes: true,
-              changedAt: true,
-              user: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-            orderBy: {
-              changedAt: 'desc',
-            },
-            take: 1,
-          },
         },
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy: { createdAt: 'desc' },
       })
 
-      const mappedRequests = maintenanceRequests.map((request) => ({
-        id: request.id,
-        requesterName: request.requesterName,
-        registrationNumber: request.registrationNumber,
-        requesterEmail: request.requesterEmail,
-        requesterWhatsApp: request.requesterWhatsApp,
-        description: request.description,
-        assetTag: request.asset.tag,
-        assetStatus: request.asset.status,
-        assetSectorId: request.asset.sectorId,
-        assetType: request.asset.assetType,
-        sector: request.asset.sector.name,
-        department: request.asset.sector.department.name,
-        status: request.status,
-        createdAt: request.createdAt,
-        lastStatusUpdateStatus: request.history[0]?.status || null,
-        lastStatusUpdateNotes: request.history[0]?.notes || null,
-        lastStatusUpdateChangedAt: request.history[0]?.changedAt || null,
-        lastStatusUpdateUserName: request.history[0]?.user.name || null,
-      }))
+      // Transformar os dados para o formato esperado pela tabela
+      const transformedRequests: MaintenanceRequestsColumnType[] =
+        maintenanceRequests.map((request) => ({
+          id: request.id,
+          assetTag: request.asset.tag,
+          assetStatus: request.asset.status,
+          assetSectorId: request.asset.sectorId,
+          requesterName: request.requesterName,
+          registrationNumber: request.registrationNumber,
+          requesterEmail: request.requesterEmail,
+          requesterWhatsApp: request.requesterWhatsApp,
+          description: request.description,
+          assetType: request.asset.assetType,
+          status: request.status,
+          createdAt: request.createdAt,
+          sector: request.asset.sector.name,
+          department: request.asset.sector.department.name,
+          lastStatusUpdateStatus: null,
+          lastStatusUpdateNotes: null,
+          lastStatusUpdateChangedAt: null,
+          lastStatusUpdateUserName: null,
+        }))
 
-      return createSuccessResponse(mappedRequests)
+      return createSuccessResponse(transformedRequests)
     } catch (error) {
-      console.error('Erro ao buscar pedidos de manutenção:', error)
-      return createErrorResponse('Erro interno do servidor')
+      console.error('Erro ao listar pedidos de manutenção:', error)
+      return createErrorResponse('Erro interno do servidor ao listar pedidos')
     }
   },
 )

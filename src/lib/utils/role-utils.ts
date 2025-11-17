@@ -5,8 +5,14 @@ export const getRoleLabel = (role: Role): string => {
   switch (role) {
     case Role.ADMIN:
       return 'Administrador'
-    case Role.OPERATOR:
-      return 'Operador'
+    case Role.OPERATOR_ASSETS:
+      return 'Operador de Ativos'
+    case Role.OPERATOR_PRINTERS:
+      return 'Operador de Impressoras'
+    case Role.OPERATOR_PHONES:
+      return 'Operador de Telefonia'
+    case Role.OPERATOR_ORG:
+      return 'Operador Organizacional'
     default:
       return role // Retorna o próprio valor se não houver um mapeamento específico
   }

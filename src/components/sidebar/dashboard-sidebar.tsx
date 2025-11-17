@@ -29,76 +29,87 @@ import { NavUser } from './nav-user'
 
 const menuLinks = {
   Geral: {
-    roles: ['OPERATOR', 'ADMIN'],
+    roles: [
+      'ADMIN',
+      'OPERATOR_ASSETS',
+      'OPERATOR_PHONES',
+      'OPERATOR_PRINTERS',
+      'OPERATOR_ORG',
+    ],
     links: [
       {
         title: 'Dashboard',
         url: '/dashboard',
         icon: LayoutDashboard,
-        roles: ['OPERATOR', 'ADMIN'],
+        roles: ['ADMIN'],
       },
       {
         title: 'Todos os Ativos',
         url: '/dashboard/assets',
         icon: PackageOpen,
-        roles: ['OPERATOR', 'ADMIN'],
+        roles: ['ADMIN', 'OPERATOR_ASSETS'],
       },
       {
         title: 'Pedidos de Manutenção',
         url: '/dashboard/maintenance-requests',
         icon: Wrench,
-        roles: ['OPERATOR', 'ADMIN'],
+        roles: [
+          'ADMIN',
+          'OPERATOR_ASSETS',
+          'OPERATOR_PHONES',
+          'OPERATOR_PRINTERS',
+        ],
       },
     ],
   },
   Impressoras: {
-    roles: ['OPERATOR', 'ADMIN'],
+    roles: ['ADMIN', 'OPERATOR_ASSETS', 'OPERATOR_PRINTERS'],
     links: [
       {
         title: 'Impressoras',
         url: '/dashboard/printers',
         icon: Printer,
-        roles: ['OPERATOR', 'ADMIN'],
+        roles: ['ADMIN', 'OPERATOR_ASSETS', 'OPERATOR_PRINTERS'],
       },
       {
         title: 'Modelos de Impressoras',
         url: '/dashboard/printer-models',
         icon: Printer,
-        roles: ['OPERATOR', 'ADMIN'],
+        roles: ['ADMIN', 'OPERATOR_ASSETS', 'OPERATOR_PRINTERS'],
       },
       {
         title: 'Pedidos de Toner',
         url: '/dashboard/toner-requests',
         icon: FileText,
-        roles: ['OPERATOR', 'ADMIN'],
+        roles: ['ADMIN', 'OPERATOR_ASSETS', 'OPERATOR_PRINTERS'],
       },
     ],
   },
   Telefones: {
-    roles: ['OPERATOR', 'ADMIN'],
+    roles: ['ADMIN', 'OPERATOR_ASSETS', 'OPERATOR_PHONES'],
     links: [
       {
         title: 'Telefones',
         url: '/dashboard/phones',
         icon: Phone,
-        roles: ['OPERATOR', 'ADMIN'],
+        roles: ['ADMIN', 'OPERATOR_ASSETS', 'OPERATOR_PHONES'],
       },
     ],
   },
   'Estrutura Organizacional': {
-    roles: ['ADMIN'],
+    roles: ['ADMIN', 'OPERATOR_ORG'],
     links: [
       {
         title: 'Secretarias',
         url: '/dashboard/departments',
         icon: Landmark,
-        roles: ['ADMIN'],
+        roles: ['ADMIN', 'OPERATOR_ORG'],
       },
       {
         title: 'Setores',
         url: '/dashboard/sectors',
         icon: Users,
-        roles: ['ADMIN'],
+        roles: ['ADMIN', 'OPERATOR_ORG'],
       },
     ],
   },

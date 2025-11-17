@@ -49,7 +49,9 @@ export const updatePhoneAction = withPermissions(
             brand: updateData.brand,
             phoneType: updateData.phoneType,
             ipAddress: updateData.ipAddress,
-            serialNumber: updateData.serialNumber,
+            ...(isAdmin && {
+              serialNumber: (updateData as UpdatePhoneAdminData).serialNumber,
+            }),
           },
         })
 

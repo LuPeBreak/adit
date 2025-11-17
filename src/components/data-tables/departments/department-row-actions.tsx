@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Pencil, Trash, Eye } from 'lucide-react'
+import { Pencil, Trash, Eye } from 'lucide-react'
 
 import { DepartmentDialogForm } from './department-dialog-form'
 import { DepartmentDetailsDialog } from './department-details-dialog'
-import { Button } from '@/components/ui/button'
+import { RowActionsButton } from '@/components/data-tables/row-actions-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import type { DepartmentRowActionsProps } from './departments-table-types'
 import { DeleteDepartmentConfirmationDialog } from './delete-department-confirmation-dialog'
+import { authClient } from '@/lib/auth/auth-client'
+import type { Role } from '@/generated/prisma'
 
 export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
   const department = row.original
@@ -23,14 +25,26 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
 
+  // Permissions
+  const { data: session } = authClient.useSession()
+  if (!session?.user.role) return <RowActionsButton />
+
+  const canDelete = authClient.admin.checkRolePermission({
+    permissions: {
+      department: ['delete'],
+    },
+    role: session.user.role as Role,
+  })
+  const canUpdate = authClient.admin.checkRolePermission({
+    permissions: { department: ['update'] },
+    role: session.user.role as Role,
+  })
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <RowActionsButton />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
@@ -39,14 +53,18 @@ export function DepartmentRowActions({ row }: DepartmentRowActionsProps) {
             <Eye />
             Ver detalhes
           </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
-            <Pencil />
-            Editar
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)}>
-            <Trash className="text-destructive" />
-            <span className="text-destructive">Deletar</span>
-          </DropdownMenuItem>
+          {canUpdate && (
+            <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
+              <Pencil />
+              Editar
+            </DropdownMenuItem>
+          )}
+          {canDelete && (
+            <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)}>
+              <Trash className="text-destructive" />
+              <span className="text-destructive">Deletar</span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 

@@ -23,10 +23,7 @@ type AssetHistoryByTagResponse = {
 }
 
 export const getAssetHistoryByTagAction = withPermissions(
-  [
-    { resource: 'asset', action: ['list'] },
-    { resource: 'assetHistory', action: ['list'] },
-  ],
+  [{ resource: 'assetHistory', action: ['list'] }],
   async (
     _,
     data: GetAssetHistoryByTagData,

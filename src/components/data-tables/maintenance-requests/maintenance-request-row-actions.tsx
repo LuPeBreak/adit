@@ -9,7 +9,7 @@ import {
   CheckCircle,
   XCircle,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { RowActionsButton } from '@/components/data-tables/row-actions-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +25,8 @@ import Link from 'next/link'
 import { getValidStatusTransitions } from '@/lib/status-transition-rules/maintenance/transition-rules'
 import { getMaintenanceStatusLabel } from '@/lib/utils/get-status-label'
 import { MaintenanceStatus } from '@/generated/prisma'
+import { authClient } from '@/lib/auth/auth-client'
+import type { Role } from '@/generated/prisma'
 
 export function MaintenanceRequestRowActions({
   row,
@@ -36,6 +38,14 @@ export function MaintenanceRequestRowActions({
     null,
   )
   const availableTargets = getValidStatusTransitions(maintenanceRequest.status)
+
+  // Permissions (síncrono via role)
+  const { data: session } = authClient.useSession()
+  if (!session?.user.role) return <RowActionsButton />
+  const canUpdate = authClient.admin.checkRolePermission({
+    permissions: { maintenanceRequest: ['update'] },
+    role: session.user.role as Role,
+  })
 
   return (
     <>
@@ -56,10 +66,7 @@ export function MaintenanceRequestRowActions({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <RowActionsButton />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
@@ -79,7 +86,7 @@ export function MaintenanceRequestRowActions({
           </DropdownMenuItem>
 
           {/* Ações de atualização de status baseadas nas transições disponíveis */}
-          {availableTargets.length > 0 && (
+          {availableTargets.length > 0 && canUpdate && (
             <>
               <DropdownMenuSeparator />
               {availableTargets.map((status) => {

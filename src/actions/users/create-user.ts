@@ -33,7 +33,7 @@ export const createUserAction = withPermissions(
           email,
           password,
           name,
-          role,
+          role, // Removido type assertion, role já é validado pelo schema
         },
       })
 

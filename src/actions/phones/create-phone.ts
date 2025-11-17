@@ -12,10 +12,7 @@ import {
 import { AssetType } from '@/generated/prisma'
 
 export const createPhoneAction = withPermissions(
-  [
-    { resource: 'phone', action: ['create'] },
-    { resource: 'asset', action: ['create'] },
-  ],
+  [{ resource: 'phone', action: ['create'] }],
   async (session, data: CreatePhoneData): Promise<ActionResponse> => {
     const validatedFields = createPhoneSchema.safeParse(data)
     if (!validatedFields.success) {

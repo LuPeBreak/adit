@@ -20,6 +20,7 @@ import { sendEmail } from '@/lib/notifications/services/email-service'
 import { sendWhatsApp } from '@/lib/notifications/services/whatsapp-service'
 import { createMaintenanceRequestStatusUpdateTemplate } from '@/lib/notifications/templates/maintenance-request/email-template'
 import { createMaintenanceRequestStatusUpdateWhatsAppTemplate } from '@/lib/notifications/templates/maintenance-request/whatsapp-template'
+import { AssetType } from '@/generated/prisma'
 
 export const updateMaintenanceRequestStatusAction = withPermissions(
   [{ resource: 'maintenanceRequest', action: ['update'] }],
@@ -75,6 +76,22 @@ export const updateMaintenanceRequestStatusAction = withPermissions(
           'Pedido de manutenção não encontrado',
           'NOT_FOUND_ERROR',
           'id',
+        )
+      }
+
+      // Restrição por tipo conforme cargo
+      const role = session.user.role as string
+      const assetType = existingRequest.asset?.assetType
+      if (role === 'OPERATOR_PRINTERS' && assetType !== AssetType.PRINTER) {
+        return createErrorResponse(
+          'Seu cargo só pode atualizar manutenção de impressoras',
+          'PERMISSION_ERROR',
+        )
+      }
+      if (role === 'OPERATOR_PHONES' && assetType !== AssetType.PHONE) {
+        return createErrorResponse(
+          'Seu cargo só pode atualizar manutenção de telefones',
+          'PERMISSION_ERROR',
         )
       }
 
@@ -250,8 +267,21 @@ export const updateMaintenanceRequestStatusAction = withPermissions(
       // Se houve falhas de notificação, retornar no payload para informar o usuário do sistema.
       return createSuccessResponse({ notificationErrors })
     } catch (error) {
-      console.error('Erro ao atualizar status de manutenção:', error)
-      return createErrorResponse('Erro interno do servidor')
+      console.error('Erro ao atualizar status do pedido de manutenção:', error)
+
+      if (error instanceof Error) {
+        if (error.message === 'PENDING_ONLY') {
+          return createErrorResponse(
+            'Apenas pedidos pendentes podem ser atualizados para análise',
+            'INVALID_STATUS_ERROR',
+          )
+        }
+      }
+
+      return createErrorResponse(
+        'Erro interno do servidor ao atualizar pedido de manutenção',
+        'INTERNAL_SERVER_ERROR',
+      )
     }
   },
 )

@@ -15,7 +15,11 @@ export const createPhoneSchema = z.object({
   phoneType: z.nativeEnum(PhoneType, {
     message: 'Tipo de telefone inválido',
   }),
-  ipAddress: z.string().ip({ message: 'Endereço IP inválido' }).optional(),
+  ipAddress: z
+    .string()
+    .ip({ message: 'Endereço IP inválido' })
+    .nullable()
+    .optional(),
   serialNumber: z
     .string({ message: 'O número de série é obrigatório' })
     .min(1, 'O número de série é obrigatório')
@@ -46,9 +50,10 @@ export const updatePhoneAdminSchema = createPhoneSchema
     id: z.string().cuid('ID do telefone inválido'),
   })
 
-// Schema para operadores (campos limitados - não pode atualizar tag)
+// Schema para operadores (campos limitados - não pode atualizar tag e serialNumber)
 export const updatePhoneOperatorSchema = updatePhoneAdminSchema.omit({
   tag: true,
+  serialNumber: true,
 })
 
 export const deletePhoneSchema = z.object({

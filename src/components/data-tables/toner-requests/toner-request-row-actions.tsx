@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Check, X, Truck, Eye } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Check, X, Truck, Eye } from 'lucide-react'
+import { RowActionsButton } from '@/components/data-tables/row-actions-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +17,8 @@ import { getTonerRequestStatusLabel } from '@/lib/utils/get-status-label'
 import { UpdateTonerRequestStatusDialog } from './update-toner-request-status-dialog'
 import { TonerRequestDetailsDialog } from './toner-request-details-dialog'
 import { getValidStatusTransitions } from '@/lib/status-transition-rules/toner/transition-rules'
+import { authClient } from '@/lib/auth/auth-client'
+import type { Role } from '@/generated/prisma'
 
 export function TonerRequestRowActions({ row }: TonerRequestRowActionsProps) {
   const tonerRequest = row.original
@@ -27,6 +29,14 @@ export function TonerRequestRowActions({ row }: TonerRequestRowActionsProps) {
   )
 
   const availableTargets = getValidStatusTransitions(tonerRequest.status)
+
+  // Permissions (síncrono via role)
+  const { data: session } = authClient.useSession()
+  if (!session?.user.role) return <RowActionsButton />
+  const canUpdate = authClient.admin.checkRolePermission({
+    permissions: { tonerRequest: ['update'] },
+    role: session.user.role as Role,
+  })
 
   return (
     <>
@@ -47,10 +57,7 @@ export function TonerRequestRowActions({ row }: TonerRequestRowActionsProps) {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <RowActionsButton />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
@@ -62,7 +69,7 @@ export function TonerRequestRowActions({ row }: TonerRequestRowActionsProps) {
           </DropdownMenuItem>
 
           {/* Ações de atualização de status baseadas nas transições disponíveis */}
-          {availableTargets.length > 0 && (
+          {availableTargets.length > 0 && canUpdate && (
             <>
               <DropdownMenuSeparator />
               {availableTargets.map((status) => {

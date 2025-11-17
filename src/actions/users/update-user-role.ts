@@ -33,7 +33,7 @@ export const updateUserRoleAction = withPermissions(
       await auth.api.setRole({
         body: {
           userId,
-          role,
+          role, // Removido type assertion, role já é validado pelo schema
         },
         headers: await headers(),
       })

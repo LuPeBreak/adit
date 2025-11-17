@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, History, Waypoints } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { History, Waypoints } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,28 +13,40 @@ import {
 import type { AssetRowActionsProps } from './assets-table-types'
 import { UpdateAssetStatusForm } from './update-asset-status-dialog-form'
 import Link from 'next/link'
+import { authClient } from '@/lib/auth/auth-client'
+import type { Role } from '@/generated/prisma'
+import { RowActionsButton } from '@/components/data-tables/row-actions-button'
 
 export function AssetRowActions({ row }: AssetRowActionsProps) {
   const [statusDialogOpen, setStatusDialogOpen] = useState(false)
 
   const asset = row.original
 
+  // Permissions (síncrono via role)
+  const { data: session } = authClient.useSession()
+  const role = session?.user?.role as Role | undefined
+  if (!role) return <RowActionsButton />
+
+  const canUpdateAsset = authClient.admin.checkRolePermission({
+    permissions: { asset: ['update'] },
+    role,
+  })
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <RowActionsButton />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setStatusDialogOpen(true)}>
-            <Waypoints />
-            Atualizar Estado
-          </DropdownMenuItem>
+          {canUpdateAsset && (
+            <DropdownMenuItem onClick={() => setStatusDialogOpen(true)}>
+              <Waypoints />
+              Atualizar Estado
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
             <Link href={`/dashboard/assets/status-history/${asset.tag}`}>
               <History />

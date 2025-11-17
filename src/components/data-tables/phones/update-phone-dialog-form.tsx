@@ -75,7 +75,7 @@ export function UpdatePhoneDialogForm({
         phoneNumber: phone.phoneNumber,
         brand: phone.brand,
         phoneType: phone.phoneType,
-        ipAddress: phone.ipAddress || '',
+        ipAddress: phone.ipAddress || null,
         serialNumber: phone.serialNumber,
         tag: phone.tag,
       })
@@ -106,8 +106,8 @@ export function UpdatePhoneDialogForm({
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          <div className="grid grid-cols-2 gap-4">
-            {isAdmin && (
+          {isAdmin && (
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="tag"
@@ -121,21 +121,21 @@ export function UpdatePhoneDialogForm({
                   </FormItem>
                 )}
               />
-            )}
-            <FormField
-              control={form.control}
-              name="serialNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>N° Serial</FormLabel>
-                  <FormControl>
-                    <Input placeholder="ABC123DEF456" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+              <FormField
+                control={form.control}
+                name="serialNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>N° Serial</FormLabel>
+                    <FormControl>
+                      <Input placeholder="ABC123DEF456" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <FormField
@@ -199,7 +199,17 @@ export function UpdatePhoneDialogForm({
                   <FormItem>
                     <FormLabel>Endereço IP (Opcional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="192.168.1.100" {...field} />
+                      <Input
+                        placeholder="192.168.1.100"
+                        value={field.value ?? ''}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value.trim() === ''
+                              ? null
+                              : e.target.value,
+                          )
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

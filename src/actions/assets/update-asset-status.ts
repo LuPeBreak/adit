@@ -12,6 +12,7 @@ import {
   createErrorResponse,
   type ActionResponse,
 } from '@/lib/types/action-response'
+import { AssetType } from '@/generated/prisma'
 
 export const updateAssetStatusAction = withPermissions(
   [{ resource: 'asset', action: ['update'] }],
@@ -34,11 +35,26 @@ export const updateAssetStatusAction = withPermissions(
         // Verificar se o ativo existe
         const existingAsset = await tx.asset.findUnique({
           where: { id: assetId },
-          select: { id: true, status: true, sectorId: true },
+          select: { id: true, status: true, sectorId: true, assetType: true },
         })
 
         if (!existingAsset) {
           throw new Error('ASSET_NOT_FOUND')
+        }
+
+        // Checagem de escopo por cargo
+        const role = session.user.role as string
+        if (
+          role === 'OPERATOR_PRINTERS' &&
+          existingAsset.assetType !== AssetType.PRINTER
+        ) {
+          throw new Error('FORBIDDEN_TYPE')
+        }
+        if (
+          role === 'OPERATOR_PHONES' &&
+          existingAsset.assetType !== AssetType.PHONE
+        ) {
+          throw new Error('FORBIDDEN_TYPE')
         }
 
         // Verificar se houve mudança real no status ou setor
@@ -90,6 +106,12 @@ export const updateAssetStatusAction = withPermissions(
             'Nenhuma alteração foi detectada',
             'VALIDATION_ERROR',
             'status',
+          )
+        }
+        if (error.message === 'FORBIDDEN_TYPE') {
+          return createErrorResponse(
+            'Seu cargo só pode atualizar o status do seu tipo de ativo',
+            'PERMISSION_ERROR',
           )
         }
       }

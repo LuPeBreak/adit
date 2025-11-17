@@ -167,7 +167,17 @@ export function CreatePhoneDialogForm({
                   <FormItem>
                     <FormLabel>Endereço IP (Opcional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="192.168.1.100" {...field} />
+                      <Input
+                        placeholder="192.168.1.100"
+                        value={field.value ?? ''}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value.trim() === ''
+                              ? null
+                              : e.target.value,
+                          )
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

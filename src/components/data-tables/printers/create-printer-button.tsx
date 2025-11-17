@@ -4,9 +4,18 @@ import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { CreatePrinterDialogForm } from './create-printer-dialog-form'
+import { authClient } from '@/lib/auth/auth-client'
+import type { Role } from '@/generated/prisma'
 
 export function CreatePrinterButton() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { data: session } = authClient.useSession()
+  if (!session?.user.role) return null
+  const canCreate = authClient.admin.checkRolePermission({
+    permissions: { printer: ['create'] },
+    role: session.user.role as Role,
+  })
+  if (!canCreate) return null
 
   return (
     <>

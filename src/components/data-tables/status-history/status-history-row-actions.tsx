@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Eye } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Eye } from 'lucide-react'
+import { RowActionsButton } from '@/components/data-tables/row-actions-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,10 +28,7 @@ export function StatusHistoryRowActions({ row }: StatusHistoryRowActionsProps) {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <RowActionsButton />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>

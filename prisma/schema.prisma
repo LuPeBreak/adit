@@ -12,7 +12,10 @@ datasource db {
 
 enum Role {
   ADMIN
-  OPERATOR
+  OPERATOR_ASSETS
+  OPERATOR_PRINTERS
+  OPERATOR_PHONES
+  OPERATOR_ORG
 }
 
 model User {
@@ -26,7 +29,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  role       Role      @default(OPERATOR)
+  role       Role      @default(OPERATOR_ASSETS)
   banned     Boolean?
   banReason  String?
   banExpires DateTime?
@@ -93,9 +96,9 @@ model Department {
   acronym      String   @unique // Department acronym (required and unique)
   manager      String
   managerEmail String   @map("manager_email")
-  contact      String?  // Phone or mobile number (optional)
-  address      String?  // Department address (optional)
-  website      String?  // Department website link (optional)
+  contact      String? // Phone or mobile number (optional)
+  address      String? // Department address (optional)
+  website      String? // Department website link (optional)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -107,11 +110,11 @@ model Department {
 model Sector {
   id           String   @id @default(cuid())
   name         String
-  acronym      String   // Sector acronym (required)
+  acronym      String // Sector acronym (required)
   manager      String
   managerEmail String   @map("manager_email")
-  contact      String?  // Phone or mobile number (optional)
-  address      String?  // Sector address (optional)
+  contact      String? // Phone or mobile number (optional)
+  address      String? // Sector address (optional)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

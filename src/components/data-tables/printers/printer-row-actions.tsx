@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Pencil, Trash, History, Waypoints } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Pencil, Trash, History, Waypoints } from 'lucide-react'
+import { RowActionsButton } from '@/components/data-tables/row-actions-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,44 +17,60 @@ import { DeletePrinterConfirmationDialog } from './delete-printer-confirmation-d
 import { UpdateAssetStatusForm } from '../assets/update-asset-status-dialog-form'
 import { authClient } from '@/lib/auth/auth-client'
 import Link from 'next/link'
+import type { Role } from '@/generated/prisma'
 
 export function PrinterRowActions({ row }: PrinterRowActionsProps) {
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [statusDialogOpen, setStatusDialogOpen] = useState(false)
 
-  const { data: session } = authClient.useSession()
-
   const printer = row.original
-  const isAdmin = session?.user.role === 'ADMIN'
+
+  // Permissions (síncrono via role)
+  const { data: session } = authClient.useSession()
+  if (!session?.user.role) return <RowActionsButton />
+
+  const canDelete = authClient.admin.checkRolePermission({
+    permissions: { printer: ['delete'] },
+    role: session.user.role as Role,
+  })
+  const canUpdate = authClient.admin.checkRolePermission({
+    permissions: { printer: ['update'] },
+    role: session.user.role as Role,
+  })
+  const canUpdateAsset = authClient.admin.checkRolePermission({
+    permissions: { asset: ['update'] },
+    role: session.user.role as Role,
+  })
 
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <RowActionsButton />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
-            <Pencil />
-            Editar
-          </DropdownMenuItem>
-          {isAdmin && (
+          {canUpdate && (
+            <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
+              <Pencil />
+              Editar
+            </DropdownMenuItem>
+          )}
+          {canDelete && (
             <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
               <Trash className="text-destructive" />
               <span className="text-destructive">Deletar</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => setStatusDialogOpen(true)}>
-            <Waypoints />
-            Atualizar Estado
-          </DropdownMenuItem>
+          {canUpdateAsset && (
+            <DropdownMenuItem onClick={() => setStatusDialogOpen(true)}>
+              <Waypoints />
+              Atualizar Estado
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
             <Link href={`/dashboard/assets/status-history/${printer.tag}`}>
               <History />
@@ -79,7 +95,7 @@ export function PrinterRowActions({ row }: PrinterRowActionsProps) {
         onOpenChange={setStatusDialogOpen}
       />
 
-      {isAdmin && (
+      {canDelete && (
         <DeletePrinterConfirmationDialog
           printer={printer}
           open={deleteDialogOpen}

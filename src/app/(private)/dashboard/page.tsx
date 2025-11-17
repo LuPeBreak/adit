@@ -2,9 +2,25 @@ import DashboardContainer from '@/components/dashboard-container'
 import { getAssetsMetricsByType } from '@/actions/assets/get-assets-metrics-by-type'
 import { getTonerRequestsMetrics } from '@/actions/toner-requests/get-toner-requests-metrics'
 import { MetricCard } from '@/components/dashboard/metric-card'
-import { AssetStatus } from '@/generated/prisma'
+import { AssetStatus, Role } from '@/generated/prisma'
+import { auth } from '@/lib/auth/auth'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { getRoleHome } from '@/lib/auth/role-redirects'
 
 export default async function DashboardPage() {
+  // Redirecionamento por cargo: somente ADMIN vê o dashboard
+  const session = await auth.api.getSession({ headers: await headers() })
+  if (!session) {
+    redirect('/login')
+  }
+
+  // Se não for ADMIN, redirecionar para página específica da role
+  if (session.user.role !== 'ADMIN') {
+    redirect(getRoleHome(session.user.role as Role))
+  }
+
+  // Se chegou aqui, é ADMIN - carregar métricas
   const [assetsMetrics, tonerMetrics] = await Promise.all([
     getAssetsMetricsByType(),
     getTonerRequestsMetrics(),

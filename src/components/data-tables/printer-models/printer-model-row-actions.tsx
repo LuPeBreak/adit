@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { MoreHorizontal, Pencil, Trash } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Pencil, Trash } from 'lucide-react'
+import { RowActionsButton } from '@/components/data-tables/row-actions-button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,32 +14,48 @@ import {
 import { PrinterModelDialogForm } from './printer-model-dialog-form'
 import type { PrinterModelRowActionsProps } from './printer-models-table-types'
 import { DeletePrinterModelConfirmationDialog } from './delete-printer-model-confirmation-dialog'
+import { authClient } from '@/lib/auth/auth-client'
+import type { Role } from '@/generated/prisma'
 
 export function PrinterModelRowActions({ row }: PrinterModelRowActionsProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const printerModel = row.original
 
+  // Permissions (síncrono via role)
+  const { data: session } = authClient.useSession()
+  if (!session?.user.role) return <RowActionsButton />
+
+  const canUpdate = authClient.admin.checkRolePermission({
+    permissions: { printerModel: ['update'] },
+    role: session.user.role as Role,
+  })
+  const canDelete = authClient.admin.checkRolePermission({
+    permissions: { printerModel: ['delete'] },
+    role: session.user.role as Role,
+  })
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Abrir menu</span>
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+          <RowActionsButton />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
-            <Pencil />
-            Editar
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)}>
-            <Trash className="text-destructive" />
-            <span className="text-destructive">Deletar</span>
-          </DropdownMenuItem>
+          {canUpdate && (
+            <DropdownMenuItem onSelect={() => setIsEditDialogOpen(true)}>
+              <Pencil />
+              Editar
+            </DropdownMenuItem>
+          )}
+          {canDelete && (
+            <DropdownMenuItem onSelect={() => setIsDeleteDialogOpen(true)}>
+              <Trash className="text-destructive" />
+              <span className="text-destructive">Deletar</span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -53,11 +69,13 @@ export function PrinterModelRowActions({ row }: PrinterModelRowActionsProps) {
         onOpenChange={setIsEditDialogOpen}
       />
 
-      <DeletePrinterModelConfirmationDialog
-        printerModel={printerModel}
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      />
+      {canDelete && (
+        <DeletePrinterModelConfirmationDialog
+          printerModel={printerModel}
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+        />
+      )}
     </>
   )
 }
