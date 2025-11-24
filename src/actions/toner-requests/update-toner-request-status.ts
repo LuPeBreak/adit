@@ -92,10 +92,17 @@ export const updateTonerRequestStatusAction = withPermissions(
         )
       }
 
-      // Atualizar apenas o status
+      // Atualizar status e, se informado, a última observação
+      const updateData: { status: TonerRequestStatus; notes?: string } = {
+        status,
+      }
+      if (notes !== undefined) {
+        updateData.notes = notes
+      }
+
       await prisma.tonerRequest.update({
         where: { id },
-        data: { status },
+        data: updateData,
       })
 
       // Enviar notificações

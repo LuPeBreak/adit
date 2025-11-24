@@ -39,14 +39,29 @@ export type GetTonerRequestsUpdatesData = z.infer<
 >
 
 // Schema para atualização de status de pedidos de toner
-export const updateTonerRequestStatusSchema = z.object({
-  id: z.string().cuid('ID do pedido de toner inválido'),
-  status: z.nativeEnum(TonerRequestStatus, { message: 'Status inválido' }),
-  notes: z
-    .string({ message: 'As observações são obrigatórias' })
-    .min(1, 'As observações são obrigatórias')
-    .max(200, 'As observações devem ter no máximo 200 caracteres'),
-})
+export const updateTonerRequestStatusSchema = z
+  .object({
+    id: z.string().cuid('ID do pedido de toner inválido'),
+    status: z.nativeEnum(TonerRequestStatus, { message: 'Status inválido' }),
+    notes: z
+      .string()
+      .max(200, 'As observações devem ter no máximo 200 caracteres')
+      .optional()
+      .transform((v) =>
+        typeof v === 'string' && v.trim().length === 0 ? undefined : v,
+      ),
+  })
+  .superRefine((data, ctx) => {
+    if (data.status === TonerRequestStatus.REJECTED) {
+      if (!data.notes || data.notes.trim().length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'As observações são obrigatórias ao rejeitar',
+          path: ['notes'],
+        })
+      }
+    }
+  })
 
 export type UpdateTonerRequestStatusData = z.infer<
   typeof updateTonerRequestStatusSchema

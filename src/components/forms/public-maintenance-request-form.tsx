@@ -77,6 +77,9 @@ export function PublicMaintenanceRequestForm() {
         const result = await getPublicAssetsAction({ assetType })
         if (result.success && result.data) {
           setAssets(result.data)
+        } else {
+          setAssets([])
+          toast.error(result.error?.message || 'Falha ao carregar ativos')
         }
       } catch (error) {
         console.error('Erro ao carregar ativos:', error)
@@ -121,11 +124,11 @@ export function PublicMaintenanceRequestForm() {
         >
           {/* Informações do Equipamento */}
           <div className="space-y-3 sm:space-y-4">
-          <div className="border-b pb-2">
-            <h3 className="text-base sm:text-lg font-semibold text-foreground">
-              Informações do Equipamento
-            </h3>
-          </div>
+            <div className="border-b pb-2">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">
+                Informações do Equipamento
+              </h3>
+            </div>
 
             <FormField
               control={form.control}
@@ -144,6 +147,10 @@ export function PublicMaintenanceRequestForm() {
                           variant="outline"
                           role="combobox"
                           aria-expanded={open}
+                          aria-busy={isLoadingAssets}
+                          aria-disabled={
+                            form.formState.isSubmitting || isLoadingAssets
+                          }
                           aria-label={
                             assetType
                               ? `Selecionar Patrimônio de ${getAssetTypeLabel(assetType)}`
@@ -153,7 +160,9 @@ export function PublicMaintenanceRequestForm() {
                             'justify-between',
                             !field.value && 'text-muted-foreground',
                           )}
-                          disabled={form.formState.isSubmitting || isLoadingAssets}
+                          disabled={
+                            form.formState.isSubmitting || isLoadingAssets
+                          }
                         >
                           {selectedAsset
                             ? `${selectedAsset.tag} - ${getAssetTypeLabel(selectedAsset.assetType)}`
@@ -187,9 +196,7 @@ export function PublicMaintenanceRequestForm() {
                                 <div className="flex flex-col">
                                   <span className="font-medium">
                                     {asset.tag} -{' '}
-                                    {getAssetTypeLabel(
-                                      asset.assetType
-                                    )}
+                                    {getAssetTypeLabel(asset.assetType)}
                                   </span>
                                   <span className="text-sm text-muted-foreground">
                                     {asset.sector} - {asset.department}
