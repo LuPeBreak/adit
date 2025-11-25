@@ -1,4 +1,5 @@
 import { PublicMaintenanceRequestForm } from '@/components/forms/public-maintenance-request-form'
+import { Suspense } from 'react'
 import { Wrench } from 'lucide-react'
 import { ContactSection } from '@/components/home/contact-section'
 
@@ -21,7 +22,15 @@ export default function MaintenanceRequestPage() {
           </p>
         </div>
 
-        <PublicMaintenanceRequestForm />
+        <Suspense
+          fallback={
+            <div className="text-center text-muted-foreground">
+              Carregando formulário...
+            </div>
+          }
+        >
+          <PublicMaintenanceRequestForm />
+        </Suspense>
       </div>
 
       <ContactSection />
