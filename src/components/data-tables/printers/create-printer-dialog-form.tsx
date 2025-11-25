@@ -262,7 +262,11 @@ export function CreatePrinterDialogForm({
                                 key={model.id}
                                 value={model.name}
                                 onSelect={() => {
-                                  form.setValue('printerModelId', model.id)
+                                  form.setValue('printerModelId', model.id, {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                    shouldTouch: true,
+                                  })
                                   setPrinterModelOpen(false)
                                 }}
                               >
