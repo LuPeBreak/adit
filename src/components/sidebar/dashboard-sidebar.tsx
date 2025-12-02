@@ -19,13 +19,13 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from '../ui/sidebar'
 import Link from 'next/link'
 import { auth } from '@/lib/auth/auth'
 import { headers } from 'next/headers'
 import { NavUser } from './nav-user'
+import { SidebarLink } from './sidebar-link'
 
 const menuLinks = {
   Geral: {
@@ -169,12 +169,11 @@ export async function DashboardSidebar() {
                 <SidebarMenu>
                   {visibleLinks.map((link) => (
                     <SidebarMenuItem key={link.title}>
-                      <SidebarMenuButton asChild>
-                        <Link href={link.url}>
-                          <link.icon />
-                          <span>{link.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
+                      <SidebarLink
+                        url={link.url}
+                        title={link.title}
+                        icon={<link.icon />}
+                      />
                     </SidebarMenuItem>
                   ))}
                 </SidebarMenu>

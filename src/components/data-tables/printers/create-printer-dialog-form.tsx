@@ -134,7 +134,7 @@ export function CreatePrinterDialogForm({
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="tag"
@@ -177,7 +177,7 @@ export function CreatePrinterDialogForm({
             )}
           />
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="status"
@@ -186,7 +186,7 @@ export function CreatePrinterDialogForm({
                   <FormLabel>Status</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
                     </FormControl>
@@ -206,7 +206,7 @@ export function CreatePrinterDialogForm({
               control={form.control}
               name="printerModelId"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem>
                   <FormLabel>Modelo</FormLabel>
                   <Popover
                     open={printerModelOpen}
@@ -218,8 +218,22 @@ export function CreatePrinterDialogForm({
                           variant="outline"
                           role="combobox"
                           aria-expanded={printerModelOpen}
+                          aria-label={
+                            isLoadingModels
+                              ? 'Carregando modelos...'
+                              : field.value
+                                ? (() => {
+                                    const model = printerModels.find(
+                                      (m) => m.id === field.value,
+                                    )
+                                    return model
+                                      ? `Modelo selecionado: ${model.name}`
+                                      : 'Modelo não encontrado'
+                                  })()
+                                : 'Selecione um modelo'
+                          }
                           className={cn(
-                            'justify-between',
+                            'justify-between w-full flex min-w-0',
                             !field.value && 'text-muted-foreground',
                           )}
                           disabled={isLoadingModels}
@@ -234,12 +248,16 @@ export function CreatePrinterDialogForm({
                               const model = printerModels.find(
                                 (m) => m.id === field.value,
                               )
-                              return model
-                                ? model.name
-                                : 'Modelo não encontrado'
+                              return (
+                                <span className="truncate flex-1 text-left">
+                                  {model ? model.name : 'Modelo não encontrado'}
+                                </span>
+                              )
                             })()
                           ) : (
-                            'Selecione um modelo'
+                            <span className="truncate flex-1 text-left">
+                              Selecione um modelo
+                            </span>
                           )}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
@@ -296,7 +314,7 @@ export function CreatePrinterDialogForm({
             control={form.control}
             name="sectorId"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem>
                 <FormLabel>Secretaria - Setor</FormLabel>
                 <SectorSelect
                   value={field.value}

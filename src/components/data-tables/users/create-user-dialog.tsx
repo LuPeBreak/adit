@@ -158,7 +158,7 @@ export function CreateUserDialog({
                 <FormLabel>Cargo</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione o cargo" />
                     </SelectTrigger>
                   </FormControl>
@@ -175,13 +175,14 @@ export function CreateUserDialog({
             )}
           />
 
-          <div className="flex flex-row items-start space-x-3 space-y-0">
+          <div className="flex flex-row items-start space-x-3">
             <Checkbox
               checked={shouldGeneratePassword}
               onCheckedChange={handleGeneratePasswordChange}
+              aria-label="Gerar senha automaticamente"
             />
             <div className="space-y-1 leading-none">
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label className="text-sm font-medium leading-none">
                 Gerar senha automaticamente
               </label>
               <p className="text-xs text-muted-foreground">
@@ -199,6 +200,7 @@ export function CreateUserDialog({
                 <FormControl>
                   <div className="relative">
                     <Input
+                      id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Digite a senha"
                       {...field}
@@ -211,6 +213,11 @@ export function CreateUserDialog({
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={
+                        showPassword ? 'Ocultar senha' : 'Mostrar senha'
+                      }
+                      aria-controls="password"
+                      aria-pressed={showPassword}
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />

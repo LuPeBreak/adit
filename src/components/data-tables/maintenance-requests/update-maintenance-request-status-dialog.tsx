@@ -196,6 +196,7 @@ export function UpdateMaintenanceRequestStatusDialog({
                     <Checkbox
                       checked={!!field.value}
                       onCheckedChange={(checked) => field.onChange(!!checked)}
+                      aria-label="Atualizar ativo (status e/ou setor)"
                       disabled={
                         targetStatus === 'MAINTENANCE' ||
                         targetStatus === 'COMPLETED'
@@ -226,6 +227,7 @@ export function UpdateMaintenanceRequestStatusDialog({
                       >
                         <FormControl>
                           <SelectTrigger
+                            className="w-full"
                             disabled={targetStatus === 'MAINTENANCE'}
                           >
                             <SelectValue

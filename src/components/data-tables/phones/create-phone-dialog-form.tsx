@@ -76,7 +76,7 @@ export function CreatePhoneDialogForm({
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
         >
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="tag"
@@ -105,7 +105,7 @@ export function CreatePhoneDialogForm({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="phoneNumber"
@@ -134,7 +134,7 @@ export function CreatePhoneDialogForm({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="phoneType"
@@ -143,7 +143,7 @@ export function CreatePhoneDialogForm({
                   <FormLabel>Tipo de Telefone</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione o tipo" />
                       </SelectTrigger>
                     </FormControl>
@@ -194,7 +194,7 @@ export function CreatePhoneDialogForm({
                 <FormLabel>Status Inicial</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione o status" />
                     </SelectTrigger>
                   </FormControl>
@@ -215,7 +215,7 @@ export function CreatePhoneDialogForm({
             control={form.control}
             name="sectorId"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem>
                 <FormLabel>Setor</FormLabel>
                 <FormControl>
                   <SectorSelect

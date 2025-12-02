@@ -87,8 +87,11 @@ export function SectorSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          aria-label={
+            selectedSector ? getDisplayText(selectedSector) : placeholder
+          }
           className={cn(
-            'justify-between',
+            'justify-between w-full flex min-w-0',
             !value && 'text-muted-foreground',
             className,
           )}
@@ -100,9 +103,11 @@ export function SectorSelect({
               Carregando...
             </>
           ) : selectedSector ? (
-            getDisplayText(selectedSector)
+            <span className="truncate flex-1 text-left">
+              {getDisplayText(selectedSector)}
+            </span>
           ) : (
-            placeholder
+            <span className="truncate flex-1 text-left">{placeholder}</span>
           )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>

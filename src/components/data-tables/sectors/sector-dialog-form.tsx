@@ -57,6 +57,7 @@ interface SectorDialogFormProps {
 interface Department {
   id: string
   name: string
+  acronym: string
 }
 
 export function SectorDialogForm({
@@ -145,6 +146,7 @@ export function SectorDialogForm({
       open={open}
       onOpenChange={onOpenChange}
       title={isUpdateMode ? 'Editar Setor' : 'Criar Setor'}
+      className="sm:max-w-[600px]"
     >
       <Form {...form}>
         <form
@@ -155,7 +157,7 @@ export function SectorDialogForm({
             control={form.control}
             name="departmentId"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem>
                 <FormLabel>Secretaria</FormLabel>
                 <Popover open={departmentOpen} onOpenChange={setDepartmentOpen}>
                   <PopoverTrigger asChild>
@@ -164,8 +166,22 @@ export function SectorDialogForm({
                         variant="outline"
                         role="combobox"
                         aria-expanded={departmentOpen}
+                        aria-label={
+                          isLoadingDepartments
+                            ? 'Carregando secretarias...'
+                            : field.value
+                              ? (() => {
+                                  const dept = departments.find(
+                                    (d) => d.id === field.value,
+                                  )
+                                  return dept
+                                    ? `Secretaria selecionada: ${dept.acronym} - ${dept.name}`
+                                    : 'Selecione uma secretaria'
+                                })()
+                              : 'Selecione uma secretaria'
+                        }
                         className={cn(
-                          'justify-between',
+                          'w-full sm:max-w-[550px] justify-between flex min-w-0',
                           !field.value && 'text-muted-foreground',
                         )}
                         disabled={isLoadingDepartments}
@@ -176,9 +192,18 @@ export function SectorDialogForm({
                             Carregando...
                           </>
                         ) : field.value ? (
-                          departments.find(
-                            (department) => department.id === field.value,
-                          )?.name
+                          (() => {
+                            const dept = departments.find(
+                              (d) => d.id === field.value,
+                            )
+                            return (
+                              <span className="truncate flex-1 text-left">
+                                {dept
+                                  ? `${dept.acronym} - ${dept.name}`
+                                  : 'Selecione uma secretaria'}
+                              </span>
+                            )
+                          })()
                         ) : (
                           'Selecione uma secretaria'
                         )}
@@ -186,12 +211,22 @@ export function SectorDialogForm({
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="max-h-[200px] p-0">
+                  <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
                     <Command
                       filter={(value, search) => {
-                        const departmentText = value.toLowerCase()
-                        const searchText = search.toLowerCase()
-                        return departmentText.includes(searchText) ? 1 : 0
+                        const department = departments.find(
+                          (d) =>
+                            `${d.acronym} - ${d.name}`.toLowerCase() ===
+                            value.toLowerCase(),
+                        )
+                        if (!department) return 0
+                        const searchLower = search.toLowerCase()
+                        return department.name
+                          .toLowerCase()
+                          .includes(searchLower) ||
+                          department.acronym.toLowerCase().includes(searchLower)
+                          ? 1
+                          : 0
                       }}
                     >
                       <CommandInput placeholder="Buscar secretaria..." />
@@ -203,7 +238,7 @@ export function SectorDialogForm({
                           {departments.map((department) => (
                             <CommandItem
                               key={department.id}
-                              value={department.name}
+                              value={`${department.acronym} - ${department.name}`}
                               onSelect={() => {
                                 form.setValue('departmentId', department.id)
                                 setDepartmentOpen(false)
@@ -217,7 +252,7 @@ export function SectorDialogForm({
                                     : 'opacity-0',
                                 )}
                               />
-                              {department.name}
+                              {department.acronym} - {department.name}
                             </CommandItem>
                           ))}
                         </CommandGroup>

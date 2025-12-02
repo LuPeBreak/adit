@@ -28,8 +28,12 @@ type DepartmentFormValues = CreateDepartmentData
 export interface DepartmentFormData {
   id?: string
   name: string
+  acronym: string
   manager: string
   managerEmail: string
+  contact?: string
+  address?: string
+  website?: string
 }
 
 interface DepartmentDialogFormProps {
@@ -47,8 +51,12 @@ export function DepartmentDialogForm({
     resolver: zodResolver(createDepartmentSchema),
     defaultValues: {
       name: initialData?.name ?? '',
+      acronym: initialData?.acronym ?? '',
       manager: initialData?.manager ?? '',
       managerEmail: initialData?.managerEmail ?? '',
+      contact: initialData?.contact ?? '',
+      address: initialData?.address ?? '',
+      website: initialData?.website ?? '',
     },
   })
 
@@ -56,7 +64,15 @@ export function DepartmentDialogForm({
 
   useEffect(() => {
     if (initialData) {
-      form.reset(initialData)
+      form.reset({
+        name: initialData.name ?? '',
+        acronym: initialData.acronym ?? '',
+        manager: initialData.manager ?? '',
+        managerEmail: initialData.managerEmail ?? '',
+        contact: initialData.contact ?? '',
+        address: initialData.address ?? '',
+        website: initialData.website ?? '',
+      })
     }
   }, [initialData, form])
 
@@ -93,6 +109,7 @@ export function DepartmentDialogForm({
       open={open}
       onOpenChange={onOpenChange}
       title={isUpdateMode ? 'Editar Secretaria' : 'Criar Secretaria'}
+      className="sm:max-w-[600px]"
     >
       <Form {...form}>
         <form
