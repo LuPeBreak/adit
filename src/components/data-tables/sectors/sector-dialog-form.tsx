@@ -152,6 +152,7 @@ export function SectorDialogForm({
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
+          aria-busy={form.formState.isSubmitting}
         >
           <FormField
             control={form.control}
@@ -166,6 +167,8 @@ export function SectorDialogForm({
                         variant="outline"
                         role="combobox"
                         aria-expanded={departmentOpen}
+                        aria-autocomplete="list"
+                        aria-controls="department-list"
                         aria-label={
                           isLoadingDepartments
                             ? 'Carregando secretarias...'
@@ -207,11 +210,14 @@ export function SectorDialogForm({
                         ) : (
                           'Selecione uma secretaria'
                         )}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        <ChevronsUpDown
+                          className="ml-2 h-4 w-4 shrink-0 opacity-50"
+                          aria-hidden="true"
+                        />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
+                  <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[min(60vh,320px)] p-0">
                     <Command
                       filter={(value, search) => {
                         const department = departments.find(
@@ -230,7 +236,7 @@ export function SectorDialogForm({
                       }}
                     >
                       <CommandInput placeholder="Buscar secretaria..." />
-                      <CommandList>
+                      <CommandList id="department-list">
                         <CommandEmpty>
                           Nenhuma secretaria encontrada.
                         </CommandEmpty>
@@ -271,7 +277,7 @@ export function SectorDialogForm({
               <FormItem>
                 <FormLabel>Setor</FormLabel>
                 <FormControl>
-                  <Input placeholder="Desenvolvimento" {...field} />
+                  <Input placeholder="Desenvolvimento" {...field} autoFocus />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -314,6 +320,7 @@ export function SectorDialogForm({
                     id="managerEmail"
                     placeholder="desenvolvimento@example.com"
                     {...field}
+                    autoComplete="email"
                   />
                 </FormControl>
                 <FormMessage />
@@ -327,7 +334,13 @@ export function SectorDialogForm({
               <FormItem>
                 <FormLabel>Contato (Opcional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="(11) 99999-9999" {...field} />
+                  <Input
+                    placeholder="(11) 99999-9999"
+                    {...field}
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -340,18 +353,35 @@ export function SectorDialogForm({
               <FormItem>
                 <FormLabel>Endereço (Opcional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Sala 101, 1º Andar" {...field} />
+                  <Input
+                    placeholder="Sala 101, 1º Andar"
+                    {...field}
+                    autoComplete="street-address"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            {isUpdateMode ? 'Salvar Alterações' : 'Criar Setor'}
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={form.formState.isSubmitting}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && (
+                <Loader2
+                  className="mr-2 h-4 w-4 animate-spin"
+                  aria-hidden="true"
+                />
+              )}
+              {isUpdateMode ? 'Salvar Alterações' : 'Criar Setor'}
+            </Button>
+          </div>
         </form>
       </Form>
     </BasicDialog>

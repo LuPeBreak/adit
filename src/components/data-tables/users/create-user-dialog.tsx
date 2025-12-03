@@ -114,7 +114,11 @@ export function CreateUserDialog({
       description="Preencha os dados para criar um novo usuário no sistema."
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4"
+          aria-busy={form.formState.isSubmitting}
+        >
           <FormField
             control={form.control}
             name="name"
@@ -125,13 +129,17 @@ export function CreateUserDialog({
                   <Input
                     placeholder="Digite o nome completo"
                     {...field}
+                    autoFocus
+                    autoComplete="name"
+                    aria-invalid={!!form.formState.errors.name}
+                    aria-describedby="name-error"
                     onChange={(e) => {
                       field.onChange(e)
                       handleNameChange(e.target.value)
                     }}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="name-error" />
               </FormItem>
             )}
           />
@@ -143,9 +151,16 @@ export function CreateUserDialog({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="Digite o email" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="Digite o email"
+                    {...field}
+                    autoComplete="email"
+                    aria-invalid={!!form.formState.errors.email}
+                    aria-describedby="email-error"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="email-error" />
               </FormItem>
             )}
           />
@@ -206,6 +221,9 @@ export function CreateUserDialog({
                       {...field}
                       readOnly={shouldGeneratePassword}
                       className={shouldGeneratePassword ? 'bg-muted' : ''}
+                      autoComplete="new-password"
+                      aria-invalid={!!form.formState.errors.password}
+                      aria-describedby="password-error"
                     />
                     <Button
                       type="button"
@@ -220,9 +238,9 @@ export function CreateUserDialog({
                       aria-pressed={showPassword}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className="h-4 w-4" aria-hidden="true" />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-4 w-4" aria-hidden="true" />
                       )}
                     </Button>
                   </div>
@@ -239,7 +257,7 @@ export function CreateUserDialog({
                     </Button>
                   </div>
                 )}
-                <FormMessage />
+                <FormMessage id="password-error" />
               </FormItem>
             )}
           />
@@ -256,7 +274,10 @@ export function CreateUserDialog({
             <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2
+                    className="mr-2 h-4 w-4 animate-spin"
+                    aria-hidden="true"
+                  />
                   Criando...
                 </>
               ) : (

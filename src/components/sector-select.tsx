@@ -90,6 +90,8 @@ export function SectorSelect({
           aria-label={
             selectedSector ? getDisplayText(selectedSector) : placeholder
           }
+          aria-autocomplete="list"
+          aria-controls="sector-select-list"
           className={cn(
             'justify-between w-full flex min-w-0',
             !value && 'text-muted-foreground',
@@ -99,7 +101,10 @@ export function SectorSelect({
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2
+                className="mr-2 h-4 w-4 animate-spin"
+                aria-hidden="true"
+              />
               Carregando...
             </>
           ) : selectedSector ? (
@@ -109,13 +114,16 @@ export function SectorSelect({
           ) : (
             <span className="truncate flex-1 text-left">{placeholder}</span>
           )}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown
+            className="ml-2 h-4 w-4 shrink-0 opacity-50"
+            aria-hidden="true"
+          />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
+      <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[min(60vh,320px)] p-0">
         <Command filter={filterFunction}>
           <CommandInput placeholder="Buscar secretaria ou setor..." />
-          <CommandList>
+          <CommandList id="sector-select-list">
             <CommandEmpty>Nenhum setor encontrado.</CommandEmpty>
             <CommandGroup>
               {sectors.map((sector) => (

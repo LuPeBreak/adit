@@ -75,6 +75,7 @@ export function CreatePhoneDialogForm({
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
+          aria-busy={form.formState.isSubmitting}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
@@ -84,9 +85,14 @@ export function CreatePhoneDialogForm({
                 <FormItem>
                   <FormLabel>N° Patrimônio</FormLabel>
                   <FormControl>
-                    <Input placeholder="TI-00001" {...field} />
+                    <Input
+                      placeholder="TI-00001"
+                      {...field}
+                      aria-invalid={!!form.formState.errors.tag}
+                      aria-describedby="phone-tag-error"
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage id="phone-tag-error" />
                 </FormItem>
               )}
             />
@@ -97,9 +103,14 @@ export function CreatePhoneDialogForm({
                 <FormItem>
                   <FormLabel>N° Serial</FormLabel>
                   <FormControl>
-                    <Input placeholder="ABC123DEF456" {...field} />
+                    <Input
+                      placeholder="ABC123DEF456"
+                      {...field}
+                      aria-invalid={!!form.formState.errors.serialNumber}
+                      aria-describedby="phone-serial-error"
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage id="phone-serial-error" />
                 </FormItem>
               )}
             />
@@ -113,9 +124,16 @@ export function CreatePhoneDialogForm({
                 <FormItem>
                   <FormLabel>Número do Telefone</FormLabel>
                   <FormControl>
-                    <Input placeholder="21063004" {...field} />
+                    <Input
+                      placeholder="21063004"
+                      {...field}
+                      autoFocus
+                      autoComplete="tel"
+                      aria-invalid={!!form.formState.errors.phoneNumber}
+                      aria-describedby="phone-number-error"
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage id="phone-number-error" />
                 </FormItem>
               )}
             />
@@ -126,9 +144,15 @@ export function CreatePhoneDialogForm({
                 <FormItem>
                   <FormLabel>Marca</FormLabel>
                   <FormControl>
-                    <Input placeholder="Marca" {...field} />
+                    <Input
+                      placeholder="Marca"
+                      {...field}
+                      autoComplete="off"
+                      aria-invalid={!!form.formState.errors.brand}
+                      aria-describedby="phone-brand-error"
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage id="phone-brand-error" />
                 </FormItem>
               )}
             />
@@ -170,6 +194,7 @@ export function CreatePhoneDialogForm({
                       <Input
                         placeholder="192.168.1.100"
                         value={field.value ?? ''}
+                        inputMode="numeric"
                         onChange={(e) =>
                           field.onChange(
                             e.target.value.trim() === ''
@@ -229,12 +254,25 @@ export function CreatePhoneDialogForm({
             )}
           />
 
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Criar Telefone
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={form.formState.isSubmitting}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && (
+                <Loader2
+                  className="mr-2 h-4 w-4 animate-spin"
+                  aria-hidden="true"
+                />
+              )}
+              Criar Telefone
+            </Button>
+          </div>
         </form>
       </Form>
     </BasicDialog>

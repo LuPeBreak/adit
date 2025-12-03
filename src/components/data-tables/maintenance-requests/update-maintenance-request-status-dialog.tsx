@@ -150,7 +150,11 @@ export function UpdateMaintenanceRequestStatusDialog({
       className="sm:max-w-[560px]"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4"
+          aria-busy={isLoading}
+        >
           <div className="rounded-md border p-3 bg-muted text-sm space-y-1">
             <div className="text-muted-foreground font-mono">
               {maintenanceRequest.assetTag}
@@ -176,9 +180,12 @@ export function UpdateMaintenanceRequestStatusDialog({
                     placeholder="Descreva a justificativa da mudança de status..."
                     className="min-h-[100px]"
                     {...field}
+                    autoFocus
+                    aria-invalid={!!form.formState.errors.notes}
+                    aria-describedby="maintenance-notes-error"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="maintenance-notes-error" />
               </FormItem>
             )}
           />
@@ -292,7 +299,12 @@ export function UpdateMaintenanceRequestStatusDialog({
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading && (
+                <Loader2
+                  className="mr-2 h-4 w-4 animate-spin"
+                  aria-hidden="true"
+                />
+              )}
               Atualizar status
             </Button>
           </div>

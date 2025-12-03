@@ -115,6 +115,7 @@ export function DepartmentDialogForm({
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
+          aria-busy={form.formState.isSubmitting}
         >
           <FormField
             control={form.control}
@@ -123,9 +124,15 @@ export function DepartmentDialogForm({
               <FormItem>
                 <FormLabel>Secretaria</FormLabel>
                 <FormControl>
-                  <Input placeholder="Tecnologia da Informação" {...field} />
+                  <Input
+                    placeholder="Tecnologia da Informação"
+                    {...field}
+                    autoFocus
+                    aria-invalid={!!form.formState.errors.name}
+                    aria-describedby="department-name-error"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="department-name-error" />
               </FormItem>
             )}
           />
@@ -136,9 +143,15 @@ export function DepartmentDialogForm({
               <FormItem>
                 <FormLabel>Sigla</FormLabel>
                 <FormControl>
-                  <Input placeholder="TI" {...field} />
+                  <Input
+                    placeholder="TI"
+                    {...field}
+                    autoComplete="off"
+                    aria-invalid={!!form.formState.errors.acronym}
+                    aria-describedby="department-acronym-error"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="department-acronym-error" />
               </FormItem>
             )}
           />
@@ -149,9 +162,15 @@ export function DepartmentDialogForm({
               <FormItem>
                 <FormLabel>Responsável da Secretaria</FormLabel>
                 <FormControl>
-                  <Input placeholder="Diego Soares Gomes" {...field} />
+                  <Input
+                    placeholder="Diego Soares Gomes"
+                    {...field}
+                    autoComplete="name"
+                    aria-invalid={!!form.formState.errors.manager}
+                    aria-describedby="department-manager-error"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="department-manager-error" />
               </FormItem>
             )}
           />
@@ -166,9 +185,12 @@ export function DepartmentDialogForm({
                     id="managerEmail"
                     placeholder="informatica@example.com"
                     {...field}
+                    autoComplete="email"
+                    aria-invalid={!!form.formState.errors.managerEmail}
+                    aria-describedby="department-managerEmail-error"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="department-managerEmail-error" />
               </FormItem>
             )}
           />
@@ -179,9 +201,17 @@ export function DepartmentDialogForm({
               <FormItem>
                 <FormLabel>Contato (Opcional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="(11) 99999-9999" {...field} />
+                  <Input
+                    placeholder="(11) 99999-9999"
+                    {...field}
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    aria-invalid={!!form.formState.errors.contact}
+                    aria-describedby="department-contact-error"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="department-contact-error" />
               </FormItem>
             )}
           />
@@ -192,9 +222,15 @@ export function DepartmentDialogForm({
               <FormItem>
                 <FormLabel>Endereço (Opcional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Rua das Flores, 123" {...field} />
+                  <Input
+                    placeholder="Rua das Flores, 123"
+                    {...field}
+                    autoComplete="street-address"
+                    aria-invalid={!!form.formState.errors.address}
+                    aria-describedby="department-address-error"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="department-address-error" />
               </FormItem>
             )}
           />
@@ -208,18 +244,35 @@ export function DepartmentDialogForm({
                   <Input
                     placeholder="https://secretaria.example.com"
                     {...field}
+                    type="url"
+                    autoComplete="url"
+                    aria-invalid={!!form.formState.errors.website}
+                    aria-describedby="department-website-error"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage id="department-website-error" />
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            {isUpdateMode ? 'Salvar Alterações' : 'Criar Secretaria'}
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={form.formState.isSubmitting}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && (
+                <Loader2
+                  className="mr-2 h-4 w-4 animate-spin"
+                  aria-hidden="true"
+                />
+              )}
+              {isUpdateMode ? 'Salvar Alterações' : 'Criar Secretaria'}
+            </Button>
+          </div>
         </form>
       </Form>
     </BasicDialog>

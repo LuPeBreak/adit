@@ -133,6 +133,7 @@ export function CreatePrinterDialogForm({
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4"
+          aria-busy={form.formState.isSubmitting}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormField
@@ -142,7 +143,12 @@ export function CreatePrinterDialogForm({
                 <FormItem>
                   <FormLabel>N° Patrimônio</FormLabel>
                   <FormControl>
-                    <Input placeholder="TI-00001" {...field} />
+                    <Input
+                      placeholder="TI-00001"
+                      {...field}
+                      autoFocus
+                      autoComplete="off"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -155,7 +161,11 @@ export function CreatePrinterDialogForm({
                 <FormItem>
                   <FormLabel>N° Serial</FormLabel>
                   <FormControl>
-                    <Input placeholder="ABC123DEF456" {...field} />
+                    <Input
+                      placeholder="ABC123DEF456"
+                      {...field}
+                      autoComplete="off"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -170,7 +180,11 @@ export function CreatePrinterDialogForm({
               <FormItem>
                 <FormLabel>Endereço IP</FormLabel>
                 <FormControl>
-                  <Input placeholder="192.168.1.100" {...field} />
+                  <Input
+                    placeholder="192.168.1.100"
+                    {...field}
+                    inputMode="numeric"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -218,6 +232,8 @@ export function CreatePrinterDialogForm({
                           variant="outline"
                           role="combobox"
                           aria-expanded={printerModelOpen}
+                          aria-autocomplete="list"
+                          aria-controls="printer-model-list"
                           aria-label={
                             isLoadingModels
                               ? 'Carregando modelos...'
@@ -259,11 +275,14 @@ export function CreatePrinterDialogForm({
                               Selecione um modelo
                             </span>
                           )}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          <ChevronsUpDown
+                            className="ml-2 h-4 w-4 shrink-0 opacity-50"
+                            aria-hidden="true"
+                          />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
+                    <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[min(60vh,320px)] p-0">
                       <Command
                         filter={(value, search) => {
                           const modelText = value.toLowerCase()
@@ -272,7 +291,7 @@ export function CreatePrinterDialogForm({
                         }}
                       >
                         <CommandInput placeholder="Buscar modelo..." />
-                        <CommandList>
+                        <CommandList id="printer-model-list">
                           <CommandEmpty>Nenhum modelo encontrado.</CommandEmpty>
                           <CommandGroup>
                             {printerModels.map((model) => (
@@ -325,12 +344,25 @@ export function CreatePrinterDialogForm({
             )}
           />
 
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Criar Impressora
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={form.formState.isSubmitting}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting && (
+                <Loader2
+                  className="mr-2 h-4 w-4 animate-spin"
+                  aria-hidden="true"
+                />
+              )}
+              Criar Impressora
+            </Button>
+          </div>
         </form>
       </Form>
     </BasicDialog>
